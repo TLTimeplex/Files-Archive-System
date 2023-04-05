@@ -1,0 +1,19 @@
+{
+  "name": "files-archive-system",
+  "version": "1.0.0",
+  "description": "Modular Files and Archive System",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Files",
+    "Archive",
+    "Modular"
+  ],
+  "author": "Timeplex",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
