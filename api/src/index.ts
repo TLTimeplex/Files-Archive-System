@@ -14,7 +14,7 @@ const PORT = process.env.PORT || 3000;
 //Version system check
 const verifyVersion = (req : Request, res : Response, next : NextFunction) => {
   if(req.originalUrl === "/")
-    return res.status(400).send("Version is required<br\>url/X[.Y[.Z]]/...");
+    return res.status(400).send("Version is required<br\>Current version is " + currentVersion);
 
   const version = req.originalUrl.split('/')[1];
 
