@@ -1,25 +1,36 @@
 import express, {Request, Response, NextFunction} from 'express';
+import Version, {VERSION_PATTERN} from './version';
+
+//-----------------------------------------------------------//
 
 const app = express();
 
-//DEFINE CONSTANTS
-const versionPattern = /^\d+(\.\d+){0,2}$/;
+//-----------------------------------------------------------//
+//-------------------| DEFINE CONSTANTS |--------------------//
+//-----------------------------------------------------------//
 
-const currentVersion = "1.0.0";
+const CURRENT_VERSION : Version = new Version("1.0.0");
 
-const PORT = process.env.PORT || 3000;
+const SERVER_PORT     = process.env.PORT || 3000;
 
-//DEFINE MIDDLEWARE
+//-----------------------------------------------------------//
+//-------------------| DEFINE MIDDLEWARE |-------------------//
+//-----------------------------------------------------------//
 
 //Version system check
 const verifyVersion = (req : Request, res : Response, next : NextFunction) => {
   if(req.originalUrl === "/")
-    return res.status(400).send("Version is required<br\>Current version is " + currentVersion);
+    return res.status(418).send({version : CURRENT_VERSION.toString()});
 
-  const version = req.originalUrl.split('/')[1];
+  const versionString = req.originalUrl.split('/')[1];
 
-  if(!versionPattern.test(version))
+  if(!VERSION_PATTERN.test(versionString))
     return res.status(400).send("Invalid version");
+
+  const version = new Version(versionString);
+
+  if(CURRENT_VERSION.compareTo(version) < 0)
+    return res.status(400).send("This version is not supported yet!");
 
   next();
 };
@@ -33,14 +44,19 @@ const verifyToken = (req : Request, res : Response, next : NextFunction) => {
   next();
 };
 
+//-----------------------------------------------------------//
+//------------------| GLOBAL MIDDLEWARE |--------------------//
+//-----------------------------------------------------------//
 
-//GLOBAL MIDDLEWARE
 app.use(verifyVersion);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-//ROUTES
+//-----------------------------------------------------------//
+//------------------------| ROUTES |-------------------------//
+//-----------------------------------------------------------//
+
 //Echo version
 app.get('/:version', (req, res) => {
   return res.send({version : req.params.version});
@@ -51,17 +67,19 @@ app.post('/:version/login/:username', (req, res) => {
   const username = req.params.username;
   const password = req.body.password;
 
-  return res.send({username, password});
+  return res.status(501).send({username, password});
 });
 
 //Authenticate token
 app.get('/:version/:token', (req, res) => {
-  return res.send({token : req.params.token});
+  return res.status(501).send({token : req.params.token});
   });
 
 
+//-----------------------------------------------------------//
+//---------------------| START SERVER |----------------------//
+//-----------------------------------------------------------//
 
-//START SERVER
-app.listen(PORT, () => {
-  console.log(`Server is listening on port ${PORT}.`);
+app.listen(SERVER_PORT, () => {
+  console.log(`Server is listening on port ${SERVER_PORT}.`);
 });
