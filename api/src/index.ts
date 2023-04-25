@@ -73,6 +73,10 @@ app.post('/:version/login/:username', (req, res) => {
   const username = req.params.username;
   const password = req.body.password;
 
+  if(!username || !password){
+    return res.status(400).send("Invalid username or password");
+  }
+
   return res.status(501).send({username, password});
 });
 
