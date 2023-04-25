@@ -27,10 +27,16 @@ const verifyVersion = (req : Request, res : Response, next : NextFunction) => {
   if(!VERSION_PATTERN.test(versionString))
     return res.status(400).send("Invalid version");
 
-  const version = new Version(versionString);
+  try{
+  
+    const version = new Version(versionString);
+  
+    if(CURRENT_VERSION.compareTo(version) < 0)
+      return res.status(400).send("This version is not supported yet!");
 
-  if(CURRENT_VERSION.compareTo(version) < 0)
-    return res.status(400).send("This version is not supported yet!");
+  }catch(e){
+    return res.status(500).send("Internal server error");
+  }
 
   next();
 };
