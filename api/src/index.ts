@@ -1,5 +1,6 @@
 import express, {Request, Response, NextFunction} from 'express';
 import Version, {VERSION_PATTERN} from './version';
+import db from './db';
 
 //-----------------------------------------------------------//
 
