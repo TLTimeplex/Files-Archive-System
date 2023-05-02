@@ -3,6 +3,7 @@ import Version, {VERSION_PATTERN} from './version';
 import db from './db';
 import { createScheme } from './db/create';
 import { dropScheme } from './db/drop';
+import middleware from './endware';
 
 //-----------------------------------------------------------//
 
@@ -78,16 +79,7 @@ app.get('/:version', (req, res) => {
 });
 
 //Login (Get token)
-app.post('/:version/login/:username', (req, res) => {
-  const username = req.params.username;
-  const password = req.body.password;
-
-  if(!username || !password){
-    return res.status(400).send("Invalid username or password");
-  }
-
-  return res.status(501).send({username, password});
-});
+app.post('/:version/login/:username', middleware.loginUser);
 
 //Authenticate token
 app.get('/:version/:token', (req, res) => {
