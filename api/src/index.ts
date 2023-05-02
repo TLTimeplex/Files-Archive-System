@@ -1,6 +1,8 @@
 import express, {Request, Response, NextFunction} from 'express';
 import Version, {VERSION_PATTERN} from './version';
 import db from './db';
+import { createScheme } from './db/create';
+import { dropScheme } from './db/drop';
 
 //-----------------------------------------------------------//
 
@@ -13,6 +15,12 @@ const app = express();
 const CURRENT_VERSION : Version = new Version("1.0.0");
 
 const SERVER_PORT     = process.env.PORT || 3000;
+
+//-----------------------------------------------------------//
+//-----------------------| DB STUFF |------------------------//
+//-----------------------------------------------------------//
+
+db.autoInit();
 
 //-----------------------------------------------------------//
 //-------------------| DEFINE MIDDLEWARE |-------------------//
