@@ -2,7 +2,7 @@ import {Request, Response, NextFunction} from 'express';
 import db from '../db';
 import { users } from '../db/interfaces';
 import bcrypt from 'bcrypt';
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuid_v4 } from 'uuid';
 
 export const loginUser = (req : Request, res : Response) => {
   
@@ -27,7 +27,7 @@ export const loginUser = (req : Request, res : Response) => {
 
         if(!same) return res.status(200).send("Invalid username or password");
         
-        const uuid = uuidv4();
+        const uuid = uuid_v4();
         res.cookie('token', uuid, { expires: new Date(Date.now() + 60 * 60 * 24 * 30), path: '/', });
         return res.status(200).send(uuid);
       });
