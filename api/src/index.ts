@@ -3,7 +3,7 @@ import Version, {VERSION_PATTERN} from './version';
 import db from './db';
 import { createScheme } from './db/create';
 import { dropScheme } from './db/drop';
-import middleware from './endware';
+import endware from './endware';
 
 //-----------------------------------------------------------//
 
@@ -79,7 +79,7 @@ app.get('/:version', (req, res) => {
 });
 
 //Login (Get token)
-app.post('/:version/login/:username', middleware.loginUser);
+app.post('/:version/login/:username', endware.loginUser);
 
 //Authenticate token
 app.get('/:version/:token', (req, res) => {
