@@ -4,7 +4,7 @@ import { session } from '../db/interfaces';
 
 //Authentication check
 export const verifyToken = (req : Request, res : Response, next : NextFunction) => {
-  const token = req.params.token || req.cookies.token;
+  const token = req.params.token || req.cookies.token as string;
 
   if(!token) return res.status(401).send("User is not authorized");
 
@@ -26,6 +26,8 @@ export const verifyToken = (req : Request, res : Response, next : NextFunction) 
           return res.status(401).send("User is not authorized");
         });
       }
+
+      connection.release();
 
       return next();
 

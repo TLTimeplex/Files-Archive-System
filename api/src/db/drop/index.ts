@@ -14,7 +14,6 @@ export function dropScheme(db : Pool){
         if (err) {
           console.error(err);
         }
-        connection.release();
       }
     );
     
@@ -25,7 +24,6 @@ export function dropScheme(db : Pool){
         if (err) {
           console.error(err);
         }
-        connection.release();
       }
     );
 
@@ -35,7 +33,6 @@ export function dropScheme(db : Pool){
       if (err) {
         console.error(err);
       }
-      connection.release();
       }
     );
 
@@ -45,7 +42,6 @@ export function dropScheme(db : Pool){
       if (err) {
         console.error(err);
       }
-      connection.release();
       }
     );
 
@@ -55,7 +51,6 @@ export function dropScheme(db : Pool){
       if (err) {
         console.error(err);
       }
-      connection.release();
       }
     );
 
@@ -65,7 +60,6 @@ export function dropScheme(db : Pool){
       if (err) {
         console.error(err);
       }
-      connection.release();
       }
     );
 
@@ -75,7 +69,6 @@ export function dropScheme(db : Pool){
       if (err) {
         console.error(err);
       }
-      connection.release();
       }
     );
 

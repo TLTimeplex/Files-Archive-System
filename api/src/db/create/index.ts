@@ -20,7 +20,6 @@ export function createScheme(db : Pool){
         if (err) {
           console.error(err);
         }
-        connection.release();
       }
     );
     
@@ -38,7 +37,6 @@ export function createScheme(db : Pool){
         if (err) {
           console.error(err);
         }
-        connection.release();
       }
     );
 
@@ -53,7 +51,6 @@ export function createScheme(db : Pool){
       if (err) {
         console.error(err);
       }
-      connection.release();
       }
     );
 
@@ -69,7 +66,6 @@ export function createScheme(db : Pool){
       if (err) {
         console.error(err);
       }
-      connection.release();
       }
     );
 
@@ -90,7 +86,6 @@ export function createScheme(db : Pool){
       if (err) {
         console.error(err);
       }
-      connection.release();
       }
     );
 
@@ -104,7 +99,6 @@ export function createScheme(db : Pool){
       if (err) {
         console.error(err);
       }
-      connection.release();
       }
     );
 
@@ -116,5 +110,6 @@ export function createScheme(db : Pool){
     });
 
     connection.execute(`COMMIT;`);
+    connection.release();
   });
 } 

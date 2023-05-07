@@ -8,8 +8,7 @@ const pool = mysql.createPool({
     host: 'localhost',
     user: 'fas_user',
     database: 'fas_db',
-    waitForConnections: true,
-    connectionLimit: 10,
+    connectionLimit: 100,
 });
 
 function autoInit() : boolean {
@@ -36,7 +35,7 @@ function autoInit() : boolean {
             console.log(results);
         });
 
-
+        connection.release();
 
     });
     return true;

@@ -3,6 +3,7 @@ import Version, {VERSION_PATTERN} from './version';
 import db from './db';
 import endware from './endware';
 import middleware from './middleware';
+import cors from 'cors';
 
 //-----------------------------------------------------------//
 
@@ -31,6 +32,8 @@ app.use(middleware.verifyVersion);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use(cors());
+
 //-----------------------------------------------------------//
 //------------------------| ROUTES |-------------------------//
 //-----------------------------------------------------------//
@@ -47,7 +50,6 @@ app.post('/:version/login/:username', endware.loginUser);
 app.get('/:version/:token', middleware.verifyToken , (_, res) => {
   return res.status(200).send(true);
   });
-
 
 //-----------------------------------------------------------//
 //---------------------| START SERVER |----------------------//
