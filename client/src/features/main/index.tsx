@@ -29,12 +29,7 @@ export const Main = () => {
             window.location.href = "/login";
         });
     }
-
-
-
     
-
-    //check if the user is logged in
     return (
         <>
             <h1>Hallo</h1>
@@ -42,15 +37,5 @@ export const Main = () => {
     );
 
 };
-/*
-async function checkLogin() {
-    //check if the token is valid
-    //send a request to the server to check if the token is valid
-    //if the token is not valid, redirect to the login page
-    //if the token is valid, no redirect
-        
-
-}
-*/
 
 export default Main;
