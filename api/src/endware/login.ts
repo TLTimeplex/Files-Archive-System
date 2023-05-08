@@ -6,8 +6,11 @@ import { v4 as uuid_v4 } from 'uuid';
 
 export const loginUser = (req : Request, res : Response) => {
 
-  const username = req.params.username;
-  const password = req.body.password;
+  const username     : string  | null = req.params.username;
+  const password     : string  | null = req.body.password;
+  const keepLoggedIn : boolean | null = req.body.keepLoggedIn;
+
+  console.log(keepLoggedIn);
 
   if(!username || !password){
     return res.status(200).send("Invalid username or password");
@@ -41,7 +44,7 @@ export const loginUser = (req : Request, res : Response) => {
         const uuid = uuid_v4();
 
         // Save token in database and as cookie
-        const expires = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
+        const expires = new Date(Date.now() + (keepLoggedIn ? 1000 * 60 * 60 * 24 * 30 : 1000 * 60 * 60 * 4));
         
         connection.query("INSERT INTO `fas_db`.`session` (`token`, `user_id`, `date_created`, `date_expires`) VALUES (?, ?, ?, ?)"
         , [uuid, user.id, new Date(Date.now()), expires], (err : any, results : any[]) => {

@@ -18,6 +18,7 @@ export const Login = () => {
       //send the login request to the server with password as data
       let data = {
         password: password.value,
+        keepLoggedIn: keepLoggedIn.checked
       };
 
       const response = await axios.post("http://localhost:3000/1/login/" + username.value, data, {
