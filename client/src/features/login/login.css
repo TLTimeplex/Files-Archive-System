@@ -26,16 +26,24 @@
   width: 100%;
 }
 
-#input-keep-logged-in-wrapper{
-  display: flex;
+.input-keep-logged-in-wrapper {
+  display: flex !important;
   flex-direction: row;
-  align-items: center;
+  justify-content: flex-start;
   width: 100%;
-  text-align: center;
+  height: 3em;
   color: #ffffff;
+  align-items: center;
+  padding: 0px 0.5em !important;
+  font-size: large;
 }
 
-#login-form input {
+#input-keep-logged-in{
+  margin-left: 0 !important;
+  margin-right: 0.5em !important;
+}
+
+#login-form input[type="text"], #login-form input[type="password"], #login-form input[type="submit"] {
   width: auto;
   height: 3em;
   font-size: 1.2em;

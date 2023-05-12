@@ -21,7 +21,7 @@ export const Login = () => {
         keepLoggedIn: keepLoggedIn.checked
       };
 
-      const response = await axios.post("http://localhost:3000/1/login/" + username.value, data, {
+      const response = await axios.post("/api/1/login/" + username.value, data, {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
@@ -57,11 +57,7 @@ export const Login = () => {
 
     });
   });
-
-
-
-
-
+  
   return (
     <div id="login-wrapper">
       <img src={background} id="login-background" />
@@ -73,8 +69,8 @@ export const Login = () => {
 
           <input type="password" name="password" id="input-password" placeholder="Password" required />
 
-          <div id="input-keep-logged-in-wrapper">
-            <input type="checkbox" name="keep-logged-in" id="input-keep-logged-in" />
+          <div className="form-check form-switch input-keep-logged-in-wrapper">
+            <input className="form-check-input" type="checkbox" name="keep-logged-in" id="input-keep-logged-in" />
             <label htmlFor="input-keep-logged-in">Remember me</label>
           </div>
 

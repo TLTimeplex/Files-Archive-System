@@ -10,7 +10,7 @@ export const Main = () => {
         Navigate({ to: '/login', replace: true });
     }
     else {
-        const abc = axios.get("http://localhost:3000/1/" + token, {
+        const abc = axios.get("/api/1/" + token, {
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
