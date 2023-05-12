@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, useLocation, Routes } from 'react-route
 import './App.css';
 import Main from './features/main';
 import Login from './features/login';
+import Write from './features/write';
 import { RouteCustoms } from './modules/RouteCustoms';
 
 
@@ -12,6 +13,7 @@ const App = () => {
       <Routes>
         <Route path='*' element={<RouteCustoms element={<Main />} blocked={["/login"]} />} />
         <Route path='/login' element={<Login />}  />
+        <Route path="/write" element={<Write />} />
       </Routes>
     </Router>
   );

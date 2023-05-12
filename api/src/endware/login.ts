@@ -9,9 +9,7 @@ export const loginUser = (req : Request, res : Response) => {
   const username     : string  | null = req.params.username;
   const password     : string  | null = req.body.password;
   const keepLoggedIn : boolean | null = req.body.keepLoggedIn;
-
-  console.log(keepLoggedIn);
-
+  
   if(!username || !password){
     return res.status(200).send("Invalid username or password");
   }
