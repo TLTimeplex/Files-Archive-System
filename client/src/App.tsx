@@ -10,9 +10,10 @@ import { RouteCustoms } from './modules/RouteCustoms';
 const App = () => {
   return (
     <Router>
+      <RouteCustoms element={<Main />} blocked={["/login"]} />
       <Routes>
-        <Route path='*' element={<RouteCustoms element={<Main />} blocked={["/login"]} />} />
-        <Route path='/login' element={<Login />}  />
+        <Route path='*' element={<></>} />
+        <Route path='/login' element={<Login />} />
         <Route path="/write" element={<Write />} />
       </Routes>
     </Router>
