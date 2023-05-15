@@ -2,6 +2,10 @@ import React, { useEffect } from "react";
 import { Navigate } from "react-router";
 import axios from 'axios';
 import { useLocation } from "react-router-dom";
+import Container from 'react-bootstrap/Container';
+import Nav from 'react-bootstrap/Nav';
+import Navbar from 'react-bootstrap/Navbar';
+import NavDropdown from 'react-bootstrap/NavDropdown';
 
 export const Main = () => {
 
@@ -32,22 +36,32 @@ export const Main = () => {
     }
 
     const location = useLocation();
-    console.log(location);
 
     return (
-        <nav className="navbar navbar-expand-lg navbar-light bg-light">
-            <a className="navbar-brand" href="/dashboard">FAS</a>
-            <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-                <span className="navbar-toggler-icon"></span>
-            </button>
-            <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
-                <div className="navbar-nav">
-                    <a className={"nav-item nav-link " + ((location.pathname === '/dashboard') ? 'active' : '')} href="/dashboard">Dashboard</a>
-                    <a className={"nav-item nav-link " + ((location.pathname === '/write')     ? 'active' : '')} href="/write">Write</a>
-                    <a className={"nav-item nav-link " + ((location.pathname === '/archive')   ? 'active' : '')} href="/archive">Archive</a>
-                </div>
-            </div>
-        </nav>
+        <Navbar bg="light" expand="lg">
+            <Navbar.Brand href="/dashboard">FAS</Navbar.Brand>
+            <Navbar.Toggle aria-controls="basic-navbar-nav" />
+            <Navbar.Collapse id="basic-navbar-nav">
+                <Nav className="me-auto">
+                    <Nav.Link href="/dashboard" className={"nav-item nav-link " + ((location.pathname === '/dashboard') ? 'active' : '')}>Dashboard</Nav.Link>
+                    <Nav.Link href="/write"     className={"nav-item nav-link " + ((location.pathname === '/write')     ? 'active' : '')}>Write</Nav.Link>
+                    <Nav.Link href="/archive"   className={"nav-item nav-link " + ((location.pathname === '/archive')   ? 'active' : '')}>Archive</Nav.Link>
+                    {/*
+                    <NavDropdown title="Dropdown" id="basic-nav-dropdown">
+                        <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
+                        <NavDropdown.Item href="#action/3.2">
+                            Another action
+                        </NavDropdown.Item>
+                        <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
+                        <NavDropdown.Divider />
+                        <NavDropdown.Item href="#action/3.4">
+                            Separated link
+                        </NavDropdown.Item>
+                    </NavDropdown>
+                     */}
+                </Nav>
+            </Navbar.Collapse>
+        </Navbar>
     );
 
 };

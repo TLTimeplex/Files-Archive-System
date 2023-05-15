@@ -6,6 +6,19 @@ import httpProxy from 'http-proxy';
 const app = express();
 const apiProxy = httpProxy.createProxyServer();
 
+// Weiterleitung von HTTP zu HTTPS
+/*
+app.use((req, res, next) => {
+  if (req.secure) {
+    // Wenn die Anfrage bereits über HTTPS erfolgt, weitermachen
+    next();
+  } else {
+    // Ansonsten HTTP-Anfrage umleiten
+    res.redirect(`https://${req.headers.host}${req.url}`);
+  }
+});
+*/
+
 // API-Route
 app.use('/api', (req, res) => {
   apiProxy.web(req, res, { target: 'http://localhost:3000' });
@@ -18,8 +31,8 @@ app.get('*', (req, res) => {
 
 // SSL-Zertifikat laden
 const sslOptions = {
-  key: fs.readFileSync('./cert/key.pem'),
-  cert: fs.readFileSync('./cert/cert.pem'),
+  key: fs.readFileSync('./cert/privkey.pem'),
+  cert: fs.readFileSync('./cert/fullchain.pem'),
 };
 
 // Starten Sie den Server mit HTTPS

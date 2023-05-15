@@ -19,6 +19,7 @@
     "js-cookie": "^3.0.1",
     "react": "^18.2.0",
     "react-async": "^10.0.1",
+    "react-bootstrap": "^2.7.4",
     "react-dom": "^18.2.0",
     "react-redux": "^8.0.5",
     "react-router-dom": "^6.10.0",
@@ -52,6 +53,7 @@
     ]
   },
   "devDependencies": {
+    "@types/react-bootstrap": "^0.32.32",
     "@types/serviceworker": "^0.0.67"
   }
 }
