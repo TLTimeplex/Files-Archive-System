@@ -31,8 +31,8 @@ app.get('*', (req, res) => {
 
 // SSL-Zertifikat laden
 const sslOptions = {
-  key: fs.readFileSync('./cert/privkey.pem'),
-  cert: fs.readFileSync('./cert/fullchain.pem'),
+  key: fs.readFileSync('./cert/key.pem'),
+  cert: fs.readFileSync('./cert/cert.pem'),
 };
 
 // Starten Sie den Server mit HTTPS

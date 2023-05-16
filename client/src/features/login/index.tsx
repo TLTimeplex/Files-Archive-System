@@ -27,7 +27,7 @@ export const Login = () => {
           "Content-Type": "application/json",
         },
       });
-      if(response.status != 200){
+      if(response.status !== 200){
         alert("Login failed");
         return;
       }
@@ -54,13 +54,27 @@ export const Login = () => {
         window.location.href = "/";
       }
 
-
     });
+    const loginWrapper = document.getElementById("login-wrapper") as HTMLDivElement;
+    //when scroll or zoom block it
+    loginWrapper.addEventListener("wheel", (e) => {
+      e.preventDefault();
+    }
+    );
+    loginWrapper.addEventListener("touchmove", (e) => {
+      e.preventDefault();
+    }
+    );
+    loginWrapper.addEventListener("gesturechange", (e) => {
+      e.preventDefault();
+    }
+    );
+
   });
   
   return (
     <div id="login-wrapper">
-      <img src={background} id="login-background" />
+      <img src={background} alt="" id="login-background" />      
       <div id="login">
         <h1 id="login-title">Login</h1>
         <form id="login-form" action="none">
@@ -77,7 +91,7 @@ export const Login = () => {
           <input type="submit" value="Login" id="input-submit" />
 
         </form>
-        <h3 id="Login-info"></h3>
+        <div className="h3" id="Login-info"></div>
       </div>
     </div>
   );

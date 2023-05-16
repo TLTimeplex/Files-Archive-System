@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { BrowserRouter as Router, Route, useLocation, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './App.css';
 import Main from './features/main';
 import Login from './features/login';
@@ -14,7 +14,7 @@ const App = () => {
       <Routes>
         <Route path='*' element={<></>} />
         <Route path='/login' element={<Login />} />
-        <Route path="/write" element={<Write />} />
+        <Route path="/write/*" element={<Write />} />
       </Routes>
     </Router>
   );

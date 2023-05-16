@@ -43,9 +43,9 @@ export const Main = () => {
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="me-auto">
-                    <Nav.Link href="/dashboard" className={"nav-item nav-link " + ((location.pathname === '/dashboard') ? 'active' : '')}>Dashboard</Nav.Link>
-                    <Nav.Link href="/write"     className={"nav-item nav-link " + ((location.pathname === '/write')     ? 'active' : '')}>Write</Nav.Link>
-                    <Nav.Link href="/archive"   className={"nav-item nav-link " + ((location.pathname === '/archive')   ? 'active' : '')}>Archive</Nav.Link>
+                    <Nav.Link href="/dashboard" className={"nav-item nav-link " + ((location.pathname.match('/dashboard')) ? 'active' : '')}>Dashboard</Nav.Link>
+                    <Nav.Link href="/write"     className={"nav-item nav-link " + ((location.pathname.match('/write'))     ? 'active' : '')}>Write</Nav.Link>
+                    <Nav.Link href="/archive"   className={"nav-item nav-link " + ((location.pathname.match('/archive'))   ? 'active' : '')}>Archive</Nav.Link>
                     {/*
                     <NavDropdown title="Dropdown" id="basic-nav-dropdown">
                         <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
