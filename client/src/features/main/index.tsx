@@ -1,8 +1,7 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Navigate } from "react-router";
 import axios from 'axios';
 import { useLocation } from "react-router-dom";
-import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
@@ -15,13 +14,13 @@ export const Main = () => {
         Navigate({ to: '/login', replace: true });
     }
     else {
-        const abc = axios.get("/api/1/" + token, {
+        axios.get("/api/1/" + token, {
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
             },
         }).then((response) => {
-            if (response.status != 200) {
+            if (response.status !== 200) {
                 localStorage.removeItem("token");
                 sessionStorage.removeItem("token");
                 sessionStorage.setItem("lastPage", window.location.href);

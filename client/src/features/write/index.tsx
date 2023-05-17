@@ -1,5 +1,4 @@
-import { useEffect } from "react";
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import WriteNew from "./new";
 import WriteEdit from "./edit";
 

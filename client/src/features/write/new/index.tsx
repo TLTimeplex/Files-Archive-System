@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
-import { Alert } from 'react-bootstrap';
 import "./style.css";
 import AddAlert from '../../../scripts/addAlert';
 
@@ -11,7 +10,7 @@ export const WriteNew = () => {
     const save   = document.getElementById("new-save")   as HTMLButtonElement;
     const upload = document.getElementById("new-upload") as HTMLButtonElement;
     
-    const title  = () => (document.getElementById("title")  as HTMLInputElement)   .value;
+    const title  = () => (document.getElementById("title")  as HTMLInputElement).value;
     const report = () => (document.getElementById("report") as HTMLTextAreaElement).value;
 
     form.addEventListener("submit", (event) => {
@@ -33,8 +32,7 @@ export const WriteNew = () => {
         let keyArray = JSON.parse(localStorageKeys) as Array<string>;
         console.log(keyArray);
         if(keyArray.includes(titleValue)) {
-          // TODO
-          AddAlert("Can not save! Titel already exists!", "warning");
+          AddAlert("Can't save! Titel already exists!", "warning");
           return;
         }
         keyArray.push(titleValue);
