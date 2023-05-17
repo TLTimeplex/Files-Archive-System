@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
 import { Alert } from 'react-bootstrap';
+import "./style.css";
+import AddAlert from '../../../scripts/addAlert';
 
 export const WriteNew = () => {
 
@@ -32,7 +34,7 @@ export const WriteNew = () => {
         console.log(keyArray);
         if(keyArray.includes(titleValue)) {
           // TODO
-          alert("Title already exists");
+          AddAlert("Can not save! Titel already exists!", "warning");
           return;
         }
         keyArray.push(titleValue);
@@ -47,18 +49,7 @@ export const WriteNew = () => {
     });
 
     upload.addEventListener("click", (event) => {
-      const alert_root = document.getElementById("alert-root") as HTMLDivElement;
-      const alert = document.createElement("div") as HTMLDivElement;
-      alert.className = "fade alert alert-danger show";
-      alert.setAttribute("role", "alert");
-      alert.innerHTML = "You need to save the file first before uploading it.";
-      alert_root.appendChild(alert);
-      setTimeout(() => {
-        alert.className = "fade alert alert-danger";
-        setTimeout(() => {
-          alert_root.removeChild(alert);
-        }, 300);
-      }, 2000);
+      AddAlert("You need to save the file first before uploading it.", "danger");
     });
 
   }, []);
