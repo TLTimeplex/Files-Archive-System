@@ -44,21 +44,12 @@ export const Main = () => {
             <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="me-auto">
                     <Nav.Link href="/dashboard" className={"nav-item nav-link " + ((location.pathname.match('/dashboard')) ? 'active' : '')}>Dashboard</Nav.Link>
-                    <Nav.Link href="/write"     className={"nav-item nav-link " + ((location.pathname.match('/write'))     ? 'active' : '')}>Write</Nav.Link>
-                    <Nav.Link href="/archive"   className={"nav-item nav-link " + ((location.pathname.match('/archive'))   ? 'active' : '')}>Archive</Nav.Link>
-                    {/*
-                    <NavDropdown title="Dropdown" id="basic-nav-dropdown">
-                        <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
-                        <NavDropdown.Item href="#action/3.2">
-                            Another action
-                        </NavDropdown.Item>
-                        <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
-                        <NavDropdown.Divider />
-                        <NavDropdown.Item href="#action/3.4">
-                            Separated link
-                        </NavDropdown.Item>
+                    <NavDropdown title="Write" id="basic-nav-dropdown">
+                        <NavDropdown.Item href="/write">Overview</NavDropdown.Item>
+                        <NavDropdown.Item href="/write/new">New</NavDropdown.Item>
+                        <NavDropdown.Item href="/write/edit">Edit</NavDropdown.Item>
                     </NavDropdown>
-                     */}
+                    <Nav.Link href="/archive"   className={"nav-item nav-link " + ((location.pathname.match('/archive'))   ? 'active' : '')}>Archive</Nav.Link>
                 </Nav>
             </Navbar.Collapse>
         </Navbar>
