@@ -1,6 +1,6 @@
 import { Variant } from "react-bootstrap/esm/types";
 
-export const AddAlert = (message : string, variant : Variant, timeout : number = 2000 ) => {
+export const AddAlert = (message : string, variant : Variant, timeout : number = 2000 ) : void => {
   const alert_root = document.getElementById("alert-root") as HTMLDivElement;
   const alert = document.createElement("div") as HTMLDivElement;
   alert.className = `fade alert alert-${variant} show`;
