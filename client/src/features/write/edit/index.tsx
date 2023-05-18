@@ -1,6 +1,8 @@
-import { Button, Card } from "react-bootstrap";
+import { Button, Card, Container } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import "./style.css";
+import AddAlert from "../../../scripts/addAlert";
+import FAS_File from "../../../types/file";
 
 export const WriteEdit = () => {
 
@@ -17,24 +19,36 @@ export const WriteEdit = () => {
         <h1>Select File to edit</h1>
         <div className="file-grid">
           {fileList.map((file: string) => {
+            const jsonFile = localStorage.getItem("file-" + file);
+            const File = jsonFile ? (JSON.parse(jsonFile) as FAS_File) : null;
+            if (!jsonFile || !File) {
+              AddAlert(`Can't load file! File: ${file}`, "warning");
+              //TODO give option to delete file
+              return (<></>)
+            }
+            const lastUpdate = new Date(File.updatedAt);
+            const lastUpdateString = lastUpdate.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' });
             return (
               <Card key={file}>
                 {/*<Card.Img variant="top" src="holder.js/100px180" />*/}
                 <Card.Body>
-                  <Card.Title>{file}</Card.Title>
+                  <Card.Title>{File.title}</Card.Title>
                   <Card.Text>
-                    {localStorage.getItem("file-" + file)?.substring(0, 100) + "..."}
+                    {(File.content) ? File.content.substring(0, 100) + (File.content.length > 100 ? "..." : "") : ""}
                   </Card.Text>
-                  <Button variant="primary">Edit</Button>
                 </Card.Body>
+                <Card.Footer>
+                  <Button variant="primary" href={`/write/edit/${file}`}>Edit</Button>
+                  <div className="last-edited">{lastUpdateString}</div>
+                </Card.Footer>
               </Card>
-              )
+            )
           })}
 
         </div>
       </>
     );
-  }else if (!fileList.includes(file)) {
+  } else if (!fileList.includes(file)) {
     window.location.href = `/write/new/${file}`;
     return (<></>);
   }

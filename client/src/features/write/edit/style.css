@@ -21,3 +21,14 @@ h1 {
   text-align: center;
 }
 
+.last-edited {
+  text-align: right;
+  opacity: 50%;
+}
+
+.card-footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}

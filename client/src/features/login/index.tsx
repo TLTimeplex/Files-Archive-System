@@ -44,11 +44,13 @@ export const Login = () => {
       }
       if(keepLoggedIn.checked){
         //if the login was successful, save the token in the local storage
-        localStorage.setItem("token", resData.message);
+        localStorage.setItem("token", resData.token);
+        localStorage.setItem("Username", username.value);
       }
       else
       {
-        sessionStorage.setItem("token", resData.message);
+        sessionStorage.setItem("token", resData.token);
+        sessionStorage.setItem("Username", username.value);
       }
 
       //redirect to the last page

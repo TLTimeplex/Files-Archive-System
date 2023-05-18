@@ -53,7 +53,7 @@ export const loginUser = (req : Request, res : Response) => {
 
 
         // Return token
-        return res.status(200).send({success : true , message: uuid});
+        return res.status(200).send({success : true , token: uuid, expires: expires, user: {id: user.id, username: user.username}});
       });
     });
   });
