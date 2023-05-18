@@ -5,6 +5,11 @@ import axios from 'axios';
 
 export const Login = () => {
 
+  const html = document.getElementsByTagName("html")[0];
+  //set overflow to hidden and important
+  html.style.overflow = "hidden";
+  html.style.setProperty("overflow", "hidden", "important");
+
   React.useEffect(() => {
     //get the login form submit button
     const loginForm = document.getElementById("login-form") as HTMLFormElement;

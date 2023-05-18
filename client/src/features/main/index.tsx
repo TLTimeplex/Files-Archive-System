@@ -48,7 +48,7 @@ export const Main = () => {
                         <NavDropdown.Item href="/write/new">New</NavDropdown.Item>
                         <NavDropdown.Item href="/write/edit">Edit</NavDropdown.Item>
                     </NavDropdown>
-                    <Nav.Link href="/archive"   className={"nav-item nav-link " + ((location.pathname.match('/archive'))   ? 'active' : '')}>Archive</Nav.Link>
+                    <Nav.Link href="/archive" className={"nav-item nav-link " + ((location.pathname.match('/archive')) ? 'active' : '')}>Archive</Nav.Link>
                 </Nav>
             </Navbar.Collapse>
         </Navbar>
