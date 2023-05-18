@@ -8,7 +8,10 @@ export const Write = () => {
     <Routes>
       <Route path='*' element={<></>} />
       <Route path="/new" element={<WriteNew />} />
+      <Route path="/new/:title" element={<WriteNew />} />
+
       <Route path='/edit' element={<WriteEdit />} />
+      <Route path='/edit/:file' element={<WriteEdit />} />
     </Routes>
   );
 };

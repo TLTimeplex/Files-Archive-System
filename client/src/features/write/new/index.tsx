@@ -2,26 +2,31 @@ import { useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
 import "./style.css";
 import AddAlert from '../../../scripts/addAlert';
+import { useParams } from 'react-router-dom';
 
 export const WriteNew = () => {
+
+  const { title } = useParams();
 
   useEffect(() => {
     const form   = document.getElementById("new-form")   as HTMLFormElement;
     const save   = document.getElementById("new-save")   as HTMLButtonElement;
     const upload = document.getElementById("new-upload") as HTMLButtonElement;
     
-    const title  = () => (document.getElementById("title")  as HTMLInputElement).value;
-    const report = () => (document.getElementById("report") as HTMLTextAreaElement).value;
+    const titleF  = () => (document.getElementById("title")  as HTMLInputElement).value;
+    const reportF = () => (document.getElementById("report") as HTMLTextAreaElement).value;
+
+    if(title) (document.getElementById("title")  as HTMLInputElement).value = title;
 
     form.addEventListener("submit", (event) => {
       event.preventDefault();
     });
 
     save.addEventListener("click", (event) => {
-      if(!title()) return;
+      if(!titleF()) return;
 
-      let titleValue  = title().toLowerCase();
-      let reportValue = report();
+      let titleValue  = titleF().toLowerCase();
+      let reportValue = reportF();
 
       let localStorageKeys = localStorage.getItem("files") as string | null;
       console.log(localStorageKeys);
@@ -50,13 +55,13 @@ export const WriteNew = () => {
       AddAlert("You need to save the file first before uploading it.", "danger");
     });
 
-  }, []);
+  }, [title]);
 
     return (
       <form id="new-form">
         <div className="form-group">
           <label htmlFor="title">Title</label>
-          <input type="text" className="form-control" id="title" placeholder="Title" required></input>
+          <input type="text" className="form-control" id="title" placeholder="Title"  required></input>
         </div>
         <div className="form-group">
           <label htmlFor="report">Text</label>
