@@ -6,3 +6,19 @@
     padding: 0% 2%;
   }
 }
+
+.button-group {
+  box-sizing: border-box;
+  margin-top: 0.3rem;
+}
+
+.File-Viewer {
+  box-sizing: border-box;
+  border: 1px solid #ced4da;
+}
+
+.uploaded-files-preview {
+  display: flex !important;
+  flex-wrap: wrap;
+  justify-content: center;	
+}

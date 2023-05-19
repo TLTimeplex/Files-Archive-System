@@ -30,9 +30,11 @@ export const WriteEdit = () => {
             const lastUpdateString = lastUpdate.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' });
             return (
               <Card key={file}>
+                <Card.Header>
+                  <Card.Title>{File.title}</Card.Title>
+                </Card.Header>
                 {/*<Card.Img variant="top" src="holder.js/100px180" />*/}
                 <Card.Body>
-                  <Card.Title>{File.title}</Card.Title>
                   <Card.Text>
                     {(File.content) ? File.content.substring(0, 100) + (File.content.length > 100 ? "..." : "") : ""}
                   </Card.Text>

@@ -10,6 +10,12 @@ export const Login = () => {
   html.style.overflow = "hidden";
   html.style.setProperty("overflow", "hidden", "important");
 
+  const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+
+  if (token) {
+    window.location.href = "/";
+  }
+
   React.useEffect(() => {
     //get the login form submit button
     const loginForm = document.getElementById("login-form") as HTMLFormElement;
