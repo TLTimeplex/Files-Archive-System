@@ -1,31 +1,31 @@
-import { useEffect } from 'react';
-import Button from 'react-bootstrap/Button';
-import "./style.css";
-import AddAlert from '../../../scripts/addAlert';
+import { v4 as uuid } from "uuid";
 import { useParams } from 'react-router-dom';
-import FAS_File from '../../../types/file';
-import { Card, Container, FloatingLabel, Form } from 'react-bootstrap';
+import FAS_Report from "../../../types/report";
 
 export const WriteNew = () => {
 
   const { title } = useParams();
 
-  useEffect(() => {
-    const form = document.getElementById("new-form") as HTMLFormElement;
-    const save = document.getElementById("new-save") as HTMLButtonElement;
-    const upload = document.getElementById("new-upload") as HTMLButtonElement;
+  const ReportID = uuid();
 
-    const fileUpload = document.getElementById("fileUpload") as HTMLInputElement;
+  let Report : FAS_Report = {
+    id: ReportID,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  }
 
-    const titleF = () => (document.getElementById("title") as HTMLInputElement).value;
-    const report = document.getElementById("report") as HTMLTextAreaElement;
+  if(title && title !== '') {
+    Report.title = title;
+  }
 
-    if (title) (document.getElementById("title") as HTMLInputElement).value = title;
+  // TODO: Save Report to database
 
-    form.addEventListener("submit", (event) => {
-      event.preventDefault();
-    });
+  window.location.href = "/write/edit/" + ReportID;
 
+  return (<></>);
+
+  //useEffect(() => {
+    /*
     save.addEventListener("click", (event) => {
       if (!titleF()) return;
 
@@ -61,12 +61,10 @@ export const WriteNew = () => {
 
       window.location.href = "/write/edit/" + fileKey;
     });
+    */
 
-    upload.addEventListener("click", (event) => {
-      AddAlert("You need to save the file first before uploading it.", "danger");
-    });
-
-    const createCard = (title : string, footer : string, image : File) => {
+    /*
+    const createCard = (title: string, footer: string, image: File, footer2?: string) => {
       const card = document.createElement("div");
       card.classList.add("card");
 
@@ -81,9 +79,20 @@ export const WriteNew = () => {
       const cardBody = document.createElement("div");
       cardBody.classList.add("card-body");
 
-      const cardImg = document.createElement("img");
-      cardImg.classList.add("card-img");
-      cardImg.src = URL.createObjectURL(image);
+      if (image.type.match("image/")) {
+        const cardImg = document.createElement("img");
+        cardImg.classList.add("card-img");
+        cardImg.src = URL.createObjectURL(image);
+
+        cardBody.appendChild(cardImg);
+      } else {
+        const cardText = document.createElement("p");
+        cardText.classList.add("card-text");
+        cardText.style.textAlign = "center";
+        cardText.innerText = "File type: " + (image.type.split("/")[1] || "Unknown") + "\nNo preview available.";
+
+        cardBody.appendChild(cardText);
+      }
 
       const cardFooter = document.createElement("div");
       cardFooter.classList.add("card-footer");
@@ -92,9 +101,14 @@ export const WriteNew = () => {
       cardText.classList.add("card-text");
       cardText.innerText = footer;
 
+      const cardText2 = document.createElement("p");
+      cardText2.classList.add("card-text");
+      cardText2.classList.add("card-text-2");
+      footer2 ? cardText2.innerText = footer2 : cardText2.innerText = "";
+
       cardHeader.appendChild(cardTitle);
-      cardBody.appendChild(cardImg);
       cardFooter.appendChild(cardText);
+      cardFooter.appendChild(cardText2);
 
       card.appendChild(cardHeader);
       card.appendChild(cardBody);
@@ -102,51 +116,30 @@ export const WriteNew = () => {
 
       return card;
     }
+    */
 
-    fileUpload.addEventListener("change", (event) => {
+    /*
+    const drawPreview = (files: FileList | Array<File> | File[], clear: boolean): void => {
       const container = document.getElementById("uploaded-files-preview") as HTMLFormElement;
-      if (!fileUpload.files) return;
-      if (fileUpload.files.length === 0) return;
-      for (let i = 0; i < fileUpload.files.length; i++) {
-        const file = fileUpload.files[i];
+      if (clear) container.innerHTML = "";
+      if (!files) return;
+
+      if (files.length === 0) return;
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
         if (!file) continue;
         const reader = new FileReader();
         reader.onload = (event) => {
           if (!event.target) return;
-          const card = createCard(file.name, file.type, file);
+          const card = createCard(file.name, file.type === "" ? "Unknown" : file.type.split("/")[0], file, fileSize(file.size));
           container.appendChild(card);
         }
         reader.readAsDataURL(file);
       }
-    });
 
-    report.addEventListener("keydown", (event) => {
-      report.style.height = "auto";
-      report.style.height = (report.scrollHeight + 2) + "px";
-    });
-
-  }, [title]);
-
-  return (
-    <form id="new-form">
-      <FloatingLabel label="Title" className="mb-3">
-        <Form.Control type="text" id="title" placeholder="Title" required />
-      </FloatingLabel>
-      <FloatingLabel label="Report" className="mb-3">
-        <Form.Control as="textarea" id="report" />
-      </FloatingLabel>
-      <Form.Group className="mb-3">
-        <Form.Label>Upload Files</Form.Label>
-        <Form.Control type="file" id="fileUpload" multiple />
-      </Form.Group>
-      <div className='uploaded-files-preview form-control mb-3' id="uploaded-files-preview">
-      </div>
-      <div className='button-group'>
-        <Button variant="primary" id="new-save" type='submit'>Save</Button>{' '}
-        <Button variant="danger" id="new-upload" type='submit'>Upload</Button>
-      </div>
-    </form>
-  );
+    };
+    */
+  //}, [title]);
 };
 
 export default WriteNew;

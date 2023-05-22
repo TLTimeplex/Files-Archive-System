@@ -22,3 +22,19 @@
   flex-wrap: wrap;
   justify-content: center;	
 }
+
+.card-footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-text-2 {
+  text-align: right;
+  opacity: 50%;
+}
+
+.card-text {
+  margin-bottom: 0;
+}
