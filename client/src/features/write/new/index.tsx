@@ -1,6 +1,6 @@
 import { v4 as uuid } from "uuid";
 import { useParams } from 'react-router-dom';
-import FAS_Report from "../../../types/report";
+import IDB_Report from "../../../types/IDB_report";
 
 export const WriteNew = () => {
 
@@ -8,7 +8,7 @@ export const WriteNew = () => {
 
   const ReportID = uuid();
 
-  let Report : FAS_Report = {
+  let Report : IDB_Report = {
     id: ReportID,
     createdAt: new Date(),
     updatedAt: new Date(),

@@ -1,4 +1,4 @@
-export interface FAS_Report {
+export interface IDB_Report {
   id: string;
 
   title?: string;
@@ -13,4 +13,4 @@ export interface FAS_Report {
   fileIDs?: string[];
 }
 
-export default FAS_Report;
+export default IDB_Report;

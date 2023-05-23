@@ -11,8 +11,8 @@ export const Write = () => {
       <Route path="/new" element={<WriteNew />} />
       <Route path="/new/:title" element={<WriteNew />} />
 
-      <Route path='/edit' element={<Edit.default.EditOverview />} />
-      <Route path='/edit/:ReportTitel_OR_ID' element={<Edit.default.Editor />} />
+      <Route path='/edit' element={<Edit.Overview />} />
+      <Route path='/edit/:ReportTitel_OR_ID' element={<Edit.Editor />} />
     </Routes>
   );
 };

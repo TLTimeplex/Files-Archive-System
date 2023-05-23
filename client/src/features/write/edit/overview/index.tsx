@@ -1,9 +1,9 @@
 import { Button, Card } from "react-bootstrap";
 import AddAlert from "../../../../scripts/addAlert";
-import FAS_File from "../../../../types/report";
+import FAS_File from "../../../../types/IDB_report";
 
 // TODO: REDO!
-export const EditOverview = () => {
+export const Overview = () => {
   const files = localStorage.getItem("files");
   const fileList = files ? JSON.parse(files) : [];
   fileList.sort();
@@ -46,4 +46,4 @@ export const EditOverview = () => {
   );
 };
 
-export default EditOverview;
+export default Overview;

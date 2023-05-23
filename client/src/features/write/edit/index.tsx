@@ -1,5 +1,5 @@
 import Editor from "./editor";
-import EditOverview from "./overview";
+import Overview from "./overview";
 import "./style.css"
 
-export default { Editor, EditOverview };
+export { Editor, Overview };

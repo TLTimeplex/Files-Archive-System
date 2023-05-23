@@ -1,13 +1,13 @@
 import { useEffect } from "react";
 import { Button, FloatingLabel, Form } from "react-bootstrap";
 import { useParams } from "react-router-dom";
-import FAS_Report from "../../../../types/report";
+import IDB_Report from "../../../../types/IDB_report";
 import "./style.css";
 
 export const Editor = () => {
   const { ReportTitel_OR_ID } = useParams();
 
-  let Report: FAS_Report | undefined;
+  let Report: IDB_Report | undefined;
 
   useEffect(() => {
     /********************** HTML ELEMENTS *********************/
