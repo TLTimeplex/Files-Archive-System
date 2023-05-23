@@ -55,6 +55,7 @@ export const Editor = () => {
     });
 
     fileUpload.addEventListener("change", () => {
+      // eslint-disable-next-line
       const files = fileUpload.files;
       // TODO:
       // Save the files to the database
@@ -69,6 +70,7 @@ export const Editor = () => {
     /*********************************************************/
 
     /******************** LOCAL FUNCTIONS ********************/
+    // eslint-disable-next-line
     const drawPreview = (/* TODO: */) => {
       // TODO:
     }

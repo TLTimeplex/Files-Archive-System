@@ -1,7 +1,6 @@
 import { Route, Routes } from 'react-router-dom';
 import WriteNew from "./new";
 import * as Edit from "./edit";
-import Editor from './edit/editor';
 
 export const Write = () => {
 
