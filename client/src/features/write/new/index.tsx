@@ -1,28 +1,15 @@
-import { v4 as uuid } from "uuid";
 import { useParams } from 'react-router-dom';
-import IDB_Report from "../../../types/IDB_report";
+import { ReportDB } from "../../../scripts/IndexedDB";
 
 export const WriteNew = () => {
 
   const { title } = useParams();
 
-  const ReportID = uuid();
+  ReportDB.createReport(title).then((reportID) => {
+    window.location.href = "/write/edit/" + reportID;
+  })
 
-  let Report : IDB_Report = {
-    id: ReportID,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  }
-
-  if(title && title !== '') {
-    Report.title = title;
-  }
-
-  // TODO: Save Report to database
-
-  window.location.href = "/write/edit/" + ReportID;
-
-  return (<></>);
+  return (<>PLEASE WAIT! LOADING</>); // TODO: Loading screen
 
   //useEffect(() => {
     /*

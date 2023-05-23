@@ -1,7 +1,7 @@
 import IDB_Report from "../../../types/IDB_report";
 import GetIDB from "./getIDB";
 
-export const GetReport = async (id: string): Promise<IDB_Report> => {
+export const GetReport = async (id: string): Promise<IDB_Report | undefined> => {
   return new Promise((resolve, reject) => {
     const DB = GetIDB();
 

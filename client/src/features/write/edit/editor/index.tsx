@@ -1,15 +1,19 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button, FloatingLabel, Form } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import IDB_Report from "../../../../types/IDB_report";
 import "./style.css";
+import * as ReportsDB from "../../../../scripts/IndexedDB/Reports"
+
 
 export const Editor = () => {
   const { ReportTitel_OR_ID } = useParams();
 
-  let Report: IDB_Report | undefined;
+  const [Report, setReport] = useState<IDB_Report>();
 
   useEffect(() => {
+    if (!Report) return;
+
     /********************** HTML ELEMENTS *********************/
     // Form
     const form = document.getElementById("new-form") as HTMLFormElement;
@@ -23,7 +27,7 @@ export const Editor = () => {
     const fileUpload = document.getElementById("fileUpload") as HTMLInputElement;
     const uploadedFilesPreview = document.getElementById("uploaded-files-preview") as HTMLDivElement;
 
-    if(!form || !title || !report || !save || !upload || !fileUpload || !uploadedFilesPreview) {
+    if (!form || !title || !report || !save || !upload || !fileUpload || !uploadedFilesPreview) {
       console.error("You shouldn't be here!");
       return;
     }
@@ -77,45 +81,38 @@ export const Editor = () => {
     /*********************************************************/
   }, [Report]);
 
-  if (ReportTitel_OR_ID === undefined) {
-    window.location.href = "/write/edit";
-    return (<></>);
-  }
 
-  ReportTitel_OR_ID as string;
-
-  if (ReportTitel_OR_ID === '') {
-    window.location.href = "/write/edit";
-    return (<></>);
-  }
-
-  // if matches uuid v4 
-  if (ReportTitel_OR_ID.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/)) {
-    // TODO: Check if ID corresponds to a report in the database
-    //       If not, redirect to /write/edit
-    //       If yes, Report = Report from database
-    
-    // TEMPORARY
-    Report =  {
-      id: ReportTitel_OR_ID,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+  if (!Report) {
+    if (ReportTitel_OR_ID === undefined) {
+      window.location.href = "/write/edit";
+      return (<></>);
     }
-    // TEMPORARY
 
-  } else {
-    // TODO: Check if Titel corresponds to a report in the database
-    //       If not, redirect to /write/edit
-    //       If yes, redirect to /write/edit/:id
-    //       If multiple matches, redirect to /write/edit
+    ReportTitel_OR_ID as string;
 
-    // TEMPORARY
-    window.location.href = "/write/edit";
-    // TEMPORARY
+    if (ReportTitel_OR_ID === '') {
+      window.location.href = "/write/edit";
+      return (<></>);
+    }
 
-    return (<></>);
+    // if not matches uuid v4 
+    if (!ReportTitel_OR_ID.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/)) {
+      ReportsDB.findReport.by.Title(ReportTitel_OR_ID).then(report => {
+        if (!report || report.length !== 1) {
+          window.location.href = "/write/edit";
+        }
+        window.location.href = "/write/edit/" + report[0].id;
+      });
+      return (<></>);
+    }
+
+    ReportsDB.getReport(ReportTitel_OR_ID).then(report => {
+      if (!report) {
+        window.location.href = "/write/edit";
+      }
+      setReport(report);
+    });
   }
-
 
   return (
     <Form id="new-form">

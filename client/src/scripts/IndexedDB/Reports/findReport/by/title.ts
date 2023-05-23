@@ -1,6 +1,6 @@
 import IDB_Report from "../../../../../types/IDB_report";
 
-export const byTitle = async (title: string): Promise<IDB_Report | IDB_Report[]> => {
+export const byTitle = async (title: string): Promise<IDB_Report[]> => {
   return new Promise((resolve, reject) => {
     const DB = indexedDB.open("reports");
 

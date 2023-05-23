@@ -1,21 +1,21 @@
-import GetIDBReport from "./getIDB";
-import CreateReport from "./createReport";
-import InsertReport from "./insertReport";
-import UpdateReport from "./updateReport";
-import DeleteReport from "./deleteReport";
-import OverwriteReport from "./overwriteReport";
-import GetReport from "./getReport";
-import GetAllReports from "./getAllReports";
-import * as FindReport from "./findReport";
+import getIDBReport from "./getIDB";
+import createReport from "./createReport";
+import insertReport from "./insertReport";
+import updateReport from "./updateReport";
+import deleteReport from "./deleteReport";
+import overwriteReport from "./overwriteReport";
+import getReport from "./getReport";
+import getAllReports from "./getAllReports";
+import * as findReport from "./findReport";
 
 export {
-  GetIDBReport,
-  CreateReport,
-  InsertReport,
-  UpdateReport,
-  DeleteReport,
-  OverwriteReport,
-  GetReport,
-  GetAllReports,
-  FindReport,
+  getIDBReport,
+  createReport,
+  insertReport,
+  updateReport,
+  deleteReport,
+  overwriteReport,
+  getReport,
+  getAllReports,
+  findReport,
 }
