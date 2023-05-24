@@ -1,6 +1,7 @@
+import IDB_File from "../../../types/iDB_file";
 import GetIDB from "./getIDB";
 
-export const GetFile = async (id: string): Promise<File | undefined> => {
+export const GetFile = async (id: string): Promise<IDB_File | undefined> => {
   return new Promise((resolve, reject) => {
     const DB = GetIDB();
 
@@ -12,7 +13,7 @@ export const GetFile = async (id: string): Promise<File | undefined> => {
       const request = objectStore.get(id);
 
       request.onsuccess = () => {
-        const readData = request.result as File | undefined;
+        const readData = request.result as IDB_File | undefined;
 
         if(!readData) {
           reject("No report found");

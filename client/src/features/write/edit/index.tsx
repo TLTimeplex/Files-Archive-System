@@ -5,6 +5,9 @@ import IDB_Report from "../../../types/IDB_report";
 import "./style.css";
 import * as ReportsDB from "../../../scripts/IndexedDB/Reports"
 import AddAlertLoader2 from "../../../scripts/addAlertLoader2";
+import { FilesDB } from "../../../scripts/IndexedDB";
+import createCard from "../../../scripts/createCard";
+import FancyFileSize from "../../../scripts/fancyFileSize";
 
 
 export const Editor = () => {
@@ -24,6 +27,7 @@ export const Editor = () => {
     // Buttons
     const save = document.getElementById("new-save") as HTMLButtonElement;
     const upload = document.getElementById("new-upload") as HTMLButtonElement;
+    const deleteBtn = document.getElementById("new-delete") as HTMLButtonElement;
     // File-Upload
     const fileUpload = document.getElementById("fileUpload") as HTMLInputElement;
     const uploadedFilesPreview = document.getElementById("uploaded-files-preview") as HTMLDivElement;
@@ -59,12 +63,21 @@ export const Editor = () => {
       //TODO: Upload the files to the database after saving the report 
     });
 
-    fileUpload.addEventListener("change", () => {
-      // eslint-disable-next-line
+    deleteBtn.addEventListener("click", () => {
+      deleteReport();
+    });
+
+    fileUpload.addEventListener("change", async () => {
       const files = fileUpload.files;
-      // TODO:
-      // Save the files to the database
-      // Redraw the preview
+      if (!files) return;
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const result = await FilesDB.createFile(file, Report.id);
+        if (!Report.fileIDs) Report.fileIDs = [];
+        Report.fileIDs.push(result);
+      }
+      drawPreview();
+      saveReport();
     });
 
     // Auto resize textarea + 1 time on load
@@ -83,9 +96,6 @@ export const Editor = () => {
       report.style.height = (report.scrollHeight + 2) + "px";
     });
 
-    report.style.height = "auto";
-    report.style.height = (report.scrollHeight + 2) + "px";
-
     // save per STRG + S
     document.addEventListener("keydown", (event) => {
       if (event.ctrlKey && event.key === "s") {
@@ -96,9 +106,15 @@ export const Editor = () => {
     /*********************************************************/
 
     /******************** LOCAL FUNCTIONS ********************/
+    // eslint-disable-next-line
     const drawPreview = () => {
-      Report.fileIDs?.forEach(async fileID => {
-        
+      uploadedFilesPreview.innerHTML = "";
+      Report.fileIDs?.forEach((fileID: string) => {
+        FilesDB.getFile(fileID).then(file => {
+          if (!file) return;
+          const card = createCard(file.data.name, file.data, file.data.type.split("/")[0], FancyFileSize(file.data.size));
+          uploadedFilesPreview.appendChild(card);
+        });
       });
     }
 
@@ -107,7 +123,7 @@ export const Editor = () => {
         Report.title = title.value;
         Report.report = report.value;
         // TODO: Images?
-  
+
         ReportsDB.updateReport(Report).then(() => {
           resolve();
         }).catch((error) => {
@@ -115,9 +131,38 @@ export const Editor = () => {
           reject();
         });
 
-       }), "Saved successfully!", "success" , "Failed to save report!", "danger");
+      }), "Saved successfully!", "success", "Failed to save report!", "danger");
+    }
+
+    const deleteReport = () => {
+      const ReportID = Report.id;
+      AddAlertLoader2("Deleting report...", "info", new Promise((resolve, reject) => {
+        FilesDB.findFile.by.reportID(ReportID).then(files => {
+          files.forEach(file => {
+            FilesDB.deleteFile(file.id).catch(error => {
+              console.error(error);
+            });
+          });
+          ReportsDB.deleteReport(ReportID).then(() => {
+            resolve();
+          }).catch(error => {
+            console.error(error);
+            reject();
+          });
+        }).catch(error => {
+          console.error(error);
+          reject();
+        });
+      }), "Deleted successfully!", "success", "Failed to delete report!", "danger").finally(() => {
+        window.location.href = "/write/edit";
+      });
     }
     /*********************************************************/
+
+    drawPreview();
+
+    report.style.height = "auto";
+    report.style.height = (report.scrollHeight + 2) + "px";
   }, [Report]);
 
 
@@ -150,6 +195,8 @@ export const Editor = () => {
         window.location.href = "/write/edit";
       }
       setReport(report);
+    }).catch(error => {
+      window.location.href = "/write/edit";
     });
   }
 
@@ -169,7 +216,9 @@ export const Editor = () => {
       </div>
       <div className='button-group'>
         <Button variant="primary" id="new-save" type='submit'>Save</Button>{' '}
-        <Button variant="secondary" id="new-upload" type='submit'>Upload</Button>
+        <Button variant="secondary" id="new-upload" type='submit'>Upload</Button>{' '}
+        <Button variant="danger" id="new-delete" type='submit'>Delete</Button>
+        <Button variant="secondary" href="/write/edit/" className="Button-Back">Back</Button>
       </div>
     </Form>
   );

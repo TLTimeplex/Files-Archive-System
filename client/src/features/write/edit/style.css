@@ -7,8 +7,13 @@
 }
 
 .button-group {
+  display: flex;
   box-sizing: border-box;
   margin-top: 0.3rem;
+}
+
+.button-group > * {
+  margin: 0 0.13rem;
 }
 
 .File-Viewer {
@@ -36,4 +41,10 @@
 
 .card-text {
   margin-bottom: 0;
+}
+
+.Button-Back {
+  margin-left: auto;
+  position: relative;
+  right: 0;
 }
