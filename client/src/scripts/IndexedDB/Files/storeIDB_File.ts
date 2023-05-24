@@ -2,7 +2,7 @@ import { v4 } from "uuid";
 import IDB_File from "../../../types/iDB_file";
 import GetIDB_Files from "./getIDB_Files";
 
-export const StoreIDB_File = async (file: File, fasFileID: string): Promise<string> => {
+export const StoreIDB_File = async (file: File, ReportID: string): Promise<string> => {
   return new Promise((resolve, reject) => {
     const DB = GetIDB_Files();
 
@@ -17,7 +17,7 @@ export const StoreIDB_File = async (file: File, fasFileID: string): Promise<stri
         meta: {
           uploaded: 0,
           uploadedAt: new Date(),
-          linkedFile: fasFileID
+          linkedFile: ReportID
         }
       };
 

@@ -1,0 +1,44 @@
+.file-grid {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  overflow: auto !important;
+}
+
+.card {
+  box-sizing: border-box;
+  margin: 0.2em;
+  width: 18rem;
+}
+
+body, html {
+  overflow: auto !important;
+}
+
+h1 {
+  text-align: center;
+}
+
+.last-edited {
+  text-align: right;
+  opacity: 50%;
+}
+
+.card-footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.AddButtonBox {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.AddButton {
+  width: 90%;
+}

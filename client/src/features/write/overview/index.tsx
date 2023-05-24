@@ -1,27 +1,27 @@
 import { Button, Card } from "react-bootstrap";
-import AddAlert from "../../../../scripts/addAlert";
-import FAS_File from "../../../../types/IDB_report";
-import { ReportDB } from "../../../../scripts/IndexedDB";
+import FAS_File from "../../../types/IDB_report";
+import { ReportDB } from "../../../scripts/IndexedDB";
 import { useState } from "react";
+import "./style.css";
 
-// TODO: REDO!
+// TODO: Add Search!
 export const Overview = () => {
   const [Reports, setReports] = useState<FAS_File[]>([]);
 
-  ReportDB.getAllReports().then(reports => {setReports(reports)});
+  ReportDB.getAllReports().then(reports => { setReports(reports) });
 
   return (
     <>
-      <h1>Select File to edit</h1>
+      <h1>Select Report to edit</h1>
       <div className="file-grid">
         {Reports.map((report: FAS_File) => {
           // CLEAN UP
-          if(!report.title && !report.report && !report.fileIDs) {
+          if (!report.title && !report.report && !report.fileIDs) {
             ReportDB.deleteReport(report.id);
-            return;
+            return null;
           }
           //
-          if(!report.title) return;
+          if (!report.title) return null;
           const lastUpdate = new Date(report.updatedAt);
           const lastUpdateString = lastUpdate.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' });
           return (
@@ -42,9 +42,10 @@ export const Overview = () => {
             </Card>
           )
         })}
-        {
-          // TODO: Show Files with not title
-        }
+      </div>
+      <hr />
+      <div className="AddButtonBox">
+        <Button variant="secondary" href="/write/new" className="AddButton">New Report</Button>
       </div>
     </>
   );

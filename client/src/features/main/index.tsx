@@ -1,10 +1,8 @@
-import React from "react";
 import { Navigate } from "react-router";
 import axios from 'axios';
 import { useLocation } from "react-router-dom";
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-import NavDropdown from 'react-bootstrap/NavDropdown';
 
 export const Main = () => {
 
@@ -43,11 +41,7 @@ export const Main = () => {
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="me-auto">
           <Nav.Link href="/dashboard" className={"nav-item nav-link " + ((location.pathname.match('/dashboard')) ? 'active' : '')}>Dashboard</Nav.Link>
-          <NavDropdown title="Write" id="basic-nav-dropdown">
-            <NavDropdown.Item href="/write">Overview</NavDropdown.Item>
-            <NavDropdown.Item href="/write/new">New</NavDropdown.Item>
-            <NavDropdown.Item href="/write/edit">Edit</NavDropdown.Item>
-          </NavDropdown>
+          <Nav.Link href="/write" className={"nav-item nav-link " + ((location.pathname.match('/write')) ? 'active' : '')}>Write</Nav.Link>
           <Nav.Link href="/archive" className={"nav-item nav-link " + ((location.pathname.match('/archive')) ? 'active' : '')}>Archive</Nav.Link>
         </Nav>
       </Navbar.Collapse>
