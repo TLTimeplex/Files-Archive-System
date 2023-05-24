@@ -38,18 +38,6 @@ export const Editor = () => {
     }
     /*********************************************************/
 
-    /********************** LOAD CONTENT **********************/
-    if (Report?.title) title.value = Report.title;
-    if (Report?.report) report.value = Report.report;
-
-    if (Report?.fileIDs) {
-      Report.fileIDs.forEach(async fileID => {
-        // TODO: Get file from database
-        // OR:   Draw directly from Report.fileIDs
-      });
-    }
-    /*********************************************************/
-
     /********************* EVENT LISTENER *********************/
     form.addEventListener("submit", (event) => {
       event.preventDefault();
@@ -122,7 +110,6 @@ export const Editor = () => {
       AddAlertLoader2("Saving report...", "info", new Promise((resolve, reject) => {
         Report.title = title.value;
         Report.report = report.value;
-        // TODO: Images?
 
         ReportsDB.updateReport(Report).then(() => {
           resolve();
@@ -159,10 +146,16 @@ export const Editor = () => {
     }
     /*********************************************************/
 
-    drawPreview();
+    /********************** LOAD CONTENT **********************/
+    if (Report?.title) title.value = Report.title;
+    if (Report?.report) {
+      report.value = Report.report;
+      report.style.height = "auto";
+      report.style.height = (report.scrollHeight + 2) + "px";
+    }
+    if (Report?.fileIDs) drawPreview();
+    /*********************************************************/
 
-    report.style.height = "auto";
-    report.style.height = (report.scrollHeight + 2) + "px";
   }, [Report]);
 
 

@@ -48,3 +48,7 @@
   position: relative;
   right: 0;
 }
+
+#report{
+  max-height: 70vh;
+}
