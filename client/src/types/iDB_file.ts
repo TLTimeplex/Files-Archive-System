@@ -7,5 +7,5 @@ export default interface IDB_File {
 export interface IDB_File_Meta {
   uploaded: number;
   uploadedAt: Date;
-  linkedFile: string;
+  linkedReport: string;
 }

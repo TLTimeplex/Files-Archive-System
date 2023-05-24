@@ -1,4 +1,4 @@
-export const GetIDB_Files = () : IDBOpenDBRequest => {
+export const GetIDB = () : IDBOpenDBRequest => {
     const filesDB = indexedDB.open('files', 1);
 
     filesDB.onerror = (err) => {
@@ -6,16 +6,16 @@ export const GetIDB_Files = () : IDBOpenDBRequest => {
         console.log(err);
     };
 
-    filesDB.onupgradeneeded = (e) => {
+    filesDB.onupgradeneeded = () => {
         const db = filesDB.result;
         const objectStore = db.createObjectStore("files", { keyPath: "id" });
         objectStore.createIndex("filename", "data.name", { unique: false });
         objectStore.createIndex("uploaded", "meta.uploaded", { unique: false });
         objectStore.createIndex("uploadedAt", "meta.uploadedAt", { unique: false });
-        objectStore.createIndex("linkedFile", "meta.linkedFile", { unique: false });
+        objectStore.createIndex("linkedReport", "meta.linkedReport", { unique: false });
     };
 
     return filesDB;
 };
 
-export default GetIDB_Files;
+export default GetIDB;

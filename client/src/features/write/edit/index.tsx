@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import IDB_Report from "../../../types/IDB_report";
 import "./style.css";
 import * as ReportsDB from "../../../scripts/IndexedDB/Reports"
+import AddAlertLoader2 from "../../../scripts/addAlertLoader2";
 
 
 export const Editor = () => {
@@ -51,7 +52,7 @@ export const Editor = () => {
     });
 
     save.addEventListener("click", () => {
-      //TODO: Box up the data and save it to the database
+      saveReport();
     });
 
     upload.addEventListener("click", () => {
@@ -66,17 +67,55 @@ export const Editor = () => {
       // Redraw the preview
     });
 
-    // Auto resize textarea
+    // Auto resize textarea + 1 time on load
     report.addEventListener("keydown", (event) => {
       report.style.height = "auto";
       report.style.height = (report.scrollHeight + 2) + "px";
     });
+
+    report.addEventListener("click", (event) => {
+      report.style.height = "auto";
+      report.style.height = (report.scrollHeight + 2) + "px";
+    });
+
+    report.addEventListener("change", (event) => {
+      report.style.height = "auto";
+      report.style.height = (report.scrollHeight + 2) + "px";
+    });
+
+    report.style.height = "auto";
+    report.style.height = (report.scrollHeight + 2) + "px";
+
+    // save per STRG + S
+    document.addEventListener("keydown", (event) => {
+      if (event.ctrlKey && event.key === "s") {
+        event.preventDefault();
+        saveReport();
+      }
+    });
     /*********************************************************/
 
     /******************** LOCAL FUNCTIONS ********************/
-    // eslint-disable-next-line
-    const drawPreview = (/* TODO: */) => {
-      // TODO:
+    const drawPreview = () => {
+      Report.fileIDs?.forEach(async fileID => {
+        
+      });
+    }
+
+    const saveReport = () => {
+      AddAlertLoader2("Saving report...", "info", new Promise((resolve, reject) => {
+        Report.title = title.value;
+        Report.report = report.value;
+        // TODO: Images?
+  
+        ReportsDB.updateReport(Report).then(() => {
+          resolve();
+        }).catch((error) => {
+          console.error(error);
+          reject();
+        });
+
+       }), "Saved successfully!", "success" , "Failed to save report!", "danger");
     }
     /*********************************************************/
   }, [Report]);

@@ -16,7 +16,7 @@ export const WriteNew = () => {
       <Spinner animation="border" variant="primary" className='LoadingSpinner'/>
       <h2>Creating new Report...</h2>
     </div>
-  ); // TODO: Loading screen
+  );
 
   //useEffect(() => {
     /*
