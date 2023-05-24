@@ -4,6 +4,7 @@ import db from './db';
 import endware from './endware';
 import middleware from './middleware';
 import cors from 'cors';
+import bycrypt from 'bcrypt';
 
 //-----------------------------------------------------------//
 
@@ -50,6 +51,8 @@ app.post('/:version/login/:username', endware.loginUser);
 app.get('/:version/:token', middleware.verifyToken , (_, res) => {
   return res.status(200).send(true);
   });
+
+app.put('/:version/:token/report', middleware.verifyToken, endware.uploadReport);
 
 //-----------------------------------------------------------//
 //---------------------| START SERVER |----------------------//

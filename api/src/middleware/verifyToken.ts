@@ -16,6 +16,7 @@ export const verifyToken = (req: Request, res: Response, next: NextFunction) => 
 
       if (results.length !== 1) return res.status(401).send("User is not authorized");
       const session = results[0] as session;
+      req.params.userID = session.user_id.toString();
 
       if (session.date_expires < new Date()) {
         connection.query('DELETE FROM session WHERE token = ?', [token], (err: any, results: any[]) => {

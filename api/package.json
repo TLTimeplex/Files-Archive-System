@@ -21,7 +21,9 @@
   "dependencies": {
     "@types/uuid": "^9.0.1",
     "cors": "^2.8.5",
+    "io-ts": "^2.2.20",
     "mysql2": "^3.2.4",
+    "ts-essentials": "^9.3.2",
     "uuid": "^9.0.0"
   }
 }

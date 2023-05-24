@@ -37,7 +37,7 @@ export function dropScheme(db : Pool){
     );
 
     connection.query(`
-    DROP TABLE IF EXISTS file;
+    DROP TABLE IF EXISTS report;
     `, (err, results, fields) => {
       if (err) {
         console.error(err);

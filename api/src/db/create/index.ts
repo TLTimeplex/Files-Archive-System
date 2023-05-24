@@ -70,7 +70,7 @@ export function createScheme(db : Pool){
     );
 
     connection.query(`
-    CREATE TABLE IF NOT EXISTS file (
+    CREATE TABLE IF NOT EXISTS report (
       id INT NOT NULL AUTO_INCREMENT,
       title VARCHAR(255) NOT NULL,
       description TEXT,

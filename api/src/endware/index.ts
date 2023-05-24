@@ -1,5 +1,7 @@
-import {loginUser} from './login';
+import loginUser from './login';
+import uploadReport from './uploadReport';
 
 export default {
-    loginUser
+  loginUser,
+  uploadReport
 };

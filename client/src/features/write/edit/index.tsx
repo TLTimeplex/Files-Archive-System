@@ -8,6 +8,7 @@ import AddAlertLoader2 from "../../../scripts/addAlertLoader2";
 import { FilesDB } from "../../../scripts/IndexedDB";
 import createCard from "../../../scripts/createCard";
 import FancyFileSize from "../../../scripts/fancyFileSize";
+import axios from "axios";
 
 
 export const Editor = () => {
@@ -49,6 +50,7 @@ export const Editor = () => {
 
     upload.addEventListener("click", () => {
       //TODO: Upload the files to the database after saving the report 
+      axios.put("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report", Report);
     });
 
     deleteBtn.addEventListener("click", () => {
@@ -69,20 +71,11 @@ export const Editor = () => {
     });
 
     // Auto resize textarea + 1 time on load
-    report.addEventListener("keydown", (event) => {
-      report.style.height = "auto";
-      report.style.height = (report.scrollHeight + 2) + "px";
-    });
+    report.addEventListener("keydown", () => autoResize());
 
-    report.addEventListener("click", (event) => {
-      report.style.height = "auto";
-      report.style.height = (report.scrollHeight + 2) + "px";
-    });
+    report.addEventListener("click", () => autoResize());
 
-    report.addEventListener("change", (event) => {
-      report.style.height = "auto";
-      report.style.height = (report.scrollHeight + 2) + "px";
-    });
+    report.addEventListener("change", () => autoResize());
 
     // save per STRG + S
     document.addEventListener("keydown", (event) => {
@@ -144,14 +137,18 @@ export const Editor = () => {
         window.location.href = "/write/edit";
       });
     }
+
+    const autoResize = () => {
+      report.style.height = "auto";
+      report.style.height = (report.scrollHeight + 2) + "px";
+    }
     /*********************************************************/
 
     /********************** LOAD CONTENT **********************/
     if (Report?.title) title.value = Report.title;
     if (Report?.report) {
       report.value = Report.report;
-      report.style.height = "auto";
-      report.style.height = (report.scrollHeight + 2) + "px";
+      autoResize()
     }
     if (Report?.fileIDs) drawPreview();
     /*********************************************************/
