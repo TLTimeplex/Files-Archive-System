@@ -4,7 +4,10 @@ import db from './db';
 import endware from './endware';
 import middleware from './middleware';
 import cors from 'cors';
-import bycrypt from 'bcrypt';
+//import { dropScheme } from './db/drop';
+//dropScheme(db.pool);
+//import bycrypt from 'bcrypt';
+//console.log(bycrypt.hashSync("123", 12));
 
 //-----------------------------------------------------------//
 

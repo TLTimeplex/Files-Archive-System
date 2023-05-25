@@ -71,11 +71,10 @@ export function createScheme(db : Pool){
 
     connection.query(`
     CREATE TABLE IF NOT EXISTS report (
-      id INT NOT NULL AUTO_INCREMENT,
+      id VARCHAR(36) NOT NULL,
       title VARCHAR(255) NOT NULL,
       description TEXT,
       author_id INT NOT NULL,
-      path VARCHAR(255) NOT NULL,
       date_created DATETIME NOT NULL,
       date_modified DATETIME NOT NULL,
       restrictions TEXT,

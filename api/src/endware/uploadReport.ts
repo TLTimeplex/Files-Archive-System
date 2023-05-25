@@ -1,11 +1,10 @@
 import { Request, Response } from 'express';
 import IDB_Report from '../types/IDB_report';
 import fs from 'fs';
+import db from '../db';
 
 export const uploadReport = (req: Request, res: Response) => {
   const rawReport = req.body;
-
-  console.log(req.params.userID)
 
   // Check if any required fields are missing
   if (!rawReport.id || !rawReport.createdAt || !rawReport.updatedAt) {
@@ -27,13 +26,23 @@ export const uploadReport = (req: Request, res: Response) => {
   }
 
   if (fs.existsSync(`./reports/${report.id}`)) {
-    res.status(200).send({ success: false, message: "Report already exists" });
+    return res.status(200).send({ success: false, message: "Report already exists" });
   }
   
   fs.mkdirSync(`./reports/${report.id}`);
   fs.writeFileSync(`./reports/${report.id}/report.json`, JSON.stringify(report));
 
-  res.status(200).send({ success: true, message: "Report uploaded successfully" });
+  // Sync with database
+  db.pool.getConnection((err, connection) => {
+    connection.query("INSERT INTO `fas_db`.`report` (`id`, `title`, `description`, `author_id`, `date_created`, `date_modified`, `restrictions`) VALUES (?, ?, ?, ?, ?, ?, ?)", 
+    [report.id, report.title, report.description ? report.description : null, report.authorID, new Date(report.createdAt), new Date(report.updatedAt), JSON.stringify({private: true})], 
+    (err, results) => {
+      if(err) throw err;
+      connection.release();
+    });
+  });
+
+  return res.status(200).send({ success: true, message: "Report uploaded successfully" });
 
 };
 

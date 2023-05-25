@@ -11,6 +11,8 @@ export interface IDB_Report {
   description?: string;
 
   fileIDs?: string[];
+
+  uploaded?: boolean;
 }
 
 export default IDB_Report;

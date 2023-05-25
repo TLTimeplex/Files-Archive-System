@@ -28,13 +28,15 @@ export const Editor = () => {
     const report = document.getElementById("report") as HTMLTextAreaElement;
     // Buttons
     const save = document.getElementById("new-save") as HTMLButtonElement;
-    const upload = document.getElementById("new-upload") as HTMLButtonElement;
+    const sync = document.getElementById("new-sync") as HTMLButtonElement;
+    // eslint-disable-next-line
+    const upload = document.getElementById("new-upload") as HTMLButtonElement | undefined;
     const deleteBtn = document.getElementById("new-delete") as HTMLButtonElement;
     // File-Upload
     const fileUpload = document.getElementById("fileUpload") as HTMLInputElement;
     const uploadedFilesPreview = document.getElementById("uploaded-files-preview") as HTMLDivElement;
 
-    if (!form || !title || !report || !save || !upload || !fileUpload || !uploadedFilesPreview) {
+    if (!form || !title || !report || !save || !sync || !fileUpload || !uploadedFilesPreview) {
       console.error("You shouldn't be here!");
       return;
     }
@@ -49,9 +51,22 @@ export const Editor = () => {
       saveReport();
     });
 
-    upload.addEventListener("click", () => {
+    sync.addEventListener("click", async () => {
       //TODO: Upload the files to the database after saving the report 
-      axios.put("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report", Report);
+      const result = await axios.put("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report", Report);
+      if (result.data.success) {
+        AddAlert(result.data.message, "danger");
+      }
+
+      // TODO: Upload the files to the database
+
+      AddAlert("Report saved and uploaded!", "success");
+      setReport({
+        ...Report,
+        uploaded: true
+      });
+      saveReport();
+
     });
 
     deleteBtn.addEventListener("click", () => {
@@ -230,7 +245,8 @@ export const Editor = () => {
       </div>
       <div className='button-group'>
         <Button variant="primary" id="new-save" type='submit'>Save</Button>{' '}
-        <Button variant="secondary" id="new-upload" type='submit'>Upload</Button>{' '}
+        <Button variant={Report?.uploaded ? "success" : "outline-success"} id="new-sync" type='submit'>Sync</Button>{' '}
+        {Report?.uploaded ? <Button variant="warning" id="new-upload" type='submit'>Upload</Button> : <></>}
         <Button variant="danger" id="new-delete" type='submit'>Delete</Button>
         <Button variant="secondary" href="/write/edit/" className="Button-Back">Back</Button>
       </div>
