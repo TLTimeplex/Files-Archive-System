@@ -30,7 +30,7 @@ export const Editor = () => {
     const save = document.getElementById("new-save") as HTMLButtonElement;
     const sync = document.getElementById("new-sync") as HTMLButtonElement;
     // eslint-disable-next-line
-    const upload = document.getElementById("new-upload") as HTMLButtonElement | undefined;
+    const archive = document.getElementById("new-archive") as HTMLButtonElement | undefined;
     const deleteBtn = document.getElementById("new-delete") as HTMLButtonElement;
     // File-Upload
     const fileUpload = document.getElementById("fileUpload") as HTMLInputElement;
@@ -51,6 +51,7 @@ export const Editor = () => {
       saveReport();
     });
 
+    // TODO: request has to change after file was uploaded!
     sync.addEventListener("click", async () => {
       //TODO: Upload the files to the database after saving the report 
       const result = await axios.put("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report", Report);
@@ -61,12 +62,10 @@ export const Editor = () => {
       // TODO: Upload the files to the database
 
       AddAlert("Report saved and uploaded!", "success");
-      setReport({
-        ...Report,
-        uploaded: true
-      });
+      Report.uploaded = true;
       saveReport();
-
+      // eslint-disable-next-line no-restricted-globals
+      location.reload();
     });
 
     deleteBtn.addEventListener("click", () => {
@@ -146,6 +145,7 @@ export const Editor = () => {
     const deleteReport = () => {
       const ReportID = Report.id;
       AddAlertLoader2("Deleting report...", "info", new Promise((resolve, reject) => {
+        // TODO: tell the server to delete the files
         FilesDB.findFile.by.reportID(ReportID).then(files => {
           files.forEach(file => {
             FilesDB.deleteFile(file.id).catch(error => {
@@ -246,7 +246,7 @@ export const Editor = () => {
       <div className='button-group'>
         <Button variant="primary" id="new-save" type='submit'>Save</Button>{' '}
         <Button variant={Report?.uploaded ? "success" : "outline-success"} id="new-sync" type='submit'>Sync</Button>{' '}
-        {Report?.uploaded ? <Button variant="warning" id="new-upload" type='submit'>Upload</Button> : <></>}
+        {Report?.uploaded ? <Button variant="warning" id="new-archive" type='submit'>Archive</Button> : <></>}
         <Button variant="danger" id="new-delete" type='submit'>Delete</Button>
         <Button variant="secondary" href="/write/edit/" className="Button-Back">Back</Button>
       </div>

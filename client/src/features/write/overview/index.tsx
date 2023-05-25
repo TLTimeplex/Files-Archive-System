@@ -1,8 +1,8 @@
-import { Button, Card, CloseButton } from "react-bootstrap";
+import { Button, Card } from "react-bootstrap";
 import FAS_File from "../../../types/IDB_report";
 import { ReportDB } from "../../../scripts/IndexedDB";
 import { useState } from "react";
-import "./style.css";
+import "./style.scss";
 
 // TODO: Add Search!
 export const Overview = () => {
@@ -25,10 +25,9 @@ export const Overview = () => {
           const lastUpdate = new Date(report.updatedAt);
           const lastUpdateString = lastUpdate.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' });
           return (
-            <Card key={report.id}>
+            <Card key={report.id} className={report.uploaded ? "green-border" : "yellow-border"}>
               <Card.Header>
                 <Card.Title>{report.title}</Card.Title>
-                <CloseButton />
               </Card.Header>
               {/*<Card.Img variant="top" src="holder.js/100px180" />*/}
               <Card.Body>
