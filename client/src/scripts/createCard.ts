@@ -1,17 +1,29 @@
-export const createCard = (title: string | null, image: File | null, footerLeft: string | null, footerRight: string | null): HTMLDivElement => {
+export const createCard = (title?: string , image?: File, footerLeft?: string, footerRight?: string, closeAction?: Function): HTMLDivElement => {
   const card = document.createElement("div");
   card.classList.add("card");
 
-  if (title) {
+  if (title || closeAction) {
     const cardHeader = document.createElement("div");
     cardHeader.classList.add("card-header");
+    if (title) {
+      const cardTitle = document.createElement("div");
+      cardTitle.classList.add("card-title");
+      cardTitle.classList.add("h5");
+      cardTitle.innerText = title;
 
-    const cardTitle = document.createElement("div");
-    cardTitle.classList.add("card-title");
-    cardTitle.classList.add("h5");
-    cardTitle.innerText = title;
+      cardHeader.appendChild(cardTitle);
+    }
 
-    cardHeader.appendChild(cardTitle);
+    if (closeAction) {
+      const cardClose = document.createElement("button");
+      cardClose.classList.add("btn-close");
+      cardClose.type = "button";
+      cardClose.setAttribute("aria-label", "Close");
+      cardClose.addEventListener("click", () => closeAction());
+
+      cardHeader.appendChild(cardClose);
+    }
+
     card.appendChild(cardHeader);
   }
 
@@ -40,16 +52,16 @@ export const createCard = (title: string | null, image: File | null, footerLeft:
   if (footerLeft || footerRight) {
     const cardFooter = document.createElement("div");
     cardFooter.classList.add("card-footer");
-  
-    if(footerLeft){
+
+    if (footerLeft) {
       const cardText = document.createElement("p");
       cardText.classList.add("card-text");
       cardText.innerText = footerLeft;
 
       cardFooter.appendChild(cardText);
     }
-  
-    if(footerRight){
+
+    if (footerRight) {
       const cardText = document.createElement("p");
       cardText.classList.add("card-text");
       cardText.classList.add("card-text-2");
@@ -60,7 +72,7 @@ export const createCard = (title: string | null, image: File | null, footerLeft:
 
     card.appendChild(cardFooter);
   }
-  
+
   return card;
 }
 

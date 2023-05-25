@@ -1,4 +1,4 @@
-import { Button, Card } from "react-bootstrap";
+import { Button, Card, CloseButton } from "react-bootstrap";
 import FAS_File from "../../../types/IDB_report";
 import { ReportDB } from "../../../scripts/IndexedDB";
 import { useState } from "react";
@@ -28,6 +28,7 @@ export const Overview = () => {
             <Card key={report.id}>
               <Card.Header>
                 <Card.Title>{report.title}</Card.Title>
+                <CloseButton />
               </Card.Header>
               {/*<Card.Img variant="top" src="holder.js/100px180" />*/}
               <Card.Body>

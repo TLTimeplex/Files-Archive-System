@@ -9,6 +9,7 @@ import { FilesDB } from "../../../scripts/IndexedDB";
 import createCard from "../../../scripts/createCard";
 import FancyFileSize from "../../../scripts/fancyFileSize";
 import axios from "axios";
+import AddAlert from "../../../scripts/addAlert";
 
 
 export const Editor = () => {
@@ -87,15 +88,19 @@ export const Editor = () => {
     /*********************************************************/
 
     /******************** LOCAL FUNCTIONS ********************/
-    // eslint-disable-next-line
     const drawPreview = () => {
       uploadedFilesPreview.innerHTML = "";
       Report.fileIDs?.forEach((fileID: string) => {
         FilesDB.getFile(fileID).then(file => {
           if (!file) return;
-          const card = createCard(file.data.name, file.data, file.data.type.split("/")[0], FancyFileSize(file.data.size));
+          const card = createCard(file.data.name, file.data, file.data.type.split("/")[0], FancyFileSize(file.data.size), () => removeFile(fileID));
           uploadedFilesPreview.appendChild(card);
-        });
+        }).catch(error => {
+          Report.fileIDs = Report.fileIDs?.filter(id => id !== fileID);
+          console.error("File not Found! err: " + error);
+          silentSaveReport();
+          AddAlert("File not Found!", "danger");
+        })
       });
     }
 
@@ -112,6 +117,15 @@ export const Editor = () => {
         });
 
       }), "Saved successfully!", "success", "Failed to save report!", "danger");
+    }
+
+    const silentSaveReport = () => {
+      Report.title = title.value;
+      Report.report = report.value;
+
+      ReportsDB.updateReport(Report).catch((error) => {
+        console.error(error);
+      });
     }
 
     const deleteReport = () => {
@@ -141,6 +155,16 @@ export const Editor = () => {
     const autoResize = () => {
       report.style.height = "auto";
       report.style.height = (report.scrollHeight + 2) + "px";
+    }
+
+    const removeFile = (fileID: string) => {
+      if (!Report.fileIDs) return;
+      const size = Report.fileIDs.length;
+      Report.fileIDs = Report.fileIDs.filter(id => id !== fileID);
+      if (size === Report.fileIDs.length) return;
+      FilesDB.deleteFile(fileID).catch(error => {console.error(error);});
+      drawPreview();
+      saveReport();
     }
     /*********************************************************/
 
