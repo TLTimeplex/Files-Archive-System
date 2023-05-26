@@ -19,11 +19,19 @@ export const uploadReport = (req: Request, res: Response) => {
     return res.status(200).send({ success: false, message: "Missing optional but required fields" });
   }
 
-  const report = rawReport as IDB_Report;
+  const U_rawReport = rawReport as IDB_Report;
 
-  report.authorID = parseInt(req.params.userID);
-  if (req.params.reportID)
-    report.id = req.params.reportID; // Overwrite report id if it's provided
+  // Sieve out the fields that are not allowed to be changed
+  const report : IDB_Report = {
+    id: req.params.reportID || U_rawReport.id,
+    title: U_rawReport.title,
+    report: U_rawReport.report,
+    createdAt: U_rawReport.createdAt,
+    updatedAt: new Date(),
+    authorID: parseInt(req.params.userID),
+    description: U_rawReport.description,
+    fileIDs: [],
+  };
 
   // Create report folder if it doesn't exist
   if (!fs.existsSync(`./reports`)) {

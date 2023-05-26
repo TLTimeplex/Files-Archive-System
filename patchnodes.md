@@ -1,3 +1,6 @@
+### --- v0.1.3 --- 25.05.23, 23.50 UTC+2 ---
+* API: Added: Uploaded and updated reports get now sieve through for the necessary fields to prevent not wanted data
+
 ### --- v0.1.2 --- 26.05.23, 21:25 UTC+2 ---
 * API: Added: Reports can now be removed
 * CLIENT: Added: If uploaded, reports get now also deleted on the API

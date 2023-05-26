@@ -46,7 +46,19 @@ export const updateReport = (req: Request, res: Response) => {
   report.updatedAt = new Date();
 
   // Overwrite old report
-  const newReport = { ...oldReport, ...report };
+  const u_newReport = { ...oldReport, ...report };
+
+  const newReport = {
+    id: oldReport.id,
+    title: u_newReport.title,
+    report: u_newReport.report,
+    createdAt: oldReport.createdAt,
+    updatedAt: u_newReport.updatedAt,
+    authorID: oldReport.authorID,
+    description: u_newReport.description,
+    fileIDs: oldReport.fileIDs,
+    restrictions: u_newReport.restrictions
+  } as IDB_Report;
 
   fs.writeFileSync(`./reports/${report.id}/report.json`, JSON.stringify(newReport));
 
