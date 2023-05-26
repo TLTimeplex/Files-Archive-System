@@ -63,6 +63,7 @@ app.get('/:version/:token/report/:reportID', middleware.verifyToken, middleware.
 
 app.patch('/:version/:token/report/:reportID', middleware.verifyToken, middleware.verifyReportID, endware.updateReport);
 
+app.delete('/:version/:token/report/:reportID', middleware.verifyToken, middleware.verifyReportID, endware.deleteReport);
 //-----------------------------------------------------------//
 //---------------------| START SERVER |----------------------//
 //-----------------------------------------------------------//

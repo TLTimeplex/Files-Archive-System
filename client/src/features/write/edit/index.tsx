@@ -67,9 +67,9 @@ export const Editor = () => {
     if (Report?.fileIDs) drawPreview();
     /*********************************************************/
 
-  }, 
-  // eslint-disable-next-line
-  [init]);
+  },
+    // eslint-disable-next-line
+    [init]);
 
 
   if (!Report) {
@@ -130,10 +130,10 @@ export const Editor = () => {
     }), "Saved successfully!", "success", "Failed to save report!", "danger");
   }
 
-  const deleteReport = () => { // TODO: REDO!
+  const deleteReport = () => {
     const ReportID = Report.id;
+    const isUploaded = Report.uploaded || false;
     AddAlertLoader2("Deleting report...", "info", new Promise((resolve, reject) => {
-      // TODO: tell the server to delete the files
       FilesDB.findFile.by.reportID(ReportID).then(files => {
         files.forEach(file => {
           FilesDB.deleteFile(file.id).catch(error => {
@@ -146,6 +146,8 @@ export const Editor = () => {
           console.error(error);
           reject();
         });
+        if (isUploaded)
+          axios.delete("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report/" + ReportID);
       }).catch(error => {
         console.error(error);
         reject();
@@ -210,7 +212,7 @@ export const Editor = () => {
         }).catch(error => {
           AddAlert("Failed to load file!", "danger");
           resolve();
-         });
+        });
       }))
     });
 
@@ -225,11 +227,11 @@ export const Editor = () => {
     const remainingFileIDs = Report.fileIDs.filter(id => id !== fileID);
     if (size === remainingFileIDs.length) return;
     FilesDB.deleteFile(fileID).catch(error => { console.error(error); });
-    await saveReport({...Report, fileIDs: remainingFileIDs});
+    await saveReport({ ...Report, fileIDs: remainingFileIDs });
     drawPreview();
   }
 
-  const createShadowReport = (overwrite?: IDB_Report) : IDB_Report => {
+  const createShadowReport = (overwrite?: IDB_Report): IDB_Report => {
     const title = document.getElementById("title") as HTMLInputElement;
     const report = document.getElementById("report") as HTMLTextAreaElement;
 
