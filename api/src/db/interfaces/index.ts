@@ -10,3 +10,13 @@ export interface session {
     date_created: Date;
     date_expires: Date;
 }
+
+export interface report {
+    id: number;
+    title: string;
+    description?: string;
+    author_id: number;
+    date_created: Date;
+    date_modified: Date;
+    restrictions?: string;
+}

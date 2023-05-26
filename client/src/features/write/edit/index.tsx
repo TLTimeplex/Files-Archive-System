@@ -108,10 +108,7 @@ export const Editor = () => {
     return (<></>);
   }
 
-  var selfLock_saveReport = false;
   const saveReport = async (overwrite?: IDB_Report) => {
-    if (selfLock_saveReport) return;
-    selfLock_saveReport = true;
     await AddAlertLoader2("Saving report...", "info", new Promise((resolve, reject) => {
       const title = document.getElementById("title") as HTMLInputElement;
       const report = document.getElementById("report") as HTMLTextAreaElement;
@@ -119,7 +116,11 @@ export const Editor = () => {
       const titelValue = title.value;
       const reportValue = report.value;
 
+      console.log(overwrite)
+
       const newReport = { ...Report, title: titelValue, report: reportValue, updatedAt: new Date(), ...overwrite }
+
+      console.log(newReport);
 
       setReport(newReport);
 
@@ -159,9 +160,8 @@ export const Editor = () => {
   }
 
   const syncReport = async () => {
-    //TODO: Upload the files to the database after saving the report 
     await saveReport();
-    if (Report.uploaded) return; // TODO:
+    if (Report.uploaded) return; // TODO: update report on server
     else {
       const result = await axios.put("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report", Report);
       if (!result.data.success) {
@@ -170,11 +170,9 @@ export const Editor = () => {
       }
     }
 
-    // TODO: Upload the files to the database
-
     AddAlert("Report saved and uploaded!", "success");
     setReport({ ...Report, uploaded: true });
-    saveReport({ ...Report, uploaded: true });
+    await saveReport({ ...Report, uploaded: true });
   }
 
   const addFiles = async () => {

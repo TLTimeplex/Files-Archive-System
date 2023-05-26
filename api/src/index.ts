@@ -57,6 +57,10 @@ app.get('/:version/:token', middleware.verifyToken , (_, res) => {
 
 app.put('/:version/:token/report', middleware.verifyToken, endware.uploadReport);
 
+app.put('/:version/:token/report/:reportID', middleware.verifyToken, endware.uploadReport);
+
+app.get('/:version/:token/report/:reportID', middleware.verifyToken, middleware.verifyReportID, endware.getReport);
+
 //-----------------------------------------------------------//
 //---------------------| START SERVER |----------------------//
 //-----------------------------------------------------------//
