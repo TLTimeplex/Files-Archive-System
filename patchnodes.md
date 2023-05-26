@@ -1,6 +1,6 @@
-### --- v0.1.2 --- 26.05.23, XX:XX UTC+2 ---
+### --- v0.1.2 --- 26.05.23, 21:25 UTC+2 ---
 * API: Added: Reports can now be removed
-* CLIENT: Added: If uploaded reports get now also deleted on the API
+* CLIENT: Added: If uploaded, reports get now also deleted on the API
 
 ### --- v0.1.1 --- 26.05.23, 20:49 UTC+2 ---
 * API: Added: Reports can now be updated

@@ -5,6 +5,7 @@ import { useState } from "react";
 import "./style.scss";
 
 // TODO: Add Search!
+// TODO: Add Synchronisation with server
 export const Overview = () => {
   const [Reports, setReports] = useState<FAS_File[]>([]);
 
