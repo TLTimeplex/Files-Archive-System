@@ -1,0 +1,80 @@
+import { Request, Response } from 'express';
+import IDB_Report from '../types/IDB_report';
+import fs from 'fs';
+import db from '../db';
+import { report } from '../db/interfaces';
+import { toRestrictions } from '../types/restrictions';
+
+export const updateReport = (req: Request, res: Response) => {
+  if (!req.params.userID) return res.status(500).send();
+
+  const rawReport = req.body;
+
+  // Check if any required fields are missing
+  if (!rawReport.id || !rawReport.createdAt || !rawReport.updatedAt) {
+    return res.status(200).send({ success: false, message: "Missing required fields" });
+  }
+
+  // check if optional but required fields are missing
+  if (!rawReport.title || !rawReport.report) {
+    return res.status(200).send({ success: false, message: "Missing optional but required fields" });
+  }
+
+  const report = rawReport as IDB_Report;
+
+  // Create report folder if it doesn't exist
+  if (!fs.existsSync(`./reports`)) {
+    fs.mkdirSync(`./reports`);
+  }
+
+  // TODO: Check also in the database if the report exists
+  if (!fs.existsSync(`./reports/${report.id}`)) {
+    return res.status(200).send({ success: false, message: "Report doesn't exist" });
+  }
+
+
+  const oldReport = JSON.parse(fs.readFileSync(`./reports/${report.id}/report.json`).toString()) as IDB_Report;
+
+  // Check if the user is the author of the report or an admin
+  if (oldReport.authorID !== parseInt(req.params.userID /* TODO: */)) {
+    return res.status(200).send({ success: false, message: "You are not the author of this report" });
+  }
+
+  // Overwrite some fields
+  report.authorID = oldReport.authorID;
+  report.createdAt = oldReport.createdAt;
+  report.updatedAt = new Date();
+
+  // Overwrite old report
+  const newReport = { ...oldReport, ...report };
+
+  fs.writeFileSync(`./reports/${report.id}/report.json`, JSON.stringify(newReport));
+
+  // Sync with database
+  db.pool.getConnection((err, connection) => {
+
+    connection.query("SELECT * FROM `fas_db`.`report` WHERE (`id` = ?);", [newReport.id], (err, results: any[]) => {
+      if (err) throw err;
+      if (results.length === 0) throw "Report id: " + newReport.id + " not found in database";
+
+      const reportEntry = results[0] as report;
+
+      connection.query("UPDATE `fas_db`.`report` SET `title` = ?, `description` = ?, `date_modified` = ?, `restrictions` = ? WHERE (`id` = ?);",
+        [newReport.title, 
+          newReport.description ? newReport.description : null, 
+          new Date(newReport.updatedAt), 
+          JSON.stringify(toRestrictions(JSON.stringify({...(reportEntry.restrictions? JSON.parse(reportEntry.restrictions) : null), ...(newReport.restrictions? JSON.parse(newReport.restrictions) : null)}))), 
+          newReport.id],
+        (err, results) => {
+          if (err) throw err;
+          connection.release();
+        });
+
+    });
+  });
+
+  return res.status(200).send({ success: true, message: "Report uploaded successfully" });
+
+};
+
+export default updateReport;

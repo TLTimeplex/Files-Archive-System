@@ -61,6 +61,8 @@ app.put('/:version/:token/report/:reportID', middleware.verifyToken, endware.upl
 
 app.get('/:version/:token/report/:reportID', middleware.verifyToken, middleware.verifyReportID, endware.getReport);
 
+app.patch('/:version/:token/report/:reportID', middleware.verifyToken, middleware.verifyReportID, endware.updateReport);
+
 //-----------------------------------------------------------//
 //---------------------| START SERVER |----------------------//
 //-----------------------------------------------------------//

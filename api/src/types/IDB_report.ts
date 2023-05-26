@@ -12,7 +12,7 @@ export interface IDB_Report {
 
   fileIDs?: string[];
 
-  uploaded?: boolean;
+  restrictions?: string;
 }
 
 export default IDB_Report;

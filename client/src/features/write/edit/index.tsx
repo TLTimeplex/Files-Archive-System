@@ -116,11 +116,7 @@ export const Editor = () => {
       const titelValue = title.value;
       const reportValue = report.value;
 
-      console.log(overwrite)
-
       const newReport = { ...Report, title: titelValue, report: reportValue, updatedAt: new Date(), ...overwrite }
-
-      console.log(newReport);
 
       setReport(newReport);
 
@@ -160,10 +156,16 @@ export const Editor = () => {
   }
 
   const syncReport = async () => {
-    await saveReport();
-    if (Report.uploaded) return; // TODO: update report on server
+    const shadowReport = createShadowReport();
+    if (Report.uploaded) {
+      const result = await axios.patch("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report/" + Report.id, shadowReport);
+      if (!result.data.success) {
+        AddAlert(result.data.message, "danger");
+        return;
+      }
+    }
     else {
-      const result = await axios.put("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report", Report);
+      const result = await axios.put("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report", shadowReport);
       if (!result.data.success) {
         AddAlert(result.data.message, "danger");
         return;
@@ -171,8 +173,8 @@ export const Editor = () => {
     }
 
     AddAlert("Report saved and uploaded!", "success");
-    setReport({ ...Report, uploaded: true });
-    await saveReport({ ...Report, uploaded: true });
+    setReport({ ...shadowReport, uploaded: true });
+    await saveReport({ ...shadowReport, uploaded: true });
   }
 
   const addFiles = async () => {
@@ -227,8 +229,7 @@ export const Editor = () => {
     drawPreview();
   }
 
-  // eslint-disable-next-line
-  const silentSaveReport = async (overwrite?: IDB_Report) => {
+  const createShadowReport = (overwrite?: IDB_Report) : IDB_Report => {
     const title = document.getElementById("title") as HTMLInputElement;
     const report = document.getElementById("report") as HTMLTextAreaElement;
 
@@ -237,9 +238,7 @@ export const Editor = () => {
 
     const newReport = { ...Report, title: titelValue, report: reportValue, updatedAt: new Date(), ...overwrite }
 
-    setReport(newReport);
-
-    await ReportsDB.updateReport(newReport);
+    return newReport;
   }
 
   return (
