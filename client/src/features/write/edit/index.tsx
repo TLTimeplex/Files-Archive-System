@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, FloatingLabel, Form } from "react-bootstrap";
+import { Button, FloatingLabel, Form, Modal } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import IDB_Report from "../../../types/IDB_report";
 import "./style.css";
@@ -16,75 +16,25 @@ export const Editor = () => {
   const { ReportTitel_OR_ID } = useParams();
 
   const [Report, setReport] = useState<IDB_Report>();
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  const [init, setInit] = useState(false);
 
   useEffect(() => {
-    if (!Report) return;
+    if (!Report || !init) return;
 
     /********************** HTML ELEMENTS *********************/
-    // Form
-    const form = document.getElementById("new-form") as HTMLFormElement;
     // Text-Fields
     const title = document.getElementById("title") as HTMLInputElement;
     const report = document.getElementById("report") as HTMLTextAreaElement;
-    // Buttons
-    const save = document.getElementById("new-save") as HTMLButtonElement;
-    const sync = document.getElementById("new-sync") as HTMLButtonElement;
-    // eslint-disable-next-line
-    const archive = document.getElementById("new-archive") as HTMLButtonElement | undefined;
-    const deleteBtn = document.getElementById("new-delete") as HTMLButtonElement;
-    // File-Upload
-    const fileUpload = document.getElementById("fileUpload") as HTMLInputElement;
-    const uploadedFilesPreview = document.getElementById("uploaded-files-preview") as HTMLDivElement;
 
-    if (!form || !title || !report || !save || !sync || !fileUpload || !uploadedFilesPreview) {
+    if (!title || !report) {
       console.error("You shouldn't be here!");
       return;
     }
     /*********************************************************/
 
     /********************* EVENT LISTENER *********************/
-    form.addEventListener("submit", (event) => {
-      event.preventDefault();
-    });
-
-    save.addEventListener("click", () => {
-      saveReport();
-    });
-
-    // TODO: request has to change after file was uploaded!
-    sync.addEventListener("click", async () => {
-      //TODO: Upload the files to the database after saving the report 
-      const result = await axios.put("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report", Report);
-      if (result.data.success) {
-        AddAlert(result.data.message, "danger");
-      }
-
-      // TODO: Upload the files to the database
-
-      AddAlert("Report saved and uploaded!", "success");
-      Report.uploaded = true;
-      saveReport();
-      // eslint-disable-next-line no-restricted-globals
-      location.reload();
-    });
-
-    deleteBtn.addEventListener("click", () => {
-      deleteReport();
-    });
-
-    fileUpload.addEventListener("change", async () => {
-      const files = fileUpload.files;
-      if (!files) return;
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const result = await FilesDB.createFile(file, Report.id);
-        if (!Report.fileIDs) Report.fileIDs = [];
-        Report.fileIDs.push(result);
-      }
-      drawPreview();
-      saveReport();
-    });
-
     // Auto resize textarea + 1 time on load
     report.addEventListener("keydown", () => autoResize());
 
@@ -102,84 +52,9 @@ export const Editor = () => {
     /*********************************************************/
 
     /******************** LOCAL FUNCTIONS ********************/
-    const drawPreview = () => {
-      uploadedFilesPreview.innerHTML = "";
-      Report.fileIDs?.forEach((fileID: string) => {
-        FilesDB.getFile(fileID).then(file => {
-          if (!file) return;
-          const card = createCard(file.data.name, file.data, file.data.type.split("/")[0], FancyFileSize(file.data.size), () => removeFile(fileID));
-          uploadedFilesPreview.appendChild(card);
-        }).catch(error => {
-          Report.fileIDs = Report.fileIDs?.filter(id => id !== fileID);
-          console.error("File not Found! err: " + error);
-          silentSaveReport();
-          AddAlert("File not Found!", "danger");
-        })
-      });
-    }
-
-    const saveReport = () => {
-      AddAlertLoader2("Saving report...", "info", new Promise((resolve, reject) => {
-        Report.title = title.value;
-        Report.report = report.value;
-
-        ReportsDB.updateReport(Report).then(() => {
-          resolve();
-        }).catch((error) => {
-          console.error(error);
-          reject();
-        });
-
-      }), "Saved successfully!", "success", "Failed to save report!", "danger");
-    }
-
-    const silentSaveReport = () => {
-      Report.title = title.value;
-      Report.report = report.value;
-
-      ReportsDB.updateReport(Report).catch((error) => {
-        console.error(error);
-      });
-    }
-
-    const deleteReport = () => {
-      const ReportID = Report.id;
-      AddAlertLoader2("Deleting report...", "info", new Promise((resolve, reject) => {
-        // TODO: tell the server to delete the files
-        FilesDB.findFile.by.reportID(ReportID).then(files => {
-          files.forEach(file => {
-            FilesDB.deleteFile(file.id).catch(error => {
-              console.error(error);
-            });
-          });
-          ReportsDB.deleteReport(ReportID).then(() => {
-            resolve();
-          }).catch(error => {
-            console.error(error);
-            reject();
-          });
-        }).catch(error => {
-          console.error(error);
-          reject();
-        });
-      }), "Deleted successfully!", "success", "Failed to delete report!", "danger").finally(() => {
-        window.location.href = "/write/edit";
-      });
-    }
-
     const autoResize = () => {
       report.style.height = "auto";
       report.style.height = (report.scrollHeight + 2) + "px";
-    }
-
-    const removeFile = (fileID: string) => {
-      if (!Report.fileIDs) return;
-      const size = Report.fileIDs.length;
-      Report.fileIDs = Report.fileIDs.filter(id => id !== fileID);
-      if (size === Report.fileIDs.length) return;
-      FilesDB.deleteFile(fileID).catch(error => {console.error(error);});
-      drawPreview();
-      saveReport();
     }
     /*********************************************************/
 
@@ -192,7 +67,9 @@ export const Editor = () => {
     if (Report?.fileIDs) drawPreview();
     /*********************************************************/
 
-  }, [Report]);
+  }, 
+  // eslint-disable-next-line
+  [init]);
 
 
   if (!Report) {
@@ -224,13 +101,151 @@ export const Editor = () => {
         window.location.href = "/write/edit";
       }
       setReport(report);
+      setInit(true);
     }).catch(error => {
+      window.location.href = "/write/edit";
+    });
+    return (<></>);
+  }
+
+  var selfLock_saveReport = false;
+  const saveReport = async (overwrite?: IDB_Report) => {
+    if (selfLock_saveReport) return;
+    selfLock_saveReport = true;
+    await AddAlertLoader2("Saving report...", "info", new Promise((resolve, reject) => {
+      const title = document.getElementById("title") as HTMLInputElement;
+      const report = document.getElementById("report") as HTMLTextAreaElement;
+
+      const titelValue = title.value;
+      const reportValue = report.value;
+
+      const newReport = { ...Report, title: titelValue, report: reportValue, updatedAt: new Date(), ...overwrite }
+
+      setReport(newReport);
+
+      ReportsDB.updateReport(newReport).then(() => {
+        resolve();
+      }).catch((error) => {
+        console.error(error);
+        reject();
+      });
+
+    }), "Saved successfully!", "success", "Failed to save report!", "danger");
+  }
+
+  const deleteReport = () => { // TODO: REDO!
+    const ReportID = Report.id;
+    AddAlertLoader2("Deleting report...", "info", new Promise((resolve, reject) => {
+      // TODO: tell the server to delete the files
+      FilesDB.findFile.by.reportID(ReportID).then(files => {
+        files.forEach(file => {
+          FilesDB.deleteFile(file.id).catch(error => {
+            console.error(error);
+          });
+        });
+        ReportsDB.deleteReport(ReportID).then(() => {
+          resolve();
+        }).catch(error => {
+          console.error(error);
+          reject();
+        });
+      }).catch(error => {
+        console.error(error);
+        reject();
+      });
+    }), "Deleted successfully!", "success", "Failed to delete report!", "danger").finally(() => {
       window.location.href = "/write/edit";
     });
   }
 
+  const syncReport = async () => {
+    //TODO: Upload the files to the database after saving the report 
+    await saveReport();
+    if (Report.uploaded) return; // TODO:
+    else {
+      const result = await axios.put("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report", Report);
+      if (!result.data.success) {
+        AddAlert(result.data.message, "danger");
+        return;
+      }
+    }
+
+    // TODO: Upload the files to the database
+
+    AddAlert("Report saved and uploaded!", "success");
+    setReport({ ...Report, uploaded: true });
+    saveReport({ ...Report, uploaded: true });
+  }
+
+  const addFiles = async () => {
+    const fileUpload = document.getElementById("fileUpload") as HTMLInputElement;
+
+    const files = fileUpload.files;
+    if (!files) return;
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const result = await FilesDB.createFile(file, Report.id);
+      if (!Report.fileIDs) Report.fileIDs = [];
+      Report.fileIDs.push(result);
+    }
+
+    drawPreview();
+    saveReport();
+  }
+
+  const drawPreview = async () => {
+    const uploadedFilesPreview = document.getElementById("uploaded-files-preview") as HTMLDivElement;
+
+    uploadedFilesPreview.innerHTML = "";
+
+    const awaitFiles: Promise<string | void>[] = [];
+
+    Report.fileIDs?.forEach((fileID: string) => {
+      awaitFiles.push(new Promise(async (resolve, reject) => {
+        FilesDB.getFile(fileID).then(file => {
+          if (!file) return;
+          const card = createCard(file.data.name, file.data, file.data.type.split("/")[0], FancyFileSize(file.data.size), () => removeFile(fileID));
+          uploadedFilesPreview.appendChild(card);
+          resolve(fileID);
+        }).catch(error => {
+          AddAlert("Failed to load file!", "danger");
+          resolve();
+         });
+      }))
+    });
+
+    await Promise.all(awaitFiles).then((remaining) => {
+      saveReport({ ...Report, fileIDs: remaining.filter(id => id !== undefined) as string[] });
+    });
+  }
+
+  const removeFile = async (fileID: string) => {
+    if (!Report.fileIDs) return;
+    const size = Report.fileIDs.length;
+    const remainingFileIDs = Report.fileIDs.filter(id => id !== fileID);
+    if (size === remainingFileIDs.length) return;
+    FilesDB.deleteFile(fileID).catch(error => { console.error(error); });
+    await saveReport({...Report, fileIDs: remainingFileIDs});
+    drawPreview();
+  }
+
+  // eslint-disable-next-line
+  const silentSaveReport = async (overwrite?: IDB_Report) => {
+    const title = document.getElementById("title") as HTMLInputElement;
+    const report = document.getElementById("report") as HTMLTextAreaElement;
+
+    const titelValue = title.value;
+    const reportValue = report.value;
+
+    const newReport = { ...Report, title: titelValue, report: reportValue, updatedAt: new Date(), ...overwrite }
+
+    setReport(newReport);
+
+    await ReportsDB.updateReport(newReport);
+  }
+
   return (
-    <Form id="new-form">
+    <Form id="new-form" onSubmit={(event) => event.preventDefault()}>
       <FloatingLabel label="Title" className="mb-3">
         <Form.Control type="text" id="title" placeholder="Title" required />
       </FloatingLabel>
@@ -239,17 +254,31 @@ export const Editor = () => {
       </FloatingLabel>
       <Form.Group className="mb-3">
         <Form.Label>Upload Files</Form.Label>
-        <Form.Control type="file" id="fileUpload" multiple />
+        <Form.Control type="file" id="fileUpload" multiple onChange={addFiles} />
       </Form.Group>
       <div className='uploaded-files-preview form-control mb-3' id="uploaded-files-preview">
       </div>
       <div className='button-group'>
-        <Button variant="primary" id="new-save" type='submit'>Save</Button>{' '}
-        <Button variant={Report?.uploaded ? "success" : "outline-success"} id="new-sync" type='submit'>Sync</Button>{' '}
-        {Report?.uploaded ? <Button variant="warning" id="new-archive" type='submit'>Archive</Button> : <></>}
-        <Button variant="danger" id="new-delete" type='submit'>Delete</Button>
+        <Button variant="primary" id="new-save" type='submit' onClick={() => saveReport()}>Save</Button>{' '}
+        <Button variant={Report?.uploaded ? "success" : "outline-success"} id="new-sync" type='submit' onClick={syncReport}>Sync</Button>{' '}
+        {Report?.uploaded ? <Button variant="warning" id="new-archive" type='submit'>Archive</Button> : <></>}{' '}
+        <Button variant="danger" id="new-delete" onClick={() => setShowDeleteModal(true)}>Delete</Button>
         <Button variant="secondary" href="/write/edit/" className="Button-Back">Back</Button>
       </div>
+      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Delete report</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are your sure to delete this report permanently?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={deleteReport}>
+            Confirm
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Form>
   );
 };

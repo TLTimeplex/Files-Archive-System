@@ -1,8 +1,9 @@
 import IDB_Report from "../../../../../types/IDB_report";
+import getIDB from "../../getIDB";
 
 export const byTitle = async (title: string): Promise<IDB_Report[]> => {
   return new Promise((resolve, reject) => {
-    const DB = indexedDB.open("reports");
+    const DB = getIDB();
 
     DB.onsuccess = () => {
       const db = DB.result;

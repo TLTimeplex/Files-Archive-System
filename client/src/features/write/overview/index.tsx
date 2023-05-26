@@ -8,6 +8,8 @@ import "./style.scss";
 export const Overview = () => {
   const [Reports, setReports] = useState<FAS_File[]>([]);
 
+  ReportDB.getAllReports();
+
   ReportDB.getAllReports().then(reports => { setReports(reports) });
 
   return (
