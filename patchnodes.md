@@ -1,3 +1,6 @@
+### --- v0.1.6 --- 27.05.23, 17.00 UTC+2 ---
+* API: Added: Middleware to check if a file exists (with and without report-link check)
+
 ### --- v0.1.5 --- 27.05.23, 16.45 UTC+2 ---
 * API: Added: User can now request a list of all files linked to a report
 

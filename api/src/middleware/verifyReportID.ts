@@ -1,6 +1,5 @@
 import {Request, Response, NextFunction} from 'express';
 import db from '../db';
-import { session } from '../db/interfaces';
 
 //Authentication check
 export const verifyReportID = (req: Request, res: Response, next: NextFunction) => {
