@@ -4,6 +4,7 @@ import uploadReport from './uploadReport';
 import updateReport from './updateReport';
 import deleteReport from './deleteReport';
 import uploadFile from './uploadFile';
+import getFileIDs from './getFileIDs';
 
 export default {
   loginUser,
@@ -11,5 +12,6 @@ export default {
   getReport,
   updateReport,
   deleteReport,
-  uploadFile
+  uploadFile,
+  getFileIDs
 }
