@@ -5,6 +5,7 @@ import * as findFile from "./findFile";
 import deleteFile from "./deleteFile";
 import getFile from "./getFile";
 import getAllFiles from "./getAllFiles";
+import updateFileMeta from "./updateFileMeta";
 
 export {
   getIDB,
@@ -14,4 +15,5 @@ export {
   deleteFile,
   getFile,
   getAllFiles,
+  updateFileMeta
 };

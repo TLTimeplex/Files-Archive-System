@@ -174,6 +174,24 @@ export const Editor = () => {
       }
     }
 
+    Report.fileIDs?.forEach(async (fileID) => {
+      const file = await FilesDB.getFile(fileID);
+      if (!file) return;
+      if (file.meta.uploaded !== 0) return;
+
+      var formData = new FormData();
+      formData.append("id", file.id);
+      formData.append("data", file.data);
+      formData.append("meta", JSON.stringify(file.meta));
+
+      const result = await axios.put("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report/" + Report.id + "/file", formData); //TODO: add data
+      if (!result.data.success) {
+        AddAlert(result.data.message, "danger");
+        return;
+      }
+      await FilesDB.updateFileMeta(file.id, { ...file.meta, uploaded: 1 });
+    });
+
     AddAlert("Report saved and uploaded!", "success");
     setReport({ ...shadowReport, uploaded: true });
     await saveReport({ ...shadowReport, uploaded: true });
