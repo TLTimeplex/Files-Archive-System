@@ -1,3 +1,6 @@
+### --- v0.2.1 --- 28.05.23, 17.12 UTC+2 ---
+* CLIENT: Fix: wrong delete order for reports which caused the local report to be deleted before the server report could be deleted
+
 ### --- v0.2.0 --- 28.05.23, 16.14 UTC+2 ---
 * API: Added: Option to get all reportIds with an optional filter
 * API: Added: Filter mask for reports

@@ -40,10 +40,9 @@ export const deleteReport = (req: Request, res: Response) => {
             (err, results: any[]) => {
               if (err) throw err;
               connection.release();
+              return res.status(200).send({ success: true, message: "Report deleted!" });
             })
         });
-
-        return res.status(200).send({ success: true, message: "Report deleted!" });
 
       });
   });

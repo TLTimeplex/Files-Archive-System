@@ -131,30 +131,41 @@ export const Editor = () => {
   }
 
   const deleteReport = () => {
-    const ReportID = Report.id;
-    const isUploaded = Report.uploaded || false;
     AddAlertLoader2("Deleting report...", "info", new Promise((resolve, reject) => {
-      FilesDB.findFile.by.reportID(ReportID).then(files => {
+      FilesDB.findFile.by.reportID(Report.id).then(files => {
         files.forEach(file => {
           FilesDB.deleteFile(file.id).catch(error => {
             console.error(error);
           });
         });
-        ReportsDB.deleteReport(ReportID).then(() => {
+        
+        if (Report.uploaded) {
+          axios.delete("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report/" + Report.id).then(result => {
+            if (!result.data.success) {
+              AddAlert(result.data.message, "danger");
+              reject();
+              return;
+            }
+          });
+          ReportsDB.deleteReport(Report.id).then(() => {
+            resolve();
+          }).catch(error => {
+            console.error(error);
+            reject();
+          });
+          return;
+        }
+
+        ReportsDB.deleteReport(Report.id).then(() => {
           resolve();
         }).catch(error => {
           console.error(error);
           reject();
         });
-        if (isUploaded)
-          axios.delete("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report/" + ReportID);
-      }).catch(error => {
-        console.error(error);
-        reject();
       });
-    }), "Deleted successfully!", "success", "Failed to delete report!", "danger").finally(() => {
+    }), "Deleted successfully!", "success", "Failed to delete report!", "danger").then(() => {
       window.location.href = "/report";
-    });
+    }).finally(() => { });
   }
 
   const syncReport = async () => {
