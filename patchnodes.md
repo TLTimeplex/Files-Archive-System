@@ -1,3 +1,9 @@
+### --- v0.1.8 --- 28.05.23, 13.08 UTC+2 ---
+* API: Added: Files can now be deleted by their id
+* API: Change: Reports get now saved in a more human readable format
+* API: Fix: successfully deleting a report sends now the correct response
+* CLIENT: Fix: Changed some more write -> report stuff
+
 ### --- v0.1.7 --- 28.05.23, 11.38 UTC+2 ---
 * API: Added: Files can now be get by their id
 * CLIENT: Changed: /write -> /report and corresponding changes

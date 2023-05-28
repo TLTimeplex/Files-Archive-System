@@ -74,6 +74,8 @@ app.put('/:version/:token/report/:reportID/file', upload.single("data"), middlew
 app.put('/:version/:token/report/:reportID/file/:fileID', upload.single("data"), middleware.verifyToken, middleware.verifyReportID, endware.uploadFile);
 
 app.get('/:version/:token/report/:reportID/file/:fileID', middleware.verifyToken, middleware.verifyReportID, middleware.verifyReportFileID, endware.getFile);
+
+app.delete('/:version/:token/report/:reportID/file/:fileID', middleware.verifyToken, middleware.verifyReportID, middleware.verifyReportFileID, endware.deleteFile);
 //-----------------------------------------------------------//
 //---------------------| START SERVER |----------------------//
 //-----------------------------------------------------------//

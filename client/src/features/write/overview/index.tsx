@@ -48,7 +48,7 @@ export const Overview = () => {
       </div>
       <hr />
       <div className="AddButtonBox">
-        <Button variant="secondary" href="/write/new" className="AddButton">New Report</Button>
+        <Button variant="secondary" href="/report/new" className="AddButton">New Report</Button>
       </div>
     </>
   );

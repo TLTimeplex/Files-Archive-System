@@ -60,7 +60,7 @@ export const updateReport = (req: Request, res: Response) => {
     restrictions: u_newReport.restrictions
   } as IDB_Report;
 
-  fs.writeFileSync(`./reports/${report.id}/report.json`, JSON.stringify(newReport));
+  fs.writeFileSync(`./reports/${report.id}/report.json`, JSON.stringify(newReport, undefined, 2));
 
   // Sync with database
   db.pool.getConnection((err, connection) => {

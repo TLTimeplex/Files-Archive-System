@@ -8,7 +8,7 @@ export const WriteNew = () => {
   const { title } = useParams();
 
   ReportDB.createReport(title).then((reportID) => {
-    window.location.href = "/write/edit/" + reportID;
+    window.location.href = "/report/edit/" + reportID;
   })
 
   return (

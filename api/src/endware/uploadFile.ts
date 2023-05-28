@@ -55,7 +55,7 @@ export const uploadFile = (req: Request, res: Response) => {
         return res.status(200).send({ success: true, message: "File updated successfully" });
 
       report.fileIDs.push(fileID);
-      fs.writeFileSync(`./reports/${reportID}/report.json`, JSON.stringify(report));
+      fs.writeFileSync(`./reports/${reportID}/report.json`, JSON.stringify(report, undefined, 2));
 
       connection.release();
       return res.status(200).send({ success: true, message: "File uploaded successfully" });

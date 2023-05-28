@@ -43,7 +43,7 @@ export const deleteReport = (req: Request, res: Response) => {
             })
         });
 
-        return res.status(200).send({ success: false, message: "not authorized!" });
+        return res.status(200).send({ success: true, message: "Report deleted!" });
 
       });
   });
