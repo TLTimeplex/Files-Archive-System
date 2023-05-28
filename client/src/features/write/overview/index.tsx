@@ -39,7 +39,7 @@ export const Overview = () => {
                 </Card.Text>
               </Card.Body>
               <Card.Footer>
-                <Button variant="primary" href={`/write/edit/${report.id}`}>Edit</Button>
+                <Button variant="primary" href={`/report/edit/${report.id}`}>Edit</Button>
                 <div className="last-edited">{lastUpdateString}</div>
               </Card.Footer>
             </Card>

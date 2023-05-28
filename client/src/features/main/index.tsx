@@ -41,7 +41,7 @@ export const Main = () => {
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="me-auto">
           <Nav.Link href="/dashboard" className={"nav-item nav-link " + ((location.pathname.match('/dashboard')) ? 'active' : '')}>Dashboard</Nav.Link>
-          <Nav.Link href="/write" className={"nav-item nav-link " + ((location.pathname.match('/write')) ? 'active' : '')}>Write</Nav.Link>
+          <Nav.Link href="/report" className={"nav-item nav-link " + ((location.pathname.match('/report')) ? 'active' : '')}>Report</Nav.Link>
           <Nav.Link href="/archive" className={"nav-item nav-link " + ((location.pathname.match('/archive')) ? 'active' : '')}>Archive</Nav.Link>
         </Nav>
       </Navbar.Collapse>

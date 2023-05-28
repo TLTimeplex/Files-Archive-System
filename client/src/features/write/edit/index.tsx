@@ -280,7 +280,7 @@ export const Editor = () => {
         <Button variant={Report?.uploaded ? "success" : "outline-success"} id="new-sync" type='submit' onClick={syncReport}>Sync</Button>{' '}
         {Report?.uploaded ? <Button variant="warning" id="new-archive" type='submit'>Archive</Button> : <></>}{' '}
         <Button variant="danger" id="new-delete" onClick={() => setShowDeleteModal(true)}>Delete</Button>
-        <Button variant="secondary" href="/write/edit/" className="Button-Back">Back</Button>
+        <Button variant="secondary" href="/report" className="Button-Back">Back</Button>
       </div>
       <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
         <Modal.Header closeButton>

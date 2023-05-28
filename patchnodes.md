@@ -1,3 +1,7 @@
+### --- v0.1.7 --- 28.05.23, 11.38 UTC+2 ---
+* API: Added: Files can now be get by their id
+* CLIENT: Changed: /write -> /report and corresponding changes
+
 ### --- v0.1.6 --- 27.05.23, 17.00 UTC+2 ---
 * API: Added: Middleware to check if a file exists (with and without report-link check)
 
