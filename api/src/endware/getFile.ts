@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import IDB_Report from '../types/IDB_report';
 import fs from 'fs';
 import db from '../db';
 import { report } from '../db/interfaces';
@@ -12,8 +11,6 @@ export const getFile = (req: Request, res: Response) => {
   const reportID = req.params.reportID;
   const fileID = req.params.fileID;
   const userID = parseInt(req.params.userID);
-
-  console.log(`GET FILE: ${reportID} ${fileID} ${userID}`)
 
   if (!fs.existsSync(`./reports/${reportID}/report.json`) || !fs.existsSync(`./reports/${reportID}/${fileID}`))
     return res.status(200).send({ success: false, message: "Report/File does not exist" });

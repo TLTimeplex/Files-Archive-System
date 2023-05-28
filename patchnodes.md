@@ -1,3 +1,8 @@
+### --- v0.2.0 --- 28.05.23, 16.14 UTC+2 ---
+* API: Added: Option to get all reportIds with an optional filter
+* API: Added: Filter mask for reports
+* CLIENT: Fix: Changed some more write -> report stuff
+
 ### --- v0.1.8 --- 28.05.23, 13.08 UTC+2 ---
 * API: Added: Files can now be deleted by their id
 * API: Change: Reports get now saved in a more human readable format

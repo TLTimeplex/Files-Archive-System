@@ -153,7 +153,7 @@ export const Editor = () => {
         reject();
       });
     }), "Deleted successfully!", "success", "Failed to delete report!", "danger").finally(() => {
-      window.location.href = "/write/edit";
+      window.location.href = "/report";
     });
   }
 

@@ -7,6 +7,7 @@ import uploadFile from './uploadFile';
 import getFileIDs from './getFileIDs';
 import getFile from './getFile';
 import deleteFile from './deleteFile';
+import getReportIDs from './getReports';
 
 export default {
   loginUser,
@@ -17,5 +18,6 @@ export default {
   uploadFile,
   getFileIDs,
   getFile,
-  deleteFile
+  deleteFile,
+  getReportIDs
 }
