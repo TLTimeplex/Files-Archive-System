@@ -1,3 +1,6 @@
+### --- v0.2.2 --- 29.05.23, 13.58 UTC+2 ---
+* CLIENT: Added: Client now syncs the list of reports with the server and updates them if necessary
+
 ### --- v0.2.1 --- 28.05.23, 17.12 UTC+2 ---
 * CLIENT: Fix: wrong delete order for reports which caused the local report to be deleted before the server report could be deleted
 

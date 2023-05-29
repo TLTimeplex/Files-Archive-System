@@ -224,7 +224,7 @@ export const Editor = () => {
     saveReport();
   }
 
-  const drawPreview = async () => {
+  const drawPreview = async () => { //TODO: If files are missing try to load them from server
     const uploadedFilesPreview = document.getElementById("uploaded-files-preview") as HTMLDivElement;
 
     uploadedFilesPreview.innerHTML = "";

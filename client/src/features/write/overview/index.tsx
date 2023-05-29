@@ -1,17 +1,76 @@
 import { Button, Card } from "react-bootstrap";
-import FAS_File from "../../../types/IDB_report";
+import FAS_File, { IDB_Report } from "../../../types/IDB_report";
 import { ReportDB } from "../../../scripts/IndexedDB";
 import { useState } from "react";
 import "./style.scss";
+import axios from "axios";
+import ReportFilter from "../../../types/ReportFilter";
+import AddAlert from "../../../scripts/addAlert";
 
 // TODO: Add Search!
 // TODO: Add Synchronisation with server
 export const Overview = () => {
   const [Reports, setReports] = useState<FAS_File[]>([]);
+  const [init, setInit] = useState<boolean>(false);
 
-  ReportDB.getAllReports();
+  //TODO: REDO!
+  const sync = async () => {
+    const filter: ReportFilter = {
+      author_id: [1], //TODO: Get own ID
+    };
 
-  ReportDB.getAllReports().then(reports => { setReports(reports) });
+    const res = await axios.post(`/api/1/${localStorage.getItem("token") || sessionStorage.getItem("token")}/report`, { filter: filter });
+    if (!res.data.success) {
+      console.log(res.data);
+      AddAlert(res.data.message, "danger");
+      return;
+    }
+
+    const reportIDs = res.data.data as string[];
+
+    let tasks: Promise<void>[] = [];
+
+    reportIDs.forEach((reportID: string) => {
+      tasks.push(new Promise((resolve, reject) => {
+        axios.get(`/api/1/${localStorage.getItem("token") || sessionStorage.getItem("token")}/report/${reportID}`).then(result => {
+          if (!result.data.success) {
+            console.log(result.data);
+            AddAlert(result.data.message, "danger");
+            reject();
+          }
+          const remoteReport = result.data.report as IDB_Report;
+          remoteReport.uploaded = true;
+          ReportDB.getReport(remoteReport.id).then(localReport => {
+            if (!localReport) {
+              ReportDB.insertReport(remoteReport).then(() => resolve());
+              return;
+            }
+            if (!localReport.uploaded) {
+              ReportDB.updateReport(remoteReport).then(() => resolve());
+              return;
+            }
+            if (new Date(localReport.updatedAt) < new Date(remoteReport.updatedAt)) {
+              ReportDB.updateReport(remoteReport);
+            }
+            resolve();
+          }).catch(err => {
+            ReportDB.insertReport(remoteReport).then(() => resolve());
+          });
+        })
+      }));
+    });
+
+    Promise.all(tasks).then(() => {
+      ReportDB.getAllReports().then(reports => {
+        setReports(reports)
+      })
+    });
+  };
+
+  if (!init) {
+    sync();
+    setInit(true);
+  }
 
   return (
     <>

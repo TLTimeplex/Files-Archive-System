@@ -61,7 +61,7 @@ app.get('/:version/:token', middleware.verifyToken, (_, res) => {
 
 app.put('/:version/:token/report', middleware.verifyToken, endware.uploadReport);
 
-app.get('/:version/:token/report', middleware.verifyToken, endware.getReportIDs);
+app.post('/:version/:token/report', middleware.verifyToken, endware.getReportIDs);
 
 app.put('/:version/:token/report/:reportID', middleware.verifyToken, endware.uploadReport);
 
