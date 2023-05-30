@@ -10,6 +10,7 @@ import createCard from "../../../scripts/createCard";
 import FancyFileSize from "../../../scripts/fancyFileSize";
 import axios from "axios";
 import AddAlert from "../../../scripts/addAlert";
+import { API_FileMeta } from "../../../types/API_File";
 
 
 export const Editor = () => {
@@ -239,8 +240,40 @@ export const Editor = () => {
           uploadedFilesPreview.appendChild(card);
           resolve(fileID);
         }).catch(error => {
-          AddAlert("Failed to load file!", "danger");
-          resolve();
+          if(Report.uploaded) {
+            // Get meta of file from server
+            axios.get("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report/" + Report.id + "/file/" + fileID + "/meta").then(result => {
+              if(!result.data.success) {
+                AddAlert(result.data.message, "danger");
+                resolve();
+                return;
+              }
+              const fileMeta = result.data.meta as API_FileMeta;
+              if(!fileMeta || !fileMeta.name || !fileMeta.type || !fileMeta.size) {
+                AddAlert("Failed to load file meta!", "danger");
+                resolve();
+                return;
+              }
+              // Get file from server
+              axios.get("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report/" + Report.id + "/file/" + fileID, {responseType: 'blob'}).then(res => {
+                if(res.data.success === false) {
+                  AddAlert(res.data.message, "danger");
+                  resolve();
+                  return;
+                }
+                const blob = new Blob([res.data], {type: fileMeta.type});
+                const fileR = new File([blob], fileMeta.name, {type: fileMeta.type});
+                const card = createCard(fileR.name, fileR, fileR.type.split("/")[0], FancyFileSize(fileR.size), () => removeFile(fileID));
+                uploadedFilesPreview.appendChild(card);
+                FilesDB.insertFile({id: fileID, data: fileR, meta: { uploaded: 1, uploadedAt: new Date(), linkedReport: Report.id }})
+                .catch(error => { console.error(error); })
+                .finally(() => {resolve(fileID)});
+              });
+            });
+          }else {
+            AddAlert("Failed to load file!", "danger");
+            resolve();
+          }
         });
       }))
     });

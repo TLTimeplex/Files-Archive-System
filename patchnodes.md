@@ -1,3 +1,10 @@
+### --- v0.3.0 --- 30.05.23, 11.20 UTC+2 ---
+* API: Added: New Type FileMeta for files to store name, type and size
+* API: Added: New GET route for file meta data
+* API: Changed: API now scarps the file meta for an extra saved file
+* API: Changed: API also deletes the meta of a file when deleting the file
+* CLIENT: Added: Client now requests file from the server, when the file is not in the storage and the report is uploaded
+
 ### --- v0.2.2 --- 29.05.23, 13.58 UTC+2 ---
 * API: Changed: Changed the get Report IDs with filter method from GET to POST to support the filter mask.
 * CLIENT: Added: Client now syncs the list of reports with the server and updates them if necessary.

@@ -39,8 +39,6 @@ export const getFileIDs = (req: Request, res: Response) => {
 
         const restrictions = toRestrictions(reportEntry.restrictions);
 
-        console.log(restrictions);
-
         if (!restrictions.private || restrictions.whitelist.includes(parseInt(req.params.userID))) {
           return res.status(200).send({ success: true, fileIDs: report.fileIDs });
         }

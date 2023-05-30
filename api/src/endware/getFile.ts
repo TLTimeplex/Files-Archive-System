@@ -27,8 +27,6 @@ export const getFile = (req: Request, res: Response) => {
 
         const reportEntry = results[0] as report;
 
-        console.log(reportEntry.author_id === userID);
-
         if (reportEntry.author_id === userID) {
           return res.status(200).sendFile(path.resolve(`./reports/${reportID}/${fileID}`));
         }

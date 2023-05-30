@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import fs from 'fs';
 import db from '../db';
 import IDB_Report from '../types/IDB_report';
+import { API_FileMeta } from '../types/API_File';
 
 export const uploadFile = (req: Request, res: Response) => {
   if (!req.params.userID) return res.status(500).send();
@@ -46,6 +47,12 @@ export const uploadFile = (req: Request, res: Response) => {
       // Write file to disk
       fs.copyFileSync(fileInfo.path, `./reports/${reportID}/${fileID}`);
       fs.rmSync(fileInfo.path);
+      const fileMeta : API_FileMeta = {
+        name: fileInfo.originalname,
+        type: fileInfo.mimetype,
+        size: fileInfo.size
+      };
+      fs.writeFileSync(`./reports/${reportID}/${fileID}.json`, JSON.stringify(fileMeta, undefined, 2));
 
       if (!report.fileIDs)
         report.fileIDs = [];

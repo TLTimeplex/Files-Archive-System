@@ -8,6 +8,7 @@ import getFileIDs from './getFileIDs';
 import getFile from './getFile';
 import deleteFile from './deleteFile';
 import getReportIDs from './getReports';
+import getFileMeta from './getFileMeta';
 
 export default {
   loginUser,
@@ -19,5 +20,6 @@ export default {
   getFileIDs,
   getFile,
   deleteFile,
-  getReportIDs
+  getReportIDs,
+  getFileMeta
 }

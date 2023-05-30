@@ -5,7 +5,6 @@ import endware from './endware';
 import middleware from './middleware';
 import cors from 'cors';
 import multer from 'multer';
-import verifyReportFileID from './middleware/verifyReportFileID';
 //import { dropScheme } from './db/drop';
 //dropScheme(db.pool);
 //import bycrypt from 'bcrypt';
@@ -78,6 +77,8 @@ app.put('/:version/:token/report/:reportID/file/:fileID', upload.single("data"),
 app.get('/:version/:token/report/:reportID/file/:fileID', middleware.verifyToken, middleware.verifyReportID, middleware.verifyReportFileID, endware.getFile);
 
 app.delete('/:version/:token/report/:reportID/file/:fileID', middleware.verifyToken, middleware.verifyReportID, middleware.verifyReportFileID, endware.deleteFile);
+
+app.get('/:version/:token/report/:reportID/file/:fileID/meta', middleware.verifyToken, middleware.verifyReportID, middleware.verifyReportFileID, endware.getFileMeta);
 
 //-----------------------------------------------------------//
 //---------------------| START SERVER |----------------------//

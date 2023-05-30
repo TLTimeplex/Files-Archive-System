@@ -36,8 +36,10 @@ export const deleteReport = (req: Request, res: Response) => {
 
         // Delete the file
         fs.rmSync(`./reports/${reportID}/${fileID}`);
+        if (fs.existsSync(`./reports/${reportID}/${fileID}.json`))
+          fs.rmSync(`./reports/${reportID}/${fileID}.json`);
 
-        if(!report.fileIDs)
+        if (!report.fileIDs)
           report.fileIDs = [];
 
         // Delete the entry in the report
