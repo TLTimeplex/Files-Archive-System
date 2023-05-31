@@ -11,6 +11,7 @@ import FancyFileSize from "../../../scripts/fancyFileSize";
 import axios from "axios";
 import AddAlert from "../../../scripts/addAlert";
 import { API_FileMeta } from "../../../types/API_File";
+import IDB_File from "../../../types/iDB_file";
 
 
 export const Editor = () => {
@@ -170,19 +171,20 @@ export const Editor = () => {
   }
 
   const syncReport = async () => {
-    // Save report "locallier"
+    // Save report temporary
     const shadowReport = createShadowReport();
-    // If report is already uploaded, patch it
-    if (Report.uploaded) {
-      const result = await axios.patch("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report/" + Report.id, shadowReport);
+
+    // If report is not uploaded, create a new one
+    if(!Report.uploaded) {
+      const result = await axios.put("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report", shadowReport);
       if (!result.data.success) {
         AddAlert(result.data.message, "danger");
         return;
       }
     }
-    // If not create a new one
+    // If report is already uploaded, patch it    
     else {
-      const result = await axios.put("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report", shadowReport);
+      const result = await axios.patch("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report/" + Report.id, shadowReport);
       if (!result.data.success) {
         AddAlert(result.data.message, "danger");
         return;
@@ -192,13 +194,15 @@ export const Editor = () => {
     if (!Report.fileIDs)
       Report.fileIDs = [];
 
-    // Upload any missing images
+    // Upload any missing images and delete removed images
     const uploadedFilesResult = await axios.get("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report/" + Report.id + "/file");
     if (!uploadedFilesResult.data.success) {
       AddAlert(uploadedFilesResult.data.message, "danger");
       return;
     }
     const uploadedFiles = uploadedFilesResult.data.fileIDs as string[];
+
+    let promises: Promise<void>[] = [];
 
     let needToUpload: string[] = [];
     let needToDelete: string[] = [];
@@ -209,22 +213,81 @@ export const Editor = () => {
     })
 
     uploadedFiles.forEach((fileID) => {
-      if(!Report.fileIDs?.includes(fileID))
+      if (!Report.fileIDs?.includes(fileID))
         needToDelete.push(fileID);
     })
 
-    let promises : Promise<void>[] = [];
+    // Download any missing images
+    Report.fileIDs.forEach((fileID) => {
+      promises.push(new Promise((resolve, reject) => {
+        FilesDB.ExistsFile(fileID).then((exists) => {
+          if (exists) {
+            resolve();
+            return;
+          }
+          axios.get("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report/" + Report.id + "/file/" + fileID + "/meta")
+          .then((result) => {
+            if (!result.data.success) {
+              AddAlert(result.data.message, "danger");
+              resolve();
+              return;
+            }
+            const fileMeta = result.data.meta as API_FileMeta;
+
+            axios.get("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report/" + Report.id + "/file/" + fileID, { responseType: "blob" })
+            .then((result) => {
+              if (result.data.success === false) {
+                AddAlert(result.data.message, "danger");
+                resolve();
+                return;
+              }
+              const data = result.data as Blob;
+
+              const file = new File([data], fileMeta.name, { type: fileMeta.type });
+
+              const idbFile : IDB_File = {
+                id: fileID,
+                data: file,
+                meta: {
+                  linkedReport : Report.id,
+                  uploaded: 1,
+                  uploadedAt: new Date(),
+                }
+              }
+
+              FilesDB.insertFile(idbFile).then(() => {
+                resolve();
+                return;
+              }).catch((err) => {
+                console.log(err);
+                resolve();
+              })
+            }).catch((err) => {
+              console.log(err);
+              resolve();
+            })
+          })
+          .catch((err) => {
+            console.log(err);
+            resolve();
+          })
+        }).catch((err) => {
+          console.log(err);
+          resolve();
+        })
+      }))
+    })
 
     needToUpload.forEach((fileID) => {
       promises.push(new Promise((resolve, reject) => {
         FilesDB.getFile(fileID).then((file) => {
-          if(!file) {
+          if (!file) {
             AddAlert("Couldn't load file from storage!", "danger");
             reject();
             return;
           }
-          
-          if(file.meta.uploaded !== 0) {
+
+          if (file.meta.uploaded !== 0) {
             AddAlert("Data discrepancy!", "warning");
           }
 
@@ -232,23 +295,23 @@ export const Editor = () => {
           formData.append("id", file.id);
           formData.append("data", file.data);
           formData.append("meta", JSON.stringify(file.meta));
-          
+
           axios.put("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report/" + Report.id + "/file", formData).then((result) => {
-            if(!result.data.success){
+            if (!result.data.success) {
               AddAlert(result.data.message, "danger");
               reject();
               return;
             }
             FilesDB.updateFileMeta(file.id, { ...file.meta, uploaded: 1 }).then(() => {
-              resolve(); 
+              resolve();
               return;
             });
-          }).catch((err) =>{
+          }).catch((err) => {
             console.log(err);
             reject();
             return;
           })
-        }).catch(err =>{
+        }).catch(err => {
           console.log(err);
           AddAlert("Couldn't load file from storage!", "danger");
           Report.fileIDs = Report.fileIDs?.filter((id) => id !== fileID);
@@ -259,18 +322,34 @@ export const Editor = () => {
 
     needToDelete.forEach((fileID) => {
       promises.push(new Promise((resolve, reject) => {
-        // TODO: Check if the file still exists in storage
-
+        axios.delete("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report/" + Report.id + "/file/" + fileID).then((result) => {
+          if (!result.data.success) {
+            AddAlert(result.data.message, "danger");
+            reject();
+            return;
+          }
+          FilesDB.deleteFile(fileID).then(() => {
+            resolve();
+            return;
+          }).catch((err) => {
+            console.log(err);
+            resolve();
+            return;
+          })
+        }).catch((err) => {
+          console.log(err);
+          reject();
+          return;
+        })
       }))
     })
 
-    Promise.all(promises).then(
-      //TODO:
-    );
+    await Promise.all(promises);
 
     AddAlert("Report saved and uploaded!", "success");
     setReport({ ...shadowReport, uploaded: true });
     await saveReport({ ...shadowReport, uploaded: true });
+    await drawPreview();
   }
 
   const addFiles = async () => {
@@ -300,51 +379,17 @@ export const Editor = () => {
       awaitFiles.push(new Promise(async (resolve, reject) => {
         FilesDB.getFile(fileID).then(file => {
           if (!file) return;
-          const card = createCard(file.data.name, file.data, file.data.type.split("/")[0], FancyFileSize(file.data.size), () => removeFile(fileID));
+          const card = createCard(file.data.name, file.data, file.data.type.split("/")[0], FancyFileSize(file.data.size), async () => await removeFile(fileID));
           uploadedFilesPreview.appendChild(card);
           resolve(fileID);
         }).catch(error => {
-          if (Report.uploaded) {
-            // Get meta of file from server
-            axios.get("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report/" + Report.id + "/file/" + fileID + "/meta").then(result => {
-              if (!result.data.success) {
-                AddAlert(result.data.message, "danger");
-                resolve();
-                return;
-              }
-              const fileMeta = result.data.meta as API_FileMeta;
-              if (!fileMeta || !fileMeta.name || !fileMeta.type || !fileMeta.size) {
-                AddAlert("Failed to load file meta!", "danger");
-                resolve();
-                return;
-              }
-              // Get file from server
-              axios.get("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report/" + Report.id + "/file/" + fileID, { responseType: 'blob' }).then(res => {
-                if (res.data.success === false) {
-                  AddAlert(res.data.message, "danger");
-                  resolve();
-                  return;
-                }
-                const blob = new Blob([res.data], { type: fileMeta.type });
-                const fileR = new File([blob], fileMeta.name, { type: fileMeta.type });
-                const card = createCard(fileR.name, fileR, fileR.type.split("/")[0], FancyFileSize(fileR.size), () => removeFile(fileID));
-                uploadedFilesPreview.appendChild(card);
-                FilesDB.insertFile({ id: fileID, data: fileR, meta: { uploaded: 1, uploadedAt: new Date(), linkedReport: Report.id } })
-                  .catch(error => { console.error(error); })
-                  .finally(() => { resolve(fileID) });
-              });
-            });
-          } else {
-            AddAlert("Failed to load file!", "danger");
-            resolve();
-          }
+          const card = createCard(fileID, "Please sync to load this file!", undefined, undefined, async () => await removeFile(fileID));
+          uploadedFilesPreview.appendChild(card);
+          resolve();
         });
       }))
     });
-
-    await Promise.all(awaitFiles).then((remaining) => {
-      saveReport({ ...Report, fileIDs: remaining.filter(id => id !== undefined) as string[] });
-    });
+    await Promise.all(awaitFiles);
   }
 
   const removeFile = async (fileID: string) => {
@@ -368,6 +413,7 @@ export const Editor = () => {
 
     return newReport;
   }
+
 
   return (
     <Form id="new-form" onSubmit={(event) => event.preventDefault()}>

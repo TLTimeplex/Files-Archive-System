@@ -2,6 +2,7 @@
 * API: Added: Messing implementation of GET for the list of imageIDs of a report
 * CLIENT: Changed: Editor has now some space between the buttons and the window bottom
 * CLIENT: Added: Client now downloads files from the server, when the user syncs with the server
+* CLIENT: Added: New IDB function to look up if a file exists in the IDB
 
 ### --- v0.3.0 --- 30.05.23, 11.20 UTC+2 ---
 * API: Added: New Type FileMeta for files to store name, type and size

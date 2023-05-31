@@ -1,4 +1,4 @@
-export const createCard = (title?: string , image?: File, footerLeft?: string, footerRight?: string, closeAction?: Function): HTMLDivElement => {
+export const createCard = (title?: string, content?: File | string, footerLeft?: string, footerRight?: string, closeAction?: Function): HTMLDivElement => {
   const card = document.createElement("div");
   card.classList.add("card");
 
@@ -28,21 +28,30 @@ export const createCard = (title?: string , image?: File, footerLeft?: string, f
   }
 
 
-  if (image) {
+  if (content) {
     const cardBody = document.createElement("div");
     cardBody.classList.add("card-body");
 
-    if (image.type.match("image/")) {
-      const cardImg = document.createElement("img");
-      cardImg.classList.add("card-img");
-      cardImg.src = URL.createObjectURL(image);
+    if (typeof content === "object") {
+      if (content.type.match("image/")) {
+        const cardImg = document.createElement("img");
+        cardImg.classList.add("card-img");
+        cardImg.src = URL.createObjectURL(content);
 
-      cardBody.appendChild(cardImg);
-    } else {
+        cardBody.appendChild(cardImg);
+      } else {
+        const cardText = document.createElement("p");
+        cardText.classList.add("card-text");
+        cardText.style.textAlign = "center";
+        cardText.innerText = "File type: " + (content.type.split("/")[1] || "Unknown") + "\nNo preview available.";
+        cardBody.appendChild(cardText);
+      }
+    }else {
       const cardText = document.createElement("p");
       cardText.classList.add("card-text");
       cardText.style.textAlign = "center";
-      cardText.innerText = "File type: " + (image.type.split("/")[1] || "Unknown") + "\nNo preview available.";
+      cardText.innerText = content;
+
       cardBody.appendChild(cardText);
     }
 
