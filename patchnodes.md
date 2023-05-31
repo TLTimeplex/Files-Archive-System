@@ -1,6 +1,7 @@
-### --- v0.3.1 --- 30.05.23, XX.YY UTC+2 ---
+### --- v0.3.1 --- 31.05.23, 14.15 UTC+2 ---
 * API: Added: Messing implementation of GET for the list of imageIDs of a report
 * CLIENT: Changed: Editor has now some space between the buttons and the window bottom
+* CLIENT: Added: Client now downloads files from the server, when the user syncs with the server
 
 ### --- v0.3.0 --- 30.05.23, 11.20 UTC+2 ---
 * API: Added: New Type FileMeta for files to store name, type and size
