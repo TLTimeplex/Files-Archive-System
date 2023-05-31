@@ -72,7 +72,7 @@ export const Editor = () => {
     // eslint-disable-next-line
     [init]);
 
-
+  //TODO:  FIRST SYNC
   if (!Report) {
     if (ReportTitel_OR_ID === undefined) {
       window.location.href = "/write/edit";
@@ -108,7 +108,7 @@ export const Editor = () => {
     });
     return (<></>);
   }
-
+  //TODO:  REOD Online Sync
   const saveReport = async (overwrite?: IDB_Report) => {
     await AddAlertLoader2("Saving report...", "info", new Promise((resolve, reject) => {
       const title = document.getElementById("title") as HTMLInputElement;
@@ -139,7 +139,7 @@ export const Editor = () => {
             console.error(error);
           });
         });
-        
+
         if (Report.uploaded) {
           axios.delete("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report/" + Report.id).then(result => {
             if (!result.data.success) {
@@ -170,7 +170,9 @@ export const Editor = () => {
   }
 
   const syncReport = async () => {
+    // Save report "locallier"
     const shadowReport = createShadowReport();
+    // If report is already uploaded, patch it
     if (Report.uploaded) {
       const result = await axios.patch("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report/" + Report.id, shadowReport);
       if (!result.data.success) {
@@ -178,6 +180,7 @@ export const Editor = () => {
         return;
       }
     }
+    // If not create a new one
     else {
       const result = await axios.put("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report", shadowReport);
       if (!result.data.success) {
@@ -186,23 +189,84 @@ export const Editor = () => {
       }
     }
 
-    Report.fileIDs?.forEach(async (fileID) => {
-      const file = await FilesDB.getFile(fileID);
-      if (!file) return;
-      if (file.meta.uploaded !== 0) return;
+    if (!Report.fileIDs)
+      Report.fileIDs = [];
 
-      var formData = new FormData();
-      formData.append("id", file.id);
-      formData.append("data", file.data);
-      formData.append("meta", JSON.stringify(file.meta));
+    // Upload any missing images
+    const uploadedFilesResult = await axios.get("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report/" + Report.id + "/file");
+    if (!uploadedFilesResult.data.success) {
+      AddAlert(uploadedFilesResult.data.message, "danger");
+      return;
+    }
+    const uploadedFiles = uploadedFilesResult.data.fileIDs as string[];
 
-      const result = await axios.put("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report/" + Report.id + "/file", formData); //TODO: add data
-      if (!result.data.success) {
-        AddAlert(result.data.message, "danger");
-        return;
-      }
-      await FilesDB.updateFileMeta(file.id, { ...file.meta, uploaded: 1 });
-    });
+    let needToUpload: string[] = [];
+    let needToDelete: string[] = [];
+
+    Report.fileIDs.forEach((fileID) => {
+      if (!uploadedFiles.includes(fileID))
+        needToUpload.push(fileID);
+    })
+
+    uploadedFiles.forEach((fileID) => {
+      if(!Report.fileIDs?.includes(fileID))
+        needToDelete.push(fileID);
+    })
+
+    let promises : Promise<void>[] = [];
+
+    needToUpload.forEach((fileID) => {
+      promises.push(new Promise((resolve, reject) => {
+        FilesDB.getFile(fileID).then((file) => {
+          if(!file) {
+            AddAlert("Couldn't load file from storage!", "danger");
+            reject();
+            return;
+          }
+          
+          if(file.meta.uploaded !== 0) {
+            AddAlert("Data discrepancy!", "warning");
+          }
+
+          var formData = new FormData();
+          formData.append("id", file.id);
+          formData.append("data", file.data);
+          formData.append("meta", JSON.stringify(file.meta));
+          
+          axios.put("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report/" + Report.id + "/file", formData).then((result) => {
+            if(!result.data.success){
+              AddAlert(result.data.message, "danger");
+              reject();
+              return;
+            }
+            FilesDB.updateFileMeta(file.id, { ...file.meta, uploaded: 1 }).then(() => {
+              resolve(); 
+              return;
+            });
+          }).catch((err) =>{
+            console.log(err);
+            reject();
+            return;
+          })
+        }).catch(err =>{
+          console.log(err);
+          AddAlert("Couldn't load file from storage!", "danger");
+          Report.fileIDs = Report.fileIDs?.filter((id) => id !== fileID);
+          reject();
+        })
+      }))
+    })
+
+    needToDelete.forEach((fileID) => {
+      promises.push(new Promise((resolve, reject) => {
+        // TODO: Check if the file still exists in storage
+
+      }))
+    })
+
+    Promise.all(promises).then(
+      //TODO:
+    );
 
     AddAlert("Report saved and uploaded!", "success");
     setReport({ ...shadowReport, uploaded: true });
@@ -240,37 +304,37 @@ export const Editor = () => {
           uploadedFilesPreview.appendChild(card);
           resolve(fileID);
         }).catch(error => {
-          if(Report.uploaded) {
+          if (Report.uploaded) {
             // Get meta of file from server
             axios.get("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report/" + Report.id + "/file/" + fileID + "/meta").then(result => {
-              if(!result.data.success) {
+              if (!result.data.success) {
                 AddAlert(result.data.message, "danger");
                 resolve();
                 return;
               }
               const fileMeta = result.data.meta as API_FileMeta;
-              if(!fileMeta || !fileMeta.name || !fileMeta.type || !fileMeta.size) {
+              if (!fileMeta || !fileMeta.name || !fileMeta.type || !fileMeta.size) {
                 AddAlert("Failed to load file meta!", "danger");
                 resolve();
                 return;
               }
               // Get file from server
-              axios.get("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report/" + Report.id + "/file/" + fileID, {responseType: 'blob'}).then(res => {
-                if(res.data.success === false) {
+              axios.get("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report/" + Report.id + "/file/" + fileID, { responseType: 'blob' }).then(res => {
+                if (res.data.success === false) {
                   AddAlert(res.data.message, "danger");
                   resolve();
                   return;
                 }
-                const blob = new Blob([res.data], {type: fileMeta.type});
-                const fileR = new File([blob], fileMeta.name, {type: fileMeta.type});
+                const blob = new Blob([res.data], { type: fileMeta.type });
+                const fileR = new File([blob], fileMeta.name, { type: fileMeta.type });
                 const card = createCard(fileR.name, fileR, fileR.type.split("/")[0], FancyFileSize(fileR.size), () => removeFile(fileID));
                 uploadedFilesPreview.appendChild(card);
-                FilesDB.insertFile({id: fileID, data: fileR, meta: { uploaded: 1, uploadedAt: new Date(), linkedReport: Report.id }})
-                .catch(error => { console.error(error); })
-                .finally(() => {resolve(fileID)});
+                FilesDB.insertFile({ id: fileID, data: fileR, meta: { uploaded: 1, uploadedAt: new Date(), linkedReport: Report.id } })
+                  .catch(error => { console.error(error); })
+                  .finally(() => { resolve(fileID) });
               });
             });
-          }else {
+          } else {
             AddAlert("Failed to load file!", "danger");
             resolve();
           }
