@@ -1,3 +1,10 @@
+### --- v0.3.5 --- 01.06.23, 16.15 UTC+2 ---
+* API: Added: API checks now if the version of the DB is older than the current version and "updates" it if necessary (only creating missing tables not altering existing ones)
+* API: Added: New table for archived reports (Copy of reports)
+* API: Changed: Create Schema is now awaitable
+* API: Changed: Drop Schema is now awaitable
+* API: Fix: Fixed the version class which outputted 0s as undefined
+
 ### --- v0.3.4 --- 01.06.23, 15.40 UTC+2 ---
 * API: Changed: Ordered endware in separat folders 
 

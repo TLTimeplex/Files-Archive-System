@@ -11,18 +11,20 @@ class Version {
 
     const [majorStr, minorStr, patchStr] = versionString.split(".");
     this.major = Number.parseInt(majorStr);
-    this.minor = minorStr ? Number.parseInt(minorStr) : undefined;
-    this.patch = patchStr ? Number.parseInt(patchStr) : undefined;
+    this.minor = minorStr !== undefined ? Number.parseInt(minorStr) : undefined;
+    this.patch = patchStr !== undefined ? Number.parseInt(patchStr) : undefined;
   }
 
   toString(): string {
     let versionString = `${this.major}`;
-    if (!this.minor) {
-      versionString += `.${this.minor}`;
+    if (this.minor === undefined) {
+      return versionString;
     }
-    if (!this.patch) {
-      versionString += `.${this.patch}`;
+    versionString += `.${this.minor}`;
+    if (this.patch === undefined) {
+      return versionString;
     }
+    versionString += `.${this.patch}`;
     return versionString;
   }
 
