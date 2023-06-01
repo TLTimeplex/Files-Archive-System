@@ -12,8 +12,8 @@ export const deleteReport = (req: Request, res: Response) => {
   const userID = parseInt(req.params.userID);
 
   // Check if the report and file exist
-  if (!fs.existsSync(`./reports/${reportID}`) || !fs.existsSync(`./reports/${reportID}/${fileID}`)) {
-    return res.status(200).send({ success: false, message: "Report/File does not exist" });
+  if (!fs.existsSync(`./reports/${reportID}`)) {
+    return res.status(200).send({ success: false, message: "Report does not exist" });
   }
 
   const report = JSON.parse(fs.readFileSync(`./reports/${reportID}/report.json`, { encoding: 'utf-8' })) as IDB_Report;
@@ -34,10 +34,21 @@ export const deleteReport = (req: Request, res: Response) => {
           return res.status(200).send({ success: false, message: "not authorized!" });
         }
 
+        if (!report.fileIDs?.includes(fileID)) {
+          if (fs.existsSync(`./reports/${reportID}/${fileID}`)) {
+            fs.rmSync(`./reports/${reportID}/${fileID}`);
+            if (fs.existsSync(`./reports/${reportID}/${fileID}.json`))
+              fs.rmSync(`./reports/${reportID}/${fileID}.json`);
+          }
+          return res.status(200).send({ success: false, message: "File doesn't exist" });
+        }
+
         // Delete the file
-        fs.rmSync(`./reports/${reportID}/${fileID}`);
-        if (fs.existsSync(`./reports/${reportID}/${fileID}.json`))
-          fs.rmSync(`./reports/${reportID}/${fileID}.json`);
+        if (fs.existsSync(`./reports/${reportID}/${fileID}`)) {
+          fs.rmSync(`./reports/${reportID}/${fileID}`);
+          if (fs.existsSync(`./reports/${reportID}/${fileID}.json`))
+            fs.rmSync(`./reports/${reportID}/${fileID}.json`);
+        }
 
         if (!report.fileIDs)
           report.fileIDs = [];

@@ -66,12 +66,40 @@ export const Editor = () => {
       report.value = Report.report;
       autoResize()
     }
-    if (Report?.fileIDs) drawPreview();
     /*********************************************************/
 
   },
     // eslint-disable-next-line
     [init]);
+
+  const drawPreview = async () => {
+    const uploadedFilesPreview = document.getElementById("uploaded-files-preview") as HTMLDivElement;
+
+    uploadedFilesPreview.innerHTML = "";
+
+    const awaitFiles: Promise<string | void>[] = [];
+
+    Report?.fileIDs?.forEach((fileID: string) => {
+      awaitFiles.push(new Promise(async (resolve, reject) => {
+        FilesDB.getFile(fileID).then(file => {
+          if (!file) return;
+          const card = createCard(file.data.name, file.data, file.data.type.split("/")[0], FancyFileSize(file.data.size), async () => await removeFile(fileID));
+          uploadedFilesPreview.appendChild(card);
+          resolve(fileID);
+        }).catch(error => {
+          const card = createCard(fileID, "Please sync to load this file!", undefined, undefined, async () => await removeFile(fileID));
+          uploadedFilesPreview.appendChild(card);
+          resolve();
+        });
+      }))
+    });
+    await Promise.all(awaitFiles);
+  }
+    
+  useEffect(() => {
+    if (!Report || !init) return;
+    drawPreview();
+  }, [Report]);
 
   //TODO:  FIRST SYNC
   if (!Report) {
@@ -175,7 +203,7 @@ export const Editor = () => {
     const shadowReport = createShadowReport();
 
     // If report is not uploaded, create a new one
-    if(!Report.uploaded) {
+    if (!Report.uploaded) {
       const result = await axios.put("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report", shadowReport);
       if (!result.data.success) {
         AddAlert(result.data.message, "danger");
@@ -226,51 +254,51 @@ export const Editor = () => {
             return;
           }
           axios.get("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report/" + Report.id + "/file/" + fileID + "/meta")
-          .then((result) => {
-            if (!result.data.success) {
-              AddAlert(result.data.message, "danger");
-              resolve();
-              return;
-            }
-            const fileMeta = result.data.meta as API_FileMeta;
-
-            axios.get("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report/" + Report.id + "/file/" + fileID, { responseType: "blob" })
             .then((result) => {
-              if (result.data.success === false) {
+              if (!result.data.success) {
                 AddAlert(result.data.message, "danger");
                 resolve();
                 return;
               }
-              const data = result.data as Blob;
+              const fileMeta = result.data.meta as API_FileMeta;
 
-              const file = new File([data], fileMeta.name, { type: fileMeta.type });
+              axios.get("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report/" + Report.id + "/file/" + fileID, { responseType: "blob" })
+                .then((result) => {
+                  if (result.data.success === false) {
+                    AddAlert(result.data.message, "danger");
+                    resolve();
+                    return;
+                  }
+                  const data = result.data as Blob;
 
-              const idbFile : IDB_File = {
-                id: fileID,
-                data: file,
-                meta: {
-                  linkedReport : Report.id,
-                  uploaded: 1,
-                  uploadedAt: new Date(),
-                }
-              }
+                  const file = new File([data], fileMeta.name, { type: fileMeta.type });
 
-              FilesDB.insertFile(idbFile).then(() => {
-                resolve();
-                return;
-              }).catch((err) => {
-                console.log(err);
-                resolve();
-              })
-            }).catch((err) => {
+                  const idbFile: IDB_File = {
+                    id: fileID,
+                    data: file,
+                    meta: {
+                      linkedReport: Report.id,
+                      uploaded: 1,
+                      uploadedAt: new Date(),
+                    }
+                  }
+
+                  FilesDB.insertFile(idbFile).then(() => {
+                    resolve();
+                    return;
+                  }).catch((err) => {
+                    console.log(err);
+                    resolve();
+                  })
+                }).catch((err) => {
+                  console.log(err);
+                  resolve();
+                })
+            })
+            .catch((err) => {
               console.log(err);
               resolve();
             })
-          })
-          .catch((err) => {
-            console.log(err);
-            resolve();
-          })
         }).catch((err) => {
           console.log(err);
           resolve();
@@ -344,7 +372,7 @@ export const Editor = () => {
       }))
     })
 
-    await Promise.all(promises);
+    await Promise.all(promises).catch((err) => { console.log(err) });
 
     AddAlert("Report saved and uploaded!", "success");
     await saveReport({ ...shadowReport, uploaded: true });
@@ -364,29 +392,7 @@ export const Editor = () => {
     saveReport();
   }
 
-  const drawPreview = async () => {
-    const uploadedFilesPreview = document.getElementById("uploaded-files-preview") as HTMLDivElement;
 
-    uploadedFilesPreview.innerHTML = "";
-
-    const awaitFiles: Promise<string | void>[] = [];
-
-    Report.fileIDs?.forEach((fileID: string) => {
-      awaitFiles.push(new Promise(async (resolve, reject) => {
-        FilesDB.getFile(fileID).then(file => {
-          if (!file) return;
-          const card = createCard(file.data.name, file.data, file.data.type.split("/")[0], FancyFileSize(file.data.size), async () => await removeFile(fileID));
-          uploadedFilesPreview.appendChild(card);
-          resolve(fileID);
-        }).catch(error => {
-          const card = createCard(fileID, "Please sync to load this file!", undefined, undefined, async () => await removeFile(fileID));
-          uploadedFilesPreview.appendChild(card);
-          resolve();
-        });
-      }))
-    });
-    await Promise.all(awaitFiles);
-  }
 
   const removeFile = async (fileID: string) => {
     if (!Report.fileIDs) return;
@@ -409,7 +415,6 @@ export const Editor = () => {
     return newReport;
   }
 
-  drawPreview();
 
   return (
     <Form id="new-form" onSubmit={(event) => event.preventDefault()}>

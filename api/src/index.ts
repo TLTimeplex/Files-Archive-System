@@ -78,7 +78,7 @@ app.put('/:version/:token/report/:reportID/file/:fileID', upload.single("data"),
 
 app.get('/:version/:token/report/:reportID/file/:fileID', middleware.verifyToken, middleware.verifyReportID, middleware.verifyReportFileID, endware.getFile);
 
-app.delete('/:version/:token/report/:reportID/file/:fileID', middleware.verifyToken, middleware.verifyReportID, middleware.verifyReportFileID, endware.deleteFile);
+app.delete('/:version/:token/report/:reportID/file/:fileID', middleware.verifyToken, middleware.verifyReportID, endware.deleteFile);
 
 app.get('/:version/:token/report/:reportID/file/:fileID/meta', middleware.verifyToken, middleware.verifyReportID, middleware.verifyReportFileID, endware.getFileMeta);
 
