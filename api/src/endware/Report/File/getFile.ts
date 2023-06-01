@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import fs from 'fs';
-import db from '../db';
-import { report } from '../db/interfaces';
-import { toRestrictions } from '../types/restrictions';
+import db from '../../../db';
+import { report } from '../../../db/interfaces';
+import { toRestrictions } from '../../../types/restrictions';
 import path from 'path';
 
 export const getFile = (req: Request, res: Response) => {

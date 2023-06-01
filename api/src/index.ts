@@ -1,7 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express';
 import Version, { VERSION_PATTERN } from './version';
 import db from './db';
-import endware from './endware';
+import * as endware from './endware';
 import middleware from './middleware';
 import cors from 'cors';
 import multer from 'multer';
@@ -51,37 +51,49 @@ app.get('/:version', (req, res) => {
 });
 
 //Login (Get token)
-app.post('/:version/login/:username', endware.loginUser);
+app.post('/:version/login/:username', endware.login);
 
 //Authenticate token
 app.get('/:version/:token', middleware.verifyToken, (_, res) => {
   return res.status(200).send(true);
 });
 
-app.put('/:version/:token/report', middleware.verifyToken, endware.uploadReport);
+app.put('/:version/:token/report', middleware.verifyToken, endware.Report.uploadReport);
 
-app.post('/:version/:token/report', middleware.verifyToken, endware.getReportIDs);
+app.post('/:version/:token/report', middleware.verifyToken, endware.Report.getReportIDs);
 
-app.put('/:version/:token/report/:reportID', middleware.verifyToken, endware.uploadReport);
+app.put('/:version/:token/report/:reportID', middleware.verifyToken, endware.Report.uploadReport);
 
-app.get('/:version/:token/report/:reportID', middleware.verifyToken, middleware.verifyReportID, endware.getReport);
+app.get('/:version/:token/report/:reportID', middleware.verifyToken, middleware.verifyReportID, endware.Report.getReport);
 
-app.patch('/:version/:token/report/:reportID', middleware.verifyToken, middleware.verifyReportID, endware.updateReport);
+app.patch('/:version/:token/report/:reportID', middleware.verifyToken, middleware.verifyReportID, endware.Report.updateReport);
 
-app.delete('/:version/:token/report/:reportID', middleware.verifyToken, middleware.verifyReportID, endware.deleteReport);
+app.delete('/:version/:token/report/:reportID', middleware.verifyToken, middleware.verifyReportID, endware.Report.deleteReport);
 
-app.put('/:version/:token/report/:reportID/file', upload.single("data"), middleware.verifyToken, middleware.verifyReportID, endware.uploadFile);
+app.put('/:version/:token/report/:reportID/file', upload.single("data"), middleware.verifyToken, middleware.verifyReportID, endware.Report.File.uploadFile);
 
-app.get('/:version/:token/report/:reportID/file', upload.single("data"), middleware.verifyToken, middleware.verifyReportID, endware.getFileIDs);
+app.get('/:version/:token/report/:reportID/file', upload.single("data"), middleware.verifyToken, middleware.verifyReportID, endware.Report.File.getFileIDs);
 
-app.put('/:version/:token/report/:reportID/file/:fileID', upload.single("data"), middleware.verifyToken, middleware.verifyReportID, endware.uploadFile);
+app.put('/:version/:token/report/:reportID/file/:fileID', upload.single("data"), middleware.verifyToken, middleware.verifyReportID, endware.Report.File.uploadFile);
 
-app.get('/:version/:token/report/:reportID/file/:fileID', middleware.verifyToken, middleware.verifyReportID, middleware.verifyReportFileID, endware.getFile);
+app.get('/:version/:token/report/:reportID/file/:fileID', middleware.verifyToken, middleware.verifyReportID, middleware.verifyReportFileID, endware.Report.File.getFile);
 
-app.delete('/:version/:token/report/:reportID/file/:fileID', middleware.verifyToken, middleware.verifyReportID, endware.deleteFile);
+app.delete('/:version/:token/report/:reportID/file/:fileID', middleware.verifyToken, middleware.verifyReportID, endware.Report.File.deleteFile);
 
-app.get('/:version/:token/report/:reportID/file/:fileID/meta', middleware.verifyToken, middleware.verifyReportID, middleware.verifyReportFileID, endware.getFileMeta);
+app.get('/:version/:token/report/:reportID/file/:fileID/meta', middleware.verifyToken, middleware.verifyReportID, middleware.verifyReportFileID, endware.Report.File.getFileMeta);
+/*
+app.post('/:version/:token/archive', middleware.verifyToken, endware.getArchiveIDs);
 
+app.put('/:version/:token/archive', middleware.verifyToken, endware.archiveReport);
+
+app.put('/:version/:token/archive/:archiveID', middleware.verifyToken, endware.archiveReport);
+
+app.get('/:version/:token/archive/:archiveID', middleware.verifyToken, middleware.verifyArchiveID, endware.getArchive);
+
+app.delete('/:version/:token/archive/:archiveID', middleware.verifyToken, middleware.verifyArchiveID, endware.deleteArchive);
+
+app.post('/:version/:token/archive/:archiveID', middleware.verifyToken, middleware.verifyArchiveID, endware.unarchiveReport);
+*/
 //-----------------------------------------------------------//
 //---------------------| START SERVER |----------------------//
 //-----------------------------------------------------------//

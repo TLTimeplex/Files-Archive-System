@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import IDB_Report from '../types/IDB_report';
+import IDB_Report from '../../types/IDB_report';
 import fs from 'fs';
-import db from '../db';
-import { defaultRestrictions } from '../types/restrictions';
+import db from '../../db';
+import { defaultRestrictions } from '../../types/restrictions';
 
 export const uploadReport = (req: Request, res: Response) => {
   if (!req.params.userID) return res.status(500).send();

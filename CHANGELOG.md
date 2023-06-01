@@ -1,6 +1,9 @@
+### --- v0.3.4 --- 01.06.23, 15.40 UTC+2 ---
+* API: Changed: Ordered endware in separat folders 
+
 ### --- v0.3.3 --- 01.06.23, 12.55 UTC+2 ---
 * CLIENT: Fix: Preview gets now only once drawn on fist load instead of twice
-* API: Change: Deleting a file now doesn't check anymore if the file should exist, instead it checks if the file somehow exists and deletes it
+* API: Changed: Deleting a file now doesn't check anymore if the file should exist, instead it checks if the file somehow exists and deletes it
 
 ### --- v0.3.2 --- 01.06.23, 12.30 UTC+2 ---
 * CLIENT: Fix: The preview of Files should now update correctly without displaying ghost files

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import db from '../db';
-import ReportFilter from '../types/ReportFilter';
+import db from '../../db';
+import ReportFilter from '../../types/ReportFilter';
 
 export const getReportIDs = (req: Request, res: Response) => {
   const reportFilterRaw = req.body.filter;

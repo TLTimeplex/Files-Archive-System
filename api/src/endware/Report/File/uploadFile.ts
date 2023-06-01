@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import fs from 'fs';
-import db from '../db';
-import IDB_Report from '../types/IDB_report';
-import { API_FileMeta } from '../types/API_File';
+import db from '../../../db';
+import IDB_Report from '../../../types/IDB_report';
+import { API_FileMeta } from '../../../types/API_File';
 
 export const uploadFile = (req: Request, res: Response) => {
   if (!req.params.userID) return res.status(500).send();

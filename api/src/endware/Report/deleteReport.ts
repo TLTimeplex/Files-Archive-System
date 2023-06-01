@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import fs from 'fs';
-import db from '../db';
-import { report } from '../db/interfaces';
+import db from '../../db';
+import { report } from '../../db/interfaces';
 
 export const deleteReport = (req: Request, res: Response) => {
   if (!req.params.reportID) return res.status(500).send();

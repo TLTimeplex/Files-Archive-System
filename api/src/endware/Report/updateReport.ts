@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
-import IDB_Report from '../types/IDB_report';
+import IDB_Report from '../../types/IDB_report';
 import fs from 'fs';
-import db from '../db';
-import { report } from '../db/interfaces';
-import { toRestrictions } from '../types/restrictions';
+import db from '../../db';
+import { report } from '../../db/interfaces';
+import { toRestrictions } from '../../types/restrictions';
 
 export const updateReport = (req: Request, res: Response) => {
   if (!req.params.userID) return res.status(500).send();

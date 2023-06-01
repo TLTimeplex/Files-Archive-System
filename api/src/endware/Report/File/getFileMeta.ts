@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 import fs from 'fs';
-import db from '../db';
-import { report } from '../db/interfaces';
-import { toRestrictions } from '../types/restrictions';
+import db from '../../../db';
+import { report } from '../../../db/interfaces';
+import { toRestrictions } from '../../../types/restrictions';
 import path from 'path';
-import { API_FileMeta } from '../types/API_File';
+import { API_FileMeta } from '../../../types/API_File';
 
 export const getFileMeta = (req: Request, res: Response) => {
   if (!req.params.reportID) return res.status(500).send();
