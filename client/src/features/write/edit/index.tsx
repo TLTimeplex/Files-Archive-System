@@ -347,9 +347,7 @@ export const Editor = () => {
     await Promise.all(promises);
 
     AddAlert("Report saved and uploaded!", "success");
-    setReport({ ...shadowReport, uploaded: true });
     await saveReport({ ...shadowReport, uploaded: true });
-    await drawPreview();
   }
 
   const addFiles = async () => {
@@ -363,12 +361,10 @@ export const Editor = () => {
       if (!Report.fileIDs) Report.fileIDs = [];
       Report.fileIDs.push(result);
     }
-
-    drawPreview();
     saveReport();
   }
 
-  const drawPreview = async () => { //TODO: If files are missing try to load them from server
+  const drawPreview = async () => {
     const uploadedFilesPreview = document.getElementById("uploaded-files-preview") as HTMLDivElement;
 
     uploadedFilesPreview.innerHTML = "";
@@ -399,7 +395,6 @@ export const Editor = () => {
     if (size === remainingFileIDs.length) return;
     FilesDB.deleteFile(fileID).catch(error => { console.error(error); });
     await saveReport({ ...Report, fileIDs: remainingFileIDs });
-    drawPreview();
   }
 
   const createShadowReport = (overwrite?: IDB_Report): IDB_Report => {
@@ -414,6 +409,7 @@ export const Editor = () => {
     return newReport;
   }
 
+  drawPreview();
 
   return (
     <Form id="new-form" onSubmit={(event) => event.preventDefault()}>
