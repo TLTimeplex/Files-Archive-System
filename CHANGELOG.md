@@ -1,3 +1,7 @@
+### --- v0.3.6 --- 01.06.23, 16.48 UTC+2 ---
+* API: Added: New interface for Archive[d reports]
+* API: Changed: DB autoInit is now also async and will no longer throw an error on first start
+
 ### --- v0.3.5 --- 01.06.23, 16.15 UTC+2 ---
 * API: Added: API checks now if the version of the DB is older than the current version and "updates" it if necessary (only creating missing tables not altering existing ones)
 * API: Added: New table for archived reports (Copy of reports)

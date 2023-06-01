@@ -11,50 +11,71 @@ const pool = mysql.createPool({
   connectionLimit: 100,
 });
 
-function autoInit(): boolean {
-  pool.getConnection((err, connection) => {
-    //Check if table info exists, if not create scheme
-    connection.execute(`SHOW TABLES LIKE 'info';`, (err: any, results: mysql.RowDataPacket[]) => {
-      if (err) {
-        console.error(err);
-      }
+async function autoInit(): Promise<void> {
+  return new Promise((resolve, reject) => {
+    pool.getConnection((err, connection) => {
+      //Check if table info exists, if not create scheme
+      connection.query(`SHOW TABLES LIKE 'info';`, (err: any, results: mysql.RowDataPacket[]) => {
+        if (err) {
 
-      if (results.length === 0) {
-        console.log('Creating scheme...');
-        createScheme(pool);
-        console.log('Scheme created');
-      }
+          console.error(err);
+          reject(err);
+          return;
+        }
+
+        const checkingScheme: Promise<boolean> = new Promise((resolve, reject) => {
+          if (results.length === 0) {
+            console.log('Creating scheme...');
+            createScheme(pool).then(() => {
+              console.log('Scheme created');
+              resolve(true);
+              console.log({ currentVersion: DB_VERSION.toString() })
+            });
+          }
+          else {
+            resolve(false);
+          }
+        });
+
+        checkingScheme.then((result) => {
+          if (result) {
+            connection.release();
+            resolve();
+            return;
+          }
+          //Get version from info table
+          connection.query(`SELECT p_value FROM info WHERE p_key = 'version';`, (err: any, results: any[]) => {
+            if (err) {
+              console.error(err);
+              reject(err);
+              return;
+            }
+
+            if (results.length === 0) {
+              console.log('No version found, creating version entry...');
+              createScheme(pool);
+              console.log('Version entry created');
+              return;
+            }
+
+            const version = new Version(results[0].p_value);
+
+            if (Version.greaterThan(DB_VERSION, version)) {
+              console.log({ oldVersion: results[0].p_value });
+              console.log('Updating database...');
+              // TODO: Update Scheme script
+              createScheme(pool);
+              console.log('Database updated');
+            }
+
+            console.log({ currentVersion: DB_VERSION.toString() });
+            connection.release();
+            resolve();
+          });
+        });
+      });
     });
-
-    //Get version from info table
-    connection.execute(`SELECT p_value FROM info WHERE p_key = 'version';`, (err: any, results: any[]) => {
-      if (err) {
-        console.error(err);
-      }
-
-      if (results.length === 0) {
-        console.log('No version found, creating version entry...');
-        createScheme(pool);
-        console.log('Version entry created');
-        return;
-      }
-
-      const version = new Version(results[0].p_value);
-
-      if (Version.greaterThan(DB_VERSION, version)) {
-        console.log('Updating database...');
-        // TODO: Update Scheme script
-        createScheme(pool);
-        console.log('Database updated');
-      }
-
-      console.log(results);
-    });
-
-    connection.release();
-
   });
-  return true;
 }
 
 export default { pool, autoInit };
