@@ -1,3 +1,6 @@
+### --- v0.3.7 --- 05.06.23, 12.34 UTC+2 ---
+* API: Added: Reports can now be archived
+
 ### --- v0.3.6 --- 01.06.23, 16.48 UTC+2 ---
 * API: Added: New interface for Archive[d reports]
 * API: Changed: DB autoInit is now also async and will no longer throw an error on first start

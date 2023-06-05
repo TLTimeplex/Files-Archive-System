@@ -81,18 +81,19 @@ app.get('/:version/:token/report/:reportID/file/:fileID', middleware.verifyToken
 app.delete('/:version/:token/report/:reportID/file/:fileID', middleware.verifyToken, middleware.verifyReportID, endware.Report.File.deleteFile);
 
 app.get('/:version/:token/report/:reportID/file/:fileID/meta', middleware.verifyToken, middleware.verifyReportID, middleware.verifyReportFileID, endware.Report.File.getFileMeta);
+
+app.put('/:version/:token/archive', middleware.verifyToken, endware.Archive.archiveReport);
+
+app.put('/:version/:token/archive/:reportID', middleware.verifyToken, endware.Archive.archiveReport);
+
 /*
-app.post('/:version/:token/archive', middleware.verifyToken, endware.getArchiveIDs);
+app.post('/:version/:token/archive', middleware.verifyToken, endware.Archive.getArchiveIDs);
 
-app.put('/:version/:token/archive', middleware.verifyToken, endware.archiveReport);
+app.get('/:version/:token/archive/:archiveID', middleware.verifyToken, middleware.verifyArchiveID, endware.Archive.getArchive);
 
-app.put('/:version/:token/archive/:archiveID', middleware.verifyToken, endware.archiveReport);
+app.delete('/:version/:token/archive/:archiveID', middleware.verifyToken, middleware.verifyArchiveID, endware.Archive.deleteArchive);
 
-app.get('/:version/:token/archive/:archiveID', middleware.verifyToken, middleware.verifyArchiveID, endware.getArchive);
-
-app.delete('/:version/:token/archive/:archiveID', middleware.verifyToken, middleware.verifyArchiveID, endware.deleteArchive);
-
-app.post('/:version/:token/archive/:archiveID', middleware.verifyToken, middleware.verifyArchiveID, endware.unarchiveReport);
+app.post('/:version/:token/archive/:archiveID', middleware.verifyToken, middleware.verifyArchiveID, endware.Archive.unarchiveReport);
 */
 //-----------------------------------------------------------//
 //---------------------| START SERVER |----------------------//
