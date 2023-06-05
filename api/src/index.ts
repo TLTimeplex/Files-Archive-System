@@ -86,6 +86,8 @@ app.put('/:version/:token/archive', middleware.verifyToken, endware.Archive.arch
 
 app.put('/:version/:token/archive/:reportID', middleware.verifyToken, endware.Archive.archiveReport);
 
+app.post('/:version/:token/archive/:archiveID', middleware.verifyToken, middleware.verifyArchiveID, endware.Archive.unarchiveReport);
+
 /*
 app.post('/:version/:token/archive', middleware.verifyToken, endware.Archive.getArchiveIDs);
 
@@ -93,7 +95,6 @@ app.get('/:version/:token/archive/:archiveID', middleware.verifyToken, middlewar
 
 app.delete('/:version/:token/archive/:archiveID', middleware.verifyToken, middleware.verifyArchiveID, endware.Archive.deleteArchive);
 
-app.post('/:version/:token/archive/:archiveID', middleware.verifyToken, middleware.verifyArchiveID, endware.Archive.unarchiveReport);
 */
 //-----------------------------------------------------------//
 //---------------------| START SERVER |----------------------//
