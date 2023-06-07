@@ -113,29 +113,6 @@ export async function createScheme(db: Pool): Promise<void[]> {
       }));
 
       promises.push(new Promise((resolve, reject) => {
-        connection.query(`
-    CREATE TABLE IF NOT EXISTS archive (
-      id VARCHAR(36) NOT NULL,
-      title VARCHAR(255) NOT NULL,
-      description TEXT,
-      author_id INT NOT NULL,
-      date_created DATETIME NOT NULL,
-      date_modified DATETIME NOT NULL,
-      restrictions TEXT,
-      PRIMARY KEY (id),
-      FOREIGN KEY (author_id) REFERENCES users(id)
-    );
-    `, (err, results, fields) => {
-          if (err) {
-            console.error(err);
-            reject(err);
-          }
-          resolve();
-        }
-        );
-      }));
-
-      promises.push(new Promise((resolve, reject) => {
         connection.query(`    
     CREATE TABLE IF NOT EXISTS info (
       p_key VARCHAR(255) NOT NULL,

@@ -1,3 +1,10 @@
+### --- v0.4.0 --- 07.06.23, 16.52 UTC+2 ---
+* API: Removed: Removed Achive Table
+* API: Removed: Archive middleware check
+* API: Changed: Reports can now be un/archived via restrictions
+* API: Changed: Restrictions have now a new field "archiv"
+* API: Added: Checks if a report is archived or not in get and update routes
+
 ### --- v0.3.8 --- 05.06.23, 12.42 UTC+2 ---
 * API: Added: Archived Reports can now be "unachived"
 * API: Added: Middleware check for archived reports if they exist

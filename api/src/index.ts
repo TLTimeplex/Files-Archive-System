@@ -82,20 +82,10 @@ app.delete('/:version/:token/report/:reportID/file/:fileID', middleware.verifyTo
 
 app.get('/:version/:token/report/:reportID/file/:fileID/meta', middleware.verifyToken, middleware.verifyReportID, middleware.verifyReportFileID, endware.Report.File.getFileMeta);
 
-app.put('/:version/:token/archive', middleware.verifyToken, endware.Archive.archiveReport);
+app.get('/:version/:token/report/:reportID/archive', middleware.verifyToken, middleware.verifyReportID, endware.Report.Archive.archiveReport);
 
-app.put('/:version/:token/archive/:reportID', middleware.verifyToken, endware.Archive.archiveReport);
+app.get('/:version/:token/report/:reportID/unarchive', middleware.verifyToken, middleware.verifyReportID, endware.Report.Archive.unarchiveReport);
 
-app.post('/:version/:token/archive/:archiveID', middleware.verifyToken, middleware.verifyArchiveID, endware.Archive.unarchiveReport);
-
-/*
-app.post('/:version/:token/archive', middleware.verifyToken, endware.Archive.getArchiveIDs);
-
-app.get('/:version/:token/archive/:archiveID', middleware.verifyToken, middleware.verifyArchiveID, endware.Archive.getArchive);
-
-app.delete('/:version/:token/archive/:archiveID', middleware.verifyToken, middleware.verifyArchiveID, endware.Archive.deleteArchive);
-
-*/
 //-----------------------------------------------------------//
 //---------------------| START SERVER |----------------------//
 //-----------------------------------------------------------//

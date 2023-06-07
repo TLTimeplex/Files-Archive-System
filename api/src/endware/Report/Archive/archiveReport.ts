@@ -1,13 +1,14 @@
 import { Request, Response } from 'express';
 import fs from 'fs';
-import db from '../../db';
-import { report } from '../../db/interfaces';
-import { defaultRestrictions } from '../../types/restrictions';
+import db from '../../../db';
+import { report } from '../../../db/interfaces';
+import { toRestrictions } from '../../../types/restrictions';
 
 export const archiveReport = (req: Request, res: Response) => {
   if (!req.params.userID) return res.status(500).send();
 
   const reportID = req.params.reportID || req.body.reportID;
+  const userID = parseInt(req.params.userID);
 
   // Check if any required fields are missing
   if (!reportID) {
@@ -35,22 +36,20 @@ export const archiveReport = (req: Request, res: Response) => {
         return res.status(200).send({ success: false, message: "Report is broken" });
       }
       // Check if the user is the author of the report
-      if (report.author_id !== parseInt(req.params.userID) /** OR NOT ADMIN */) {
+      if (report.author_id !== userID /** OR NOT ADMIN */) {
         return res.status(200).send({ success: false, message: "You are not the author of this report" });
       }
-      // Check if the report is already archived
-      connection.query("SELECT * FROM archive WHERE id = ?", [reportID], (err, result: any[]) => {
+      let restrictions = toRestrictions(report.restrictions);
+      if (restrictions.archive) {
+        return res.status(200).send({ success: false, message: "Report is already archived" });
+      }
+      restrictions.archive = true;
+      restrictions.private = false;
+      report.restrictions = JSON.stringify(restrictions);
+      // Update the report entry
+      connection.query("UPDATE report SET restrictions = ? WHERE id = ?", [report.restrictions, report.id], (err, result) => {
         if (err) return res.status(500).send({ success: false, message: "Internal server error" });
-        if (result.length !== 0) return res.status(200).send({ success: false, message: "Report is already archived" });
-        // Archive the report
-        connection.query("INSERT INTO archive (id, title, description, author_id, date_created, date_modified, restrictions) VALUES (?, ?, ?, ?, ?, ?, ?)", [report.id, report.title, report.description, report.author_id, new Date(report.date_created), new Date(report.date_modified), report.restrictions || JSON.stringify(defaultRestrictions)], (err, result) => {
-          if (err) return res.status(500).send({ success: false, message: "Internal server error" });
-          // Delete the report
-          connection.query("DELETE FROM report WHERE id = ?", [reportID], (err, result) => {
-            if (err) return res.status(500).send({ success: false, message: "Internal server error" });
-            return res.status(200).send({ success: true, message: "Report archived successfully" });
-          });
-        });
+        return res.status(200).send({ success: true, message: "Report archived successfully" });
       });
     });
   });

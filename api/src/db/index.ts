@@ -2,7 +2,7 @@ import mysql from 'mysql2';
 import { createScheme } from './create';
 import Version from '../version';
 
-export const DB_VERSION: Version = new Version('1.1.0');
+export const DB_VERSION: Version = new Version('1.2.0');
 
 const pool = mysql.createPool({
   host: 'localhost',

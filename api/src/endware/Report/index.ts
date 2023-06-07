@@ -4,6 +4,7 @@ import getReportIDs from "./getReports";
 import updateReport from "./updateReport";
 import uploadReport from "./uploadReport";
 import * as File from "./File";
+import * as Archive from "./Archive";
 
 export {
   deleteReport,
@@ -11,5 +12,6 @@ export {
   getReportIDs,
   updateReport,
   uploadReport,
-  File
+  File,
+  Archive
 };

@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import fs from 'fs';
 import db from '../../db';
 import { report } from '../../db/interfaces';
+import { toRestrictions } from '../../types/restrictions';
 
 export const deleteReport = (req: Request, res: Response) => {
   if (!req.params.reportID) return res.status(500).send();
@@ -14,10 +15,12 @@ export const deleteReport = (req: Request, res: Response) => {
       (err, results: any[]) => {
         if (err) throw err;
         connection.release();
-
         if (results.length !== 1) return res.status(200).send({ success: false, message: "Report does not exist" });
 
         const reportEntry = results[0] as report;
+
+        const restrictions = toRestrictions(reportEntry.restrictions);
+        if (restrictions.archive /* And not admin */) return res.status(200).send({ success: false, message: "Report is archived" });
 
         // Check if the real deal exists
         if (!fs.existsSync(`./reports/${reportID}`)) {
