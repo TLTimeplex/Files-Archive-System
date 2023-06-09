@@ -1,9 +1,12 @@
 import { Request, Response } from 'express';
 import db from '../../db';
-import ReportFilter from '../../types/ReportFilter';
+import ReportFilter, { ReportFieldSelect } from '../../types/ReportFilter';
 
 export const getReportIDs = (req: Request, res: Response) => {
   const reportFilterRaw = req.body.filter;
+  const reportFieldSelectRaw = req.body.select;
+
+  const userID = parseInt(req.params.userID);
 
   if (!reportFilterRaw)
     return res.status(200).send({ success: false, message: "No filters given!" });
@@ -19,11 +22,25 @@ export const getReportIDs = (req: Request, res: Response) => {
     archived: reportFilterRaw.archived
   };
 
-  console.log(reportFilter);
+  const reportFieldSelect: ReportFieldSelect =
+    reportFieldSelectRaw ?
+      {
+        id: true,
+        title: reportFieldSelectRaw.title,
+        description: reportFieldSelectRaw.description,
+        author_id: reportFieldSelectRaw.author_id,
+        date_created: reportFieldSelectRaw.date_created,
+        date_modified: reportFieldSelectRaw.date_modified,
+        archived: reportFieldSelectRaw.archived,
+        access: reportFieldSelectRaw.access
+      } :
+      {
+        id: true
+      };
 
   let queryParameter: any[] = [];
 
-  let query = "SELECT `id` FROM `fas_db`.`report` WHERE ";
+  let query = "SELECT * FROM `fas_db`.`report` WHERE ";
 
   if (reportFilter.author_id !== undefined) {
     query += "`author_id` IN ( ? )";
@@ -196,7 +213,7 @@ export const getReportIDs = (req: Request, res: Response) => {
   }
 
   if (reportFilter.archived !== undefined) {
-    if(reportFilter.archived !== true && reportFilter.archived !== false) return res.status(200).send({ success: false, message: "Invalid archived: " + reportFilter.archived });
+    if (reportFilter.archived !== true && reportFilter.archived !== false) return res.status(200).send({ success: false, message: "Invalid archived: " + reportFilter.archived });
     if (reportFilter.author_id || reportFilter.date_created || reportFilter.dateRange_created || reportFilter.date_updated || reportFilter.dateRange_updated || reportFilter.tags || reportFilter.title) query += " AND ";
     query += 'JSON_EXTRACT(restrictions, "$.archive") = ?';
     queryParameter.push(reportFilter.archived);
@@ -211,12 +228,48 @@ export const getReportIDs = (req: Request, res: Response) => {
     connection.query(query, queryParameter, (err, results: any[]) => {
       if (err) throw err;
 
-      let idList: string[] = [];
-
+      let output: any[] = [];
       results.forEach((result, _) => {
-        idList.push(result.id);
+        let report: any = {};
+        if (reportFieldSelect.id) report.id = result.id;
+        if (reportFieldSelect.title) report.title = result.title;
+        if (reportFieldSelect.description) report.description = result.description;
+        if (reportFieldSelect.author_id) report.author_id = result.author_id;
+        if (reportFieldSelect.date_created) report.date_created = result.date_created;
+        if (reportFieldSelect.date_modified) report.date_modified = result.date_modified;
+        if (reportFieldSelect.archived || reportFieldSelect.access) {
+          const restrictions = JSON.parse(result.restrictions);
+          if (reportFieldSelect.archived) report.archived = restrictions.archive;
+          if (reportFieldSelect.access) {
+            if (result.author_id === userID) {
+              report.access = "EDIT";
+            }
+            else if (false) { //TODO: If admin 
+              report.access = "ADMIN";
+            }
+            else {
+              if (restrictions.private) {
+                if (restrictions.whitelist.includes(userID)) {
+                  if (restrictions.archive) {
+                    report.access = "VIEW";
+                  } else {
+                    report.access = "EDIT";
+                  }
+                }
+                else {
+                  report.access = "NONE";
+                }
+              }
+              else {
+                report.access = "VIEW";
+              }
+            }
+          }
+        }
+
+        output.push(report);
       });
-      return res.status(200).send({ success: true, data: idList });
+      return res.status(200).send({ success: true, data: output });
     });
 
   });

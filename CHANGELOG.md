@@ -1,3 +1,6 @@
+### --- v0.4.3 --- 09.06.23, 13.55 UTC+2 ---
+* API: Added: A new option to tell the API to return partial or full report meta data
+
 ### --- v0.4.2 --- 09.06.23, 11.55 UTC+2 ---
 * API: Fixed: Get Reports now checks if a field is set instead of checking if it is not false
 
@@ -9,11 +12,11 @@
 * API: Removed: Removed Achieve Table
 * API: Removed: Archive middleware check
 * API: Changed: Reports can now be un/archived via restrictions
-* API: Changed: Restrictions have now a new field "archiv"
+* API: Changed: Restrictions have now a new field "archive"
 * API: Added: Checks if a report is archived or not in get and update routes
 
 ### --- v0.3.8 --- 05.06.23, 12.42 UTC+2 ---
-* API: Added: Archived Reports can now be "unachived"
+* API: Added: Archived Reports can now be "unarchived"
 * API: Added: Middleware check for archived reports if they exist
 
 ### --- v0.3.7 --- 05.06.23, 12.34 UTC+2 ---

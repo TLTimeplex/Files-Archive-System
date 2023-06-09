@@ -23,5 +23,11 @@ export type DateSelect = {
   second?: number;
 };
 
+export type ReportFields = "id" | "title" | "description" | "author_id" | "date_created" | "date_modified" | "archived" | "access";
+
+export type ReportFieldSelect = {
+  [key in ReportFields]?: boolean;
+};
+
 
 export default ReportFilter;
