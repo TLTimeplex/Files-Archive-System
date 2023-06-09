@@ -12,6 +12,7 @@ export const getReportIDs = (req: Request, res: Response) => {
     return res.status(200).send({ success: false, message: "No filters given!" });
 
   const reportFilter: ReportFilter = {
+    id: reportFilterRaw.id,
     author_id: reportFilterRaw.author_id,
     date_created: reportFilterRaw.date_created,
     dateRange_created: reportFilterRaw.dateRange_created,
@@ -218,6 +219,13 @@ export const getReportIDs = (req: Request, res: Response) => {
     query += 'JSON_EXTRACT(restrictions, "$.archive") = ?';
     queryParameter.push(reportFilter.archived);
   }
+
+  if (reportFilter.id !== undefined) {
+    if (reportFilter.author_id || reportFilter.date_created || reportFilter.dateRange_created || reportFilter.date_updated || reportFilter.dateRange_updated || reportFilter.tags || reportFilter.title || reportFilter.archived) query += " AND ";
+    query += "`id` = ?";
+    queryParameter.push(reportFilter.id);
+  }
+
 
   if (query.endsWith("WHERE ")) query = query.slice(0, -6);
   query += " LIMIT 100;"

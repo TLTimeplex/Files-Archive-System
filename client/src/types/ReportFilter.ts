@@ -1,4 +1,5 @@
 export type ReportFilter = {
+  id?: string;
   author_id?: number[];
   date_created?: DateSelect;
   dateRange_created?: DateRange;

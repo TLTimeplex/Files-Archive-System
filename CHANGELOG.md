@@ -1,3 +1,6 @@
+### --- v0.4.4 --- 09.06.23, 15.05 UTC+2 ---
+* API: Added: Added filter for getting reports over their id to get only partial or full report meta data
+
 ### --- v0.4.3 --- 09.06.23, 13.55 UTC+2 ---
 * API: Added: A new option to tell the API to return partial or full report meta data
 
