@@ -1,4 +1,4 @@
-### --- v0.4.1 --- 07.06.23, 16.52 UTC+2 ---
+### --- v0.4.1 --- 09.06.23, 11.15 UTC+2 ---
 * ALL: Changed: Report filers now contains a new field "archived"
 * API: Added: New report filter for archived reports in getReports
 
