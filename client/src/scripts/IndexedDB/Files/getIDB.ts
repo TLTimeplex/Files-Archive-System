@@ -10,8 +10,6 @@ export const GetIDB = () : IDBOpenDBRequest => {
         const db = filesDB.result;
         const objectStore = db.createObjectStore("files", { keyPath: "id" });
         objectStore.createIndex("filename", "data.name", { unique: false });
-        objectStore.createIndex("uploaded", "meta.uploaded", { unique: false });
-        objectStore.createIndex("uploadedAt", "meta.uploadedAt", { unique: false });
         objectStore.createIndex("linkedReport", "meta.linkedReport", { unique: false });
     };
 

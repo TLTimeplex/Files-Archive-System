@@ -58,3 +58,22 @@ h1 {
 .yellow-border {
   border-color: var(--bs-yellow) !important;
 }
+
+.horizontalDivider{
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 0.6em 1.35em;
+}
+
+.horizontalDividerLine {
+  flex-grow: 1;
+  opacity: 25%;
+  border-top: 1px solid #000;
+}
+
+.horizontalDividerText {
+  margin: 0 0.5em;
+  border: none;
+  outline: none;
+}

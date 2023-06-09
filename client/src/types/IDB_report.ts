@@ -4,7 +4,7 @@ export interface IDB_Report {
   title?: string;
   report?: string;
 
-  createdAt: Date;
+  createdAt?: Date;
   updatedAt: Date;
 
   authorID?: number;

@@ -1,10 +1,17 @@
+### --- b0.5.0b --- 09.06.23, 20.50 UTC+2 ---
+### THIS IS A BROKEN BUILD, DO NOT USE IT
+* Client: Added: New component cardBox for the overview 
+* Client: Added: New component horizontalDivider for the overview
+* Client: Changed: Overview does no longer sync Reports by itself, instead it is now only checking the state of the reports (uploaded, need update, need sync etc.)
+* Client: Removed: Two unused indexes for the IDB store for Files
+* Client: Changed: Date_Created is now an optional field for reports
+
 ### --- b0.5.0a --- 09.06.23, 15.05 UTC+2 ---
 ### THIS IS A BROKEN BUILD, DO NOT USE IT
 * Client: IndexDB for reports is now split into two stores, local and remote
 * Client: Removed: Uploaded fields for reports and files
 * Client: Added: Type for stores selection (local, remote, all)
 * Client: Changed: Report IDB functions now use the new store types
-
 * Client: Broken: Overview and Edit are broken, because of the new IDB structure (Errors are commented out)
 
 ### --- v0.4.4 --- 09.06.23, 15.05 UTC+2 ---

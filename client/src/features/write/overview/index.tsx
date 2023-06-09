@@ -1,16 +1,24 @@
 import { Button, Card } from "react-bootstrap";
-import FAS_File, { IDB_Report } from "../../../types/IDB_report";
+import IDB_Report from "../../../types/IDB_report";
 import { ReportDB } from "../../../scripts/IndexedDB";
 import { useState } from "react";
 import "./style.scss";
 import axios from "axios";
 import ReportFilter, { ReportFieldSelect } from "../../../types/ReportFilter";
 import AddAlert from "../../../scripts/addAlert";
+import CardBox from "./cardBox";
+import HorizontalDivider from "./horizontalDivider";
 
 // TODO: Add Search!
 // TODO: Add Synchronisation with server
 export const Overview = () => {
-  const [Reports, setReports] = useState<FAS_File[]>([]);
+  const [LocalReports, setLocalReports] = useState<IDB_Report[]>([]);
+  const [RemoteReports, setRemoteReports] = useState<IDB_Report[]>([]);
+  const [RemoteChangedReports, setRemoteChangedReports] = useState<IDB_Report[]>([]);
+
+  const [SyncReports, setSyncReports] = useState<IDB_Report[]>([]); //TODO:
+  const [MergeReports, setMergeReports] = useState<IDB_Report[]>([]); //TODO:
+
   const [init, setInit] = useState<boolean>(false);
 
   //TODO: REDO!
@@ -20,8 +28,9 @@ export const Overview = () => {
       archived: false,
     };
 
-    const select : ReportFieldSelect = {
+    const select: ReportFieldSelect = {
       id: true,
+      title: true,
       date_modified: true,
     }
 
@@ -32,48 +41,91 @@ export const Overview = () => {
       return;
     }
 
-    const reportIDs = res.data.data as any[]; //TODO: type
+    const _syncedReports = res.data.data as any[]; //TODO: type
 
-    console.log(await ReportDB.getAllReports("all"));
-    /*
-    let tasks: Promise<void>[] = [];
+    const _localReports = await ReportDB.getAllReports("local");
+    const _remoteReports = await ReportDB.getAllReports("remote");
 
-    reportIDs.forEach((reportID: string) => {
-      tasks.push(new Promise((resolve, reject) => {
-        axios.get(`/api/1/${localStorage.getItem("token") || sessionStorage.getItem("token")}/report/${reportID}`).then(result => {
-          if (!result.data.success) {
-            console.log(result.data);
-            AddAlert(result.data.message, "danger");
-            reject();
-          }
-          const remoteReport = result.data.report as IDB_Report;
-          remoteReport.uploaded = true;
-          ReportDB.getReport(remoteReport.id).then(localReport => {
-            if (!localReport) {
-              ReportDB.insertReport(remoteReport).then(() => resolve());
-              return;
-            }
-            if (!localReport.uploaded) {
-              ReportDB.updateReport(remoteReport).then(() => resolve());
-              return;
-            }
-            if (new Date(localReport.updatedAt) < new Date(remoteReport.updatedAt)) {
-              ReportDB.updateReport(remoteReport);
-            }
-            resolve();
-          }).catch(err => {
-            ReportDB.insertReport(remoteReport).then(() => resolve());
-          });
-        })
-      }));
+    console.log({ _syncedReports, _localReports, _remoteReports });
+
+    let localReports: IDB_Report[] = [];
+    let remoteReports: IDB_Report[] = [];
+    let remoteChangedReports: IDB_Report[] = [];
+    let syncReports: IDB_Report[] = [];
+
+    let mergeReports: IDB_Report[] = [];
+
+    //TODO: REDO! Reverse order
+
+    _localReports.forEach((localReport: IDB_Report) => {
+      const remoteReport = _remoteReports.find((remoteReport: IDB_Report) => remoteReport.id === localReport.id);
+
+      if (remoteReport !== undefined) {
+        if (new Date(localReport.updatedAt) < new Date(remoteReport.updatedAt)) {
+          ReportDB.deleteReport(localReport.id, "local");
+        } else {
+          remoteChangedReports.push(remoteReport);
+        }
+        return;
+      }
+
+      const syncedReport = _syncedReports.find((syncedReport: any) => syncedReport.id === localReport.id);
+      if (syncedReport !== undefined) {
+        if (new Date(localReport.updatedAt) < new Date(syncedReport.date_modified)) {
+          ReportDB.deleteReport(localReport.id, "local");
+        } else {
+          mergeReports.push(localReport);
+        }
+        return;
+      }
+
+      localReports.push(localReport);
     });
-    Promise.all(tasks).then(() => {
-      ReportDB.getAllReports().then(reports => {
-        setReports(reports)
-      })
+
+    _remoteReports.forEach((remoteReport: IDB_Report) => {
+      const localReport = _localReports.find((localReport: IDB_Report) => remoteReport.id === localReport.id);
+
+      if (localReport !== undefined) {
+        return;
+      }
+
+      const syncedReport = _syncedReports.find((syncedReport: any) => syncedReport.id === remoteReport.id);
+      if (syncedReport !== undefined) {
+        if (new Date(remoteReport.updatedAt) < new Date(syncedReport.date_modified)) {
+          syncReports.push(remoteReport);
+        } else {
+          mergeReports.push(remoteReport);
+        }
+        return;
+      }
+
+      remoteReports.push(remoteReport);
     });
-    */
+
+    _syncedReports.forEach((syncedReport: any) => {
+      const localReport = _localReports.find((localReport: IDB_Report) => syncedReport.id === localReport.id);
+      const remoteReport = _remoteReports.find((remoteReport: IDB_Report) => syncedReport.id === remoteReport.id);
+
+      if (localReport !== undefined || remoteReport !== undefined) {
+        return;
+      }
+
+      syncReports.push({
+        id: syncedReport.id,
+        title: syncedReport.title,
+        updatedAt: syncedReport.date_modified
+      });
+    });
+
+    console.log({ localReports, remoteReports, remoteChangedReports, syncReports, mergeReports });
+
+    setLocalReports(localReports);
+    setRemoteReports(remoteReports);
+    setRemoteChangedReports(remoteChangedReports);
+    setSyncReports(syncReports);
+    setMergeReports(mergeReports);
   };
+
 
   if (!init) {
     sync();
@@ -83,40 +135,42 @@ export const Overview = () => {
   return (
     <>
       <h1>Select Report to edit</h1>
-      <div className="file-grid">
-        {Reports.map((report: FAS_File) => {
-          // CLEAN UP
-          if (!report.title && !report.report && !report.fileIDs) {
-            //ReportDB.deleteReport(report.id);
-            return null;
-          }
-          //
-          if (!report.title) return null;
-          const lastUpdate = new Date(report.updatedAt);
-          const lastUpdateString = lastUpdate.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' });
-          return (
-            <Card key={report.id} className={false ? "green-border" : "yellow-border" /** TODO: Check if is uploaded */}> 
-              <Card.Header>
-                <Card.Title>{report.title}</Card.Title>
-              </Card.Header>
-              {/*<Card.Img variant="top" src="holder.js/100px180" />*/}
-              <Card.Body>
-                <Card.Text>
-                  {(report.report) ? report.report.substring(0, 100) + (report.report.length > 100 ? "..." : "") : ""}
-                </Card.Text>
-              </Card.Body>
-              <Card.Footer>
-                <Button variant="primary" href={`/report/edit/${report.id}`}>Edit</Button>
-                <div className="last-edited">{lastUpdateString}</div>
-              </Card.Footer>
-            </Card>
-          )
-        })}
-      </div>
+      {LocalReports.length !== 0 ?
+        <>
+          <HorizontalDivider title="Local" />
+          <CardBox reports={LocalReports} type="local" />
+        </>
+        : null}
+
+      {RemoteReports.length !== 0 ?
+        <>
+          <HorizontalDivider title="Remote" />
+          <CardBox reports={RemoteReports} type="remote" />
+        </>
+        : null}
+      {RemoteChangedReports.length !== 0 ?
+        <>
+          <HorizontalDivider title="Remote (Changed)" />
+          <CardBox reports={RemoteChangedReports} type="remoteChanged" />
+        </>
+        : null}
+      {SyncReports.length !== 0 ?
+        <>
+          <HorizontalDivider title="Remote (Need Sync)" />
+          <CardBox reports={SyncReports} type="sync" />
+        </>
+        : null}
+      {MergeReports.length !== 0 ?
+        <>
+          <HorizontalDivider title="Remote (Need Merge)" />
+          <CardBox reports={MergeReports} type="merge" />
+        </>
+        : null}
       <hr />
       <div className="AddButtonBox">
         <Button variant="secondary" href="/report/new" className="AddButton">New Report</Button>
       </div>
+
     </>
   );
 };
