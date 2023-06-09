@@ -4,7 +4,7 @@ import { ReportDB } from "../../../scripts/IndexedDB";
 import { useState } from "react";
 import "./style.scss";
 import axios from "axios";
-import ReportFilter from "../../../types/ReportFilter";
+import ReportFilter, { ReportFieldSelect } from "../../../types/ReportFilter";
 import AddAlert from "../../../scripts/addAlert";
 
 // TODO: Add Search!
@@ -17,17 +17,25 @@ export const Overview = () => {
   const sync = async () => {
     const filter: ReportFilter = {
       author_id: [1], //TODO: Get own ID
+      archived: false,
     };
 
-    const res = await axios.post(`/api/1/${localStorage.getItem("token") || sessionStorage.getItem("token")}/report`, { filter: filter });
+    const select : ReportFieldSelect = {
+      id: true,
+      date_modified: true,
+    }
+
+    const res = await axios.post(`/api/1/${localStorage.getItem("token") || sessionStorage.getItem("token")}/report`, { filter: filter, select: select });
     if (!res.data.success) {
       console.log(res.data);
       AddAlert(res.data.message, "danger");
       return;
     }
 
-    const reportIDs = res.data.data as string[];
+    const reportIDs = res.data.data as any[]; //TODO: type
 
+    console.log(await ReportDB.getAllReports("all"));
+    /*
     let tasks: Promise<void>[] = [];
 
     reportIDs.forEach((reportID: string) => {
@@ -59,12 +67,12 @@ export const Overview = () => {
         })
       }));
     });
-
     Promise.all(tasks).then(() => {
       ReportDB.getAllReports().then(reports => {
         setReports(reports)
       })
     });
+    */
   };
 
   if (!init) {
@@ -79,7 +87,7 @@ export const Overview = () => {
         {Reports.map((report: FAS_File) => {
           // CLEAN UP
           if (!report.title && !report.report && !report.fileIDs) {
-            ReportDB.deleteReport(report.id);
+            //ReportDB.deleteReport(report.id);
             return null;
           }
           //
@@ -87,7 +95,7 @@ export const Overview = () => {
           const lastUpdate = new Date(report.updatedAt);
           const lastUpdateString = lastUpdate.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' });
           return (
-            <Card key={report.id} className={report.uploaded ? "green-border" : "yellow-border"}>
+            <Card key={report.id} className={false ? "green-border" : "yellow-border" /** TODO: Check if is uploaded */}> 
               <Card.Header>
                 <Card.Title>{report.title}</Card.Title>
               </Card.Header>

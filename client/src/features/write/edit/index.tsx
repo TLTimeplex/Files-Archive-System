@@ -95,7 +95,7 @@ export const Editor = () => {
     });
     await Promise.all(awaitFiles);
   }
-    
+
   useEffect(() => {
     if (!Report || !init) return;
     drawPreview();
@@ -117,15 +117,17 @@ export const Editor = () => {
 
     // if not matches uuid v4 
     if (!ReportTitel_OR_ID.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/)) {
+      /* TODO:
       ReportsDB.findReport.by.Title(ReportTitel_OR_ID).then(report => {
         if (!report || report.length !== 1) {
           window.location.href = "/write/edit";
         }
         window.location.href = "/write/edit/" + report[0].id;
       });
+      */
       return (<></>);
     }
-
+    /* TODO:
     ReportsDB.getReport(ReportTitel_OR_ID).then(report => {
       if (!report) {
         window.location.href = "/write/edit";
@@ -135,6 +137,7 @@ export const Editor = () => {
     }).catch(error => {
       window.location.href = "/write/edit";
     });
+    */
     return (<></>);
   }
   //TODO:  REOD Online Sync
@@ -150,12 +153,14 @@ export const Editor = () => {
 
       setReport(newReport);
 
+      /* TODO:
       ReportsDB.updateReport(newReport).then(() => {
         resolve();
       }).catch((error) => {
         console.error(error);
         reject();
       });
+      */
 
     }), "Saved successfully!", "success", "Failed to save report!", "danger");
   }
@@ -169,15 +174,16 @@ export const Editor = () => {
           });
         });
 
-        if (Report.uploaded) {
-          axios.delete("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report/" + Report.id).then(result => {
+        /* TODO:
+        if (false  ) {
+          axios.delete("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report/" + report.id ).then(result => {
             if (!result.data.success) {
               AddAlert(result.data.message, "danger");
               reject();
               return;
             }
           });
-          ReportsDB.deleteReport(Report.id).then(() => {
+          ReportsDB.deleteReport(report.id).then(() => {
             resolve();
           }).catch(error => {
             console.error(error);
@@ -185,13 +191,16 @@ export const Editor = () => {
           });
           return;
         }
-
+        */
+        
+        /* TODO:
         ReportsDB.deleteReport(Report.id).then(() => {
           resolve();
         }).catch(error => {
           console.error(error);
           reject();
         });
+        */
       });
     }), "Deleted successfully!", "success", "Failed to delete report!", "danger").then(() => {
       window.location.href = "/report";
@@ -203,6 +212,7 @@ export const Editor = () => {
     const shadowReport = createShadowReport();
 
     // If report is not uploaded, create a new one
+    /* TODO:
     if (!Report.uploaded) {
       const result = await axios.put("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report", shadowReport);
       if (!result.data.success) {
@@ -218,6 +228,7 @@ export const Editor = () => {
         return;
       }
     }
+    */
 
     if (!Report.fileIDs)
       Report.fileIDs = [];
@@ -277,9 +288,7 @@ export const Editor = () => {
                     id: fileID,
                     data: file,
                     meta: {
-                      linkedReport: Report.id,
-                      uploaded: 1,
-                      uploadedAt: new Date(),
+                      linkedReport: Report.id //TODO: ?
                     }
                   }
 
@@ -315,9 +324,11 @@ export const Editor = () => {
             return;
           }
 
+          /* TODO:
           if (file.meta.uploaded !== 0) {
             AddAlert("Data discrepancy!", "warning");
           }
+          */
 
           var formData = new FormData();
           formData.append("id", file.id);
@@ -330,7 +341,7 @@ export const Editor = () => {
               reject();
               return;
             }
-            FilesDB.updateFileMeta(file.id, { ...file.meta, uploaded: 1 }).then(() => {
+            FilesDB.updateFileMeta(file.id, { ...file.meta, /** TODO: */ }).then(() => {
               resolve();
               return;
             });
@@ -375,7 +386,7 @@ export const Editor = () => {
     await Promise.all(promises).catch((err) => { console.log(err) });
 
     AddAlert("Report saved and uploaded!", "success");
-    await saveReport({ ...shadowReport, uploaded: true });
+    /* await saveReport({ ...shadowReport, uploaded: true }); TODO: */ 
   }
 
   const addFiles = async () => {
@@ -432,8 +443,8 @@ export const Editor = () => {
       </div>
       <div className='button-group'>
         <Button variant="primary" id="new-save" type='submit' onClick={() => saveReport()}>Save</Button>{' '}
-        <Button variant={Report?.uploaded ? "success" : "outline-success"} id="new-sync" type='submit' onClick={syncReport}>Sync</Button>{' '}
-        {Report?.uploaded ? <Button variant="warning" id="new-archive" type='submit'>Archive</Button> : <></>}{' '}
+        <Button variant={/** Report?.uploaded TODO: */ false ? "success" : "outline-success"} id="new-sync" type='submit' onClick={syncReport}>Sync</Button>{' '}
+        {/** Report?.uploaded TODO: */ false ? <Button variant="warning" id="new-archive" type='submit'>Archive</Button> : <></>}{' '}
         <Button variant="danger" id="new-delete" onClick={() => setShowDeleteModal(true)}>Delete</Button>
         <Button variant="secondary" href="/report" className="Button-Back">Back</Button>
       </div>

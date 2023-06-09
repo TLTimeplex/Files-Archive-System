@@ -8,8 +8,6 @@ export const CreateFile = async (file: File, ReportID: string): Promise<string> 
       id: id,
       data: file,
       meta: {
-        uploaded: 0,
-        uploadedAt: new Date(),
         linkedReport: ReportID
       }
     }).then(() => {

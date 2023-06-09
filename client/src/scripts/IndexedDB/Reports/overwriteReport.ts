@@ -1,49 +1,109 @@
 import GetIDB from "./getIDB";
 import IDB_Report from "../../../types/IDB_report";
+import IDB_DB_Select from "../../../types/IDB_DB_Select";
 
-export const OverwriteReport = async (report: IDB_Report): Promise<void> => {
+/**
+ * Overwrite a report in the database. Will throw an error if the report does not exist.
+ * @param report 
+ * @param type Database to overwrite report in (local or remote). Will overwrite in both if "all" is passed
+ * @returns 
+ */
+export const OverwriteReport = async (report: IDB_Report, type: IDB_DB_Select): Promise<void> => {
   return new Promise((resolve, reject) => {
     const DB = GetIDB();
 
     DB.onsuccess = () => {
       const db = DB.result;
-      const transaction = db.transaction("reports", "readwrite");
-      const objectStore = transaction.objectStore("reports");
 
-      const request = objectStore.get(report.id);
+      let promises: Promise<boolean>[] = [];
 
-      request.onsuccess = () => {
-        const readData = request.result;
+      if (type === "local" || type === "all") {
+        promises.push(new Promise((resolve, reject) => {
+          const transaction = db.transaction("local", "readwrite");
+          const objectStore = transaction.objectStore("local");
 
-        if(!readData) {
+          const request = objectStore.get(report.id);
+
+          request.onsuccess = () => {
+            const readData = request.result;
+
+            if (!readData) {
+              resolve(false);
+              return;
+            }
+
+            const updateRequest = objectStore.put(report);
+
+            updateRequest.onsuccess = () => {
+              resolve(true);
+            }
+
+            updateRequest.onerror = (e) => {
+              reject(e);
+            }
+          }
+
+          request.onerror = (e) => {
+            reject(e);
+          }
+
+          transaction.oncomplete = () => {
+            db.close();
+          }
+        }));
+      }
+
+      if (type === "remote" || type === "all") {
+        promises.push(new Promise((resolve, reject) => {
+          const transaction = db.transaction("remote", "readwrite");
+          const objectStore = transaction.objectStore("remote");
+
+          const request = objectStore.get(report.id);
+
+          request.onsuccess = () => {
+            const readData = request.result;
+
+            if (!readData) {
+              resolve(false);
+              return;
+            }
+
+            const updateRequest = objectStore.put(report);
+
+            updateRequest.onsuccess = () => {
+              resolve(true);
+            }
+
+            updateRequest.onerror = (e) => {
+              reject(e);
+            }
+          }
+
+          request.onerror = (e) => {
+            reject(e);
+          }
+
+          transaction.oncomplete = () => {
+            db.close();
+          }
+        }));
+      }
+
+      Promise.all(promises).then((success) => {
+        if (!success.includes(true))
           reject("No report found");
-          return;
-        }
-
-        const updateRequest = objectStore.put(report);
-
-        updateRequest.onsuccess = () => {
+        else
           resolve();
-        }
-
-        updateRequest.onerror = (e) => {
-          reject(e);
-        }
-      }
-
-      request.onerror = (e) => {
+      }).catch((e) => {
         reject(e);
-      }
+      });
 
-      transaction.oncomplete = () => {
-        db.close();
-      }
     };
 
     DB.onerror = (e) => {
       reject(e);
     }
-    
+
   });
 };
 

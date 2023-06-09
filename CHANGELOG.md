@@ -1,3 +1,12 @@
+### --- b0.5.0a --- 09.06.23, 15.05 UTC+2 ---
+### THIS IS A BROKEN BUILD, DO NOT USE IT
+* Client: IndexDB for reports is now split into two stores, local and remote
+* Client: Removed: Uploaded fields for reports and files
+* Client: Added: Type for stores selection (local, remote, all)
+* Client: Changed: Report IDB functions now use the new store types
+
+* Client: Broken: Overview and Edit are broken, because of the new IDB structure (Errors are commented out)
+
 ### --- v0.4.4 --- 09.06.23, 15.05 UTC+2 ---
 * API: Added: Added filter for getting reports over their id to get only partial or full report meta data
 

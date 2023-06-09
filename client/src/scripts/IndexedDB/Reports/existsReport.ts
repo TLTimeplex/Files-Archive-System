@@ -1,41 +1,35 @@
 import IDB_DB_Select from "../../../types/IDB_DB_Select";
-import IDB_Report from "../../../types/IDB_report";
-import getIDB from "./getIDB";
+import GetIDB from "./getIDB";
 
-/**
- * Get all reports from the database
- * @param type Database to get reports from. If "all", will get reports from both local and remote databases
- * @returns 
- */
-export const GetAllReports = async (type: IDB_DB_Select): Promise<IDB_Report[]> => {
+export const existsReport = async (id: string, select: IDB_DB_Select): Promise<IDB_DB_Select | undefined> => {
   return new Promise((resolve, reject) => {
-    const DB = getIDB();
+    const DB = GetIDB();
 
     DB.onsuccess = () => {
       const db = DB.result;
 
-      let promises: Promise<IDB_Report[]>[] = [];
+      let promises: Promise<IDB_DB_Select | null>[] = [];
 
-      if (type === "local" || type === "all") {
+      if (select === "local" || select === "all") {
         promises.push(new Promise((resolve, reject) => {
           const transaction = db.transaction("local", "readonly");
           const objectStore = transaction.objectStore("local");
 
-          const request = objectStore.getAll();
+          const request = objectStore.get(id);
 
           request.onsuccess = () => {
             const readData = request.result;
 
             if (!readData) {
-              resolve([]);
+              resolve(null);
               return;
             }
 
-            resolve(readData);
+            resolve("local");
           }
 
           request.onerror = (e) => {
-            reject(e);
+            resolve(null);
           }
 
           transaction.oncomplete = () => {
@@ -44,26 +38,26 @@ export const GetAllReports = async (type: IDB_DB_Select): Promise<IDB_Report[]> 
         }));
       }
 
-      if (type === "remote" || type === "all") {
+      if (select === "remote" || select === "all") {
         promises.push(new Promise((resolve, reject) => {
           const transaction = db.transaction("remote", "readonly");
           const objectStore = transaction.objectStore("remote");
 
-          const request = objectStore.getAll();
+          const request = objectStore.get(id);
 
           request.onsuccess = () => {
             const readData = request.result;
 
             if (!readData) {
-              resolve([]);
+              resolve(null);
               return;
             }
 
-            resolve(readData);
+            resolve("remote");
           }
 
           request.onerror = (e) => {
-            reject(e);
+            resolve(null);
           }
 
           transaction.oncomplete = () => {
@@ -73,22 +67,23 @@ export const GetAllReports = async (type: IDB_DB_Select): Promise<IDB_Report[]> 
       }
 
       Promise.all(promises).then((values) => {
-        let reports: IDB_Report[] = [];
-
-        values.forEach((value) => {
-          reports = reports.concat(value);
-        });
-
-        resolve(reports);
+        if (values.length === 0) resolve(undefined);
+        else {
+          if (values.includes("local") && values.includes("remote")) resolve("all");
+          else if (values.includes("local")) resolve("local");
+          else if (values.includes("remote")) resolve("remote");
+          else resolve(undefined);
+        }
       }).catch((e) => {
         reject(e);
       });
-    };
+    }
 
     DB.onerror = (e) => {
       reject(e);
     }
+
   });
 };
 
-export default GetAllReports;
+export default existsReport;

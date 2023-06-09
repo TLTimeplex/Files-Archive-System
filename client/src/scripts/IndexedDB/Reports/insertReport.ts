@@ -1,32 +1,77 @@
 import GetIDB from "./getIDB";
 import IDB_Report from "../../../types/IDB_report";
+import IDB_DB_Select from "../../../types/IDB_DB_Select";
 
-export const InsertReport = async (report: IDB_Report): Promise<void> => {
+/**
+ * Insert a NEW report into the database. Will not overwrite existing reports and will throw an error if a report with the same ID already exists.
+ * @param report 
+ * @param type Type of database to insert report into (local or remote). Will insert into both if "all" is passed
+ * @returns 
+ */
+export const InsertReport = async (report: IDB_Report, type: IDB_DB_Select): Promise<void> => {
   return new Promise((resolve, reject) => {
     const DB = GetIDB();
 
     DB.onsuccess = (e) => {
       const db = DB.result;
-      const transaction = db.transaction("reports", "readwrite");
-      const objectStore = transaction.objectStore("reports");
 
-      const request = objectStore.add(report);
+      let promises: Promise<void>[] = [];
 
-      request.onsuccess = () => {
+      if (type === "local" || type === "all") {
+        promises.push(new Promise((resolve, reject) => {
+          const transaction = db.transaction("local", "readwrite");
+          const objectStore = transaction.objectStore("local");
+
+          const request = objectStore.add(report);
+
+          request.onsuccess = () => {
+            resolve();
+          }
+
+          request.onerror = (e) => {
+            reject(e);
+          }
+
+          transaction.oncomplete = () => {
+            db.close();
+          }
+
+          transaction.onerror = (e) => {
+            reject(e);
+          }
+        }));
+      }
+
+      if (type === "remote" || type === "all") {
+        promises.push(new Promise((resolve, reject) => {
+          const transaction = db.transaction("remote", "readwrite");
+          const objectStore = transaction.objectStore("remote");
+
+          const request = objectStore.add(report);
+
+          request.onsuccess = () => {
+            resolve();
+          }
+
+          request.onerror = (e) => {
+            reject(e);
+          }
+
+          transaction.oncomplete = () => {
+            db.close();
+          }
+
+          transaction.onerror = (e) => {
+            reject(e);
+          }
+        }));
+      }
+
+      Promise.all(promises).then(() => {
         resolve();
-      }
-
-      request.onerror = (e) => {
+      }).catch((e) => {
         reject(e);
-      }
-
-      transaction.oncomplete = () => {
-        db.close();
-      }
-
-      transaction.onerror = (e) => {
-        reject(e);
-      }
+      });
     };
 
     DB.onerror = (e) => {
