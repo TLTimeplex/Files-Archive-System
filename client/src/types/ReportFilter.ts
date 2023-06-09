@@ -6,6 +6,7 @@ export type ReportFilter = {
   dateRange_updated?: DateRange;
   tags?: string[];
   title?: string;
+  archived?: boolean;
 };
 
 export type DateRange = {

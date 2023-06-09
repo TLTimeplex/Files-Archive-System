@@ -15,7 +15,8 @@ export const getReportIDs = (req: Request, res: Response) => {
     date_updated: reportFilterRaw.date_updated,
     dateRange_updated: reportFilterRaw.dateRange_updated,
     tags: reportFilterRaw.tags,
-    title: reportFilterRaw.title
+    title: reportFilterRaw.title,
+    archived: reportFilterRaw.archived
   };
 
   let queryParameter: any[] = [];
@@ -192,6 +193,13 @@ export const getReportIDs = (req: Request, res: Response) => {
     queryParameter.push("%" + reportFilter.title + "%");
   }
 
+  if (reportFilter.archived) {
+    if(reportFilter.archived !== true && reportFilter.archived !== false) return res.status(200).send({ success: false, message: "Invalid archived: " + reportFilter.archived });
+    if (reportFilter.author_id || reportFilter.date_created || reportFilter.dateRange_created || reportFilter.date_updated || reportFilter.dateRange_updated || reportFilter.tags || reportFilter.title) query += " AND ";
+    query += 'JSON_EXTRACT(restrictions, "$.archive") = ?';
+    queryParameter.push(reportFilter.archived);
+  }
+
   if (query.endsWith("WHERE ")) query = query.slice(0, -6);
   query += " LIMIT 100;"
 
@@ -201,7 +209,7 @@ export const getReportIDs = (req: Request, res: Response) => {
     connection.query(query, queryParameter, (err, results: any[]) => {
       if (err) throw err;
 
-      let idList : string[] = [];
+      let idList: string[] = [];
 
       results.forEach((result, _) => {
         idList.push(result.id);

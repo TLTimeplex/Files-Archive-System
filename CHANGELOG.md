@@ -1,5 +1,9 @@
+### --- v0.4.1 --- 07.06.23, 16.52 UTC+2 ---
+* ALL: Changed: Report filers now contains a new field "archived"
+* API: Added: New report filter for archived reports in getReports
+
 ### --- v0.4.0 --- 07.06.23, 16.52 UTC+2 ---
-* API: Removed: Removed Achive Table
+* API: Removed: Removed Achieve Table
 * API: Removed: Archive middleware check
 * API: Changed: Reports can now be un/archived via restrictions
 * API: Changed: Restrictions have now a new field "archiv"
