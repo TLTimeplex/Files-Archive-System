@@ -19,11 +19,13 @@ export const getReportIDs = (req: Request, res: Response) => {
     archived: reportFilterRaw.archived
   };
 
+  console.log(reportFilter);
+
   let queryParameter: any[] = [];
 
   let query = "SELECT `id` FROM `fas_db`.`report` WHERE ";
 
-  if (reportFilter.author_id) {
+  if (reportFilter.author_id !== undefined) {
     query += "`author_id` IN ( ? )";
     reportFilter.author_id.forEach((id, _) => {
       if (typeof id !== "number")
@@ -32,10 +34,10 @@ export const getReportIDs = (req: Request, res: Response) => {
     queryParameter.push(reportFilter.author_id);
   }
 
-  if (reportFilter.date_created) {
+  if (reportFilter.date_created !== undefined) {
     const date = reportFilter.date_created;
     if (reportFilter.author_id) query += " AND ";
-    if (date.year) {
+    if (date.year !== undefined) {
       if (typeof date.year !== "number")
         return res.status(200).send({ success: false, message: "Invalid year: " + date.year });
       if (date.year < 0)
@@ -46,7 +48,7 @@ export const getReportIDs = (req: Request, res: Response) => {
     else {
       return res.status(200).send({ success: false, message: "Invalid date_created: " + date });
     }
-    if (date.month) {
+    if (date.month !== undefined) {
       if (typeof date.month !== "number")
         return res.status(200).send({ success: false, message: "Invalid month: " + date.month });
       if (date.month < 0 || date.month > 12)
@@ -54,7 +56,7 @@ export const getReportIDs = (req: Request, res: Response) => {
       query += " AND EXTRACT(MONTH FROM `date_created`) = ?";
       queryParameter.push(date.month);
     }
-    if (date.day) {
+    if (date.day !== undefined) {
       if (typeof date.day !== "number")
         return res.status(200).send({ success: false, message: "Invalid day: " + date.day });
       if (date.day < 0 || date.day > 31)
@@ -62,7 +64,7 @@ export const getReportIDs = (req: Request, res: Response) => {
       query += " AND EXTRACT(DAY FROM `date_created`) = ?";
       queryParameter.push(date.day);
     }
-    if (date.hour) {
+    if (date.hour !== undefined) {
       if (typeof date.hour !== "number")
         return res.status(200).send({ success: false, message: "Invalid hour: " + date.hour });
       if (date.hour < 0 || date.hour > 24)
@@ -70,7 +72,7 @@ export const getReportIDs = (req: Request, res: Response) => {
       query += " AND EXTRACT(HOUR FROM `date_created`) = ?";
       queryParameter.push(date.hour);
     }
-    if (date.minute) {
+    if (date.minute !== undefined) {
       if (typeof date.minute !== "number")
         return res.status(200).send({ success: false, message: "Invalid minute: " + date.minute });
       if (date.minute < 0 || date.minute > 60)
@@ -78,7 +80,7 @@ export const getReportIDs = (req: Request, res: Response) => {
       query += " AND EXTRACT(MINUTE FROM `date_created`) = ?";
       queryParameter.push(date.minute);
     }
-    if (date.second) {
+    if (date.second !== undefined) {
       if (typeof date.second !== "number")
         return res.status(200).send({ success: false, message: "Invalid second: " + date.second });
       if (date.second < 0 || date.second > 60)
@@ -88,7 +90,7 @@ export const getReportIDs = (req: Request, res: Response) => {
     }
   }
 
-  if (reportFilter.dateRange_created) {
+  if (reportFilter.dateRange_created !== undefined) {
     try {
       const dateRange = {
         start: new Date(reportFilter.dateRange_created.start),
@@ -107,10 +109,10 @@ export const getReportIDs = (req: Request, res: Response) => {
     }
   }
 
-  if (reportFilter.date_updated) {
+  if (reportFilter.date_updated !== undefined) {
     const date = reportFilter.date_updated;
     if (reportFilter.date_created || reportFilter.dateRange_created || reportFilter.author_id) query += " AND ";
-    if (date.year) {
+    if (date.year !== undefined) {
       if (typeof date.year !== "number")
         return res.status(200).send({ success: false, message: "Invalid year: " + date.year });
       if (date.year < 0)
@@ -121,7 +123,7 @@ export const getReportIDs = (req: Request, res: Response) => {
     else {
       return res.status(200).send({ success: false, message: "Invalid date_updated: " + date });
     }
-    if (date.month) {
+    if (date.month !== undefined) {
       if (typeof date.month !== "number")
         return res.status(200).send({ success: false, message: "Invalid month: " + date.month });
       if (date.month < 0 || date.month > 12)
@@ -129,7 +131,7 @@ export const getReportIDs = (req: Request, res: Response) => {
       query += " AND EXTRACT(MONTH FROM `date_updated`) = ?";
       queryParameter.push(date.month);
     }
-    if (date.day) {
+    if (date.day !== undefined) {
       if (typeof date.day !== "number")
         return res.status(200).send({ success: false, message: "Invalid day: " + date.day });
       if (date.day < 0 || date.day > 31)
@@ -137,7 +139,7 @@ export const getReportIDs = (req: Request, res: Response) => {
       query += " AND EXTRACT(DAY FROM `date_updated`) = ?";
       queryParameter.push(date.day);
     }
-    if (date.hour) {
+    if (date.hour !== undefined) {
       if (typeof date.hour !== "number")
         return res.status(200).send({ success: false, message: "Invalid hour: " + date.hour });
       if (date.hour < 0 || date.hour > 24)
@@ -145,7 +147,7 @@ export const getReportIDs = (req: Request, res: Response) => {
       query += " AND EXTRACT(HOUR FROM `date_updated`) = ?";
       queryParameter.push(date.hour);
     }
-    if (date.minute) {
+    if (date.minute !== undefined) {
       if (typeof date.minute !== "number")
         return res.status(200).send({ success: false, message: "Invalid minute: " + date.minute });
       if (date.minute < 0 || date.minute > 60)
@@ -153,7 +155,7 @@ export const getReportIDs = (req: Request, res: Response) => {
       query += " AND EXTRACT(MINUTE FROM `date_updated`) = ?";
       queryParameter.push(date.minute);
     }
-    if (date.second) {
+    if (date.second !== undefined) {
       if (typeof date.second !== "number")
         return res.status(200).send({ success: false, message: "Invalid second: " + date.second });
       if (date.second < 0 || date.second > 60)
@@ -163,7 +165,7 @@ export const getReportIDs = (req: Request, res: Response) => {
     }
   }
 
-  if (reportFilter.dateRange_updated) {
+  if (reportFilter.dateRange_updated !== undefined) {
     try {
       const dateRange = {
         start: new Date(reportFilter.dateRange_updated.start),
@@ -182,18 +184,18 @@ export const getReportIDs = (req: Request, res: Response) => {
     }
   }
 
-  if (reportFilter.tags) {
+  if (reportFilter.tags !== undefined) {
     // TODO:
   }
 
-  if (reportFilter.title) {
+  if (reportFilter.title !== undefined) {
     if (reportFilter.author_id || reportFilter.date_created || reportFilter.dateRange_created || reportFilter.date_updated || reportFilter.dateRange_updated || reportFilter.tags) query += " AND ";
     query += "`title` LIKE ?";
 
     queryParameter.push("%" + reportFilter.title + "%");
   }
 
-  if (reportFilter.archived) {
+  if (reportFilter.archived !== undefined) {
     if(reportFilter.archived !== true && reportFilter.archived !== false) return res.status(200).send({ success: false, message: "Invalid archived: " + reportFilter.archived });
     if (reportFilter.author_id || reportFilter.date_created || reportFilter.dateRange_created || reportFilter.date_updated || reportFilter.dateRange_updated || reportFilter.tags || reportFilter.title) query += " AND ";
     query += 'JSON_EXTRACT(restrictions, "$.archive") = ?';

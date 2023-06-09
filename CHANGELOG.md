@@ -1,3 +1,6 @@
+### --- v0.4.2 --- 09.06.23, 11.55 UTC+2 ---
+* API: Fixed: Get Reports now checks if a field is set instead of checking if it is not false
+
 ### --- v0.4.1 --- 09.06.23, 11.15 UTC+2 ---
 * ALL: Changed: Report filers now contains a new field "archived"
 * API: Added: New report filter for archived reports in getReports
