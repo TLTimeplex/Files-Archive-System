@@ -7,6 +7,7 @@ import overwriteReport from "./overwriteReport";
 import getReport from "./getReport";
 import getAllReports from "./getAllReports";
 import * as findReport from "./findReport";
+import existsReport from "./existsReport";
 
 export {
   getIDBReport,
@@ -18,4 +19,5 @@ export {
   getReport,
   getAllReports,
   findReport,
+  existsReport
 }

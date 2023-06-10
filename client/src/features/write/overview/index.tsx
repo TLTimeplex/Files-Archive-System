@@ -1,6 +1,6 @@
-import { Button, Card } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import IDB_Report from "../../../types/IDB_report";
-import { ReportDB } from "../../../scripts/IndexedDB";
+import { FilesDB, ReportDB } from "../../../scripts/IndexedDB";
 import { useState } from "react";
 import "./style.scss";
 import axios from "axios";
@@ -8,6 +8,17 @@ import ReportFilter, { ReportFieldSelect } from "../../../types/ReportFilter";
 import AddAlert from "../../../scripts/addAlert";
 import CardBox from "./cardBox";
 import HorizontalDivider from "./horizontalDivider";
+import IDB_File from "../../../types/iDB_file";
+import { API_FileMeta } from "../../../types/API_File";
+
+
+declare global {
+  interface Navigator {
+    connection: any;
+    mozConnection: any;
+    webkitConnection: any;
+  }
+}
 
 // TODO: Add Search!
 // TODO: Add Synchronisation with server
@@ -93,10 +104,7 @@ export const Overview = () => {
       if (syncedReport !== undefined) {
         if (new Date(remoteReport.updatedAt) < new Date(syncedReport.date_modified)) {
           syncReports.push(remoteReport);
-        } else {
-          mergeReports.push(remoteReport);
         }
-        return;
       }
 
       remoteReports.push(remoteReport);
@@ -126,11 +134,153 @@ export const Overview = () => {
     setMergeReports(mergeReports);
   };
 
+  const syncReport = async (reportID: string) => {
+    console.log("Syncing report " + reportID);
+    // Check if report exists on client
+    const location = await ReportDB.existsReport(reportID, "all");
+    // Check if report exists on server
+    const filter: ReportFilter = {
+      id: reportID,
+    };
+
+    const select: ReportFieldSelect = {
+      id: true,
+      date_modified: true,
+    };
+
+    const res = await axios.post(`/api/1/${localStorage.getItem("token") || sessionStorage.getItem("token")}/report`, { filter: filter, select: select });
+
+    if (!res.data.success) {
+      console.log(res.data);
+      AddAlert(res.data.message, "danger");
+      return;
+    }
+
+    if (res.data.data.length === 0) {
+      AddAlert("Report does not exist on server", "danger");
+      return;
+    }
+    console.log(res);
+    const extReport = res.data.data[0] as any; //TODO: type
+
+    const local = await ReportDB.getReport(reportID, "local");
+    const remote = await ReportDB.getReport(reportID, "remote");
+
+    if (location === "all") {
+      if (local === undefined || remote === undefined) {
+        AddAlert("Internal Error", "danger");
+        return;
+      }
+
+      if (new Date(local.updatedAt) > new Date(remote.updatedAt)) {
+        AddAlert("This report needs to be merged", "warning");
+        return;
+      }
+    }
+
+    if (location === "all" || location === "remote") {
+      if (remote === undefined) {
+        AddAlert("Internal Error", "danger");
+        return;
+      }
+
+      if (new Date(remote.updatedAt) > new Date(extReport.date_modified)) {
+        AddAlert("This report doesn't need to be synced", "warning");
+        return;
+      }
+    }
+
+    if (location === "local") {
+      if (local === undefined) {
+        AddAlert("Internal Error", "danger");
+        return;
+      }
+
+      if (new Date(local.updatedAt) > new Date(extReport.date_modified)) {
+        AddAlert("Unexpected edge case! Inform an Admin!", "danger");
+        return;
+      }
+    }
+
+    const result = await axios.get(`/api/1/${localStorage.getItem("token") || sessionStorage.getItem("token")}/report/${reportID}`);
+    if (!result.data.success) {
+      console.log(result.data);
+      AddAlert(result.data.message, "danger");
+      return;
+    }
+    const report = result.data.report as IDB_Report;
+    report.updatedAt = new Date(extReport.date_modified);
+
+    try {
+      if (location === null)
+        await ReportDB.insertReport(report, "remote");
+      else
+        await ReportDB.overwriteReport(report, "remote");
+
+      AddAlert("Report synced", "success");
+    } catch (err) {
+      console.log(err);
+      AddAlert("Internal Error", "danger");
+    }
+    if (location === "all" || location === "local")
+      await ReportDB.deleteReport(reportID, "local");
+
+    // Load Files
+    const fileIDs = report.fileIDs;
+    if (fileIDs === undefined)
+      return;
+
+    let filesToLoad: Promise<string | null>[] = [];
+    fileIDs.forEach((fileID: string) => {
+      filesToLoad.push(FilesDB.existsFile(fileID).then((exists: boolean): string | null => { return exists ? null : fileID }));
+    });
+
+    const loadableFileIDs = (await Promise.all(filesToLoad)).filter((fileID: string | null) => fileID !== null) as string[];
+
+    const MAX_SIZE_IN_BYTES_PER_FILE = 1000000; // 1MB //TODO: Let user choose
+
+    for (let i = 0; i < loadableFileIDs.length; i++) {
+      const fileID = loadableFileIDs[i];
+      const fileExists = await FilesDB.existsFile(fileID);
+      if (fileExists) {
+        continue;
+      }
+      const fileMeta = await axios.get("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report/" + reportID + "/file/" + fileID + "/meta");
+      if (!fileMeta.data.success) {
+        console.log(fileMeta.data);
+        AddAlert(fileMeta.data.message, "danger");
+        continue;
+      }
+      const fileMetaData = fileMeta.data.meta as API_FileMeta;
+      if (fileMetaData.size > MAX_SIZE_IN_BYTES_PER_FILE) {
+        continue;
+      }
+      const fileData: Blob = await axios.get("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report/" + reportID + "/file/" + fileID, { responseType: "blob" });
+
+      const file = new File([fileData], fileMetaData.name, { type: fileMetaData.type });
+
+      const idbFile: IDB_File = {
+        id: fileID,
+        data: file,
+        meta: {
+          linkedReport: reportID,
+        }
+      };
+
+      FilesDB.insertFile(idbFile);
+    }
+    AddAlert("Files synced", "success");
+    sync();
+    return;
+  };
+
 
   if (!init) {
     sync();
     setInit(true);
   }
+
+  //const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
 
   return (
     <>
@@ -157,7 +307,7 @@ export const Overview = () => {
       {SyncReports.length !== 0 ?
         <>
           <HorizontalDivider title="Remote (Need Sync)" />
-          <CardBox reports={SyncReports} type="sync" />
+          <CardBox reports={SyncReports} type="sync" sync={syncReport} />
         </>
         : null}
       {MergeReports.length !== 0 ?
@@ -170,7 +320,7 @@ export const Overview = () => {
       <div className="AddButtonBox">
         <Button variant="secondary" href="/report/new" className="AddButton">New Report</Button>
       </div>
-
+      <h1>{ }</h1>
     </>
   );
 };

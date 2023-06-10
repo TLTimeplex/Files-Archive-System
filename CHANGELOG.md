@@ -1,3 +1,7 @@
+### --- b0.5.0c --- 10.06.23, 15.30 UTC+2 ---
+### THIS IS A BROKEN BUILD, DO NOT USE IT
+* Client: Changed: Reports that can be synced to a newer version, can now be sync in the overview
+ 
 ### --- b0.5.0b --- 09.06.23, 20.50 UTC+2 ---
 ### THIS IS A BROKEN BUILD, DO NOT USE IT
 * Client: Added: New component cardBox for the overview 

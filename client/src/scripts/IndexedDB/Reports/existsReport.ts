@@ -1,7 +1,7 @@
 import IDB_DB_Select from "../../../types/IDB_DB_Select";
 import GetIDB from "./getIDB";
 
-export const existsReport = async (id: string, select: IDB_DB_Select): Promise<IDB_DB_Select | undefined> => {
+export const existsReport = async (id: string, select: IDB_DB_Select): Promise<IDB_DB_Select | null> => {
   return new Promise((resolve, reject) => {
     const DB = GetIDB();
 
@@ -67,12 +67,12 @@ export const existsReport = async (id: string, select: IDB_DB_Select): Promise<I
       }
 
       Promise.all(promises).then((values) => {
-        if (values.length === 0) resolve(undefined);
+        if (values.length === 0) resolve(null);
         else {
           if (values.includes("local") && values.includes("remote")) resolve("all");
           else if (values.includes("local")) resolve("local");
           else if (values.includes("remote")) resolve("remote");
-          else resolve(undefined);
+          else resolve(null);
         }
       }).catch((e) => {
         reject(e);

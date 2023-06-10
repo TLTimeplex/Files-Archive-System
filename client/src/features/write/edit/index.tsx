@@ -259,7 +259,7 @@ export const Editor = () => {
     // Download any missing images
     Report.fileIDs.forEach((fileID) => {
       promises.push(new Promise((resolve, reject) => {
-        FilesDB.ExistsFile(fileID).then((exists) => {
+        FilesDB.existsFile(fileID).then((exists) => {
           if (exists) {
             resolve();
             return;

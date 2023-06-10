@@ -5,11 +5,17 @@ import IDB_Report from "../../../types/IDB_report";
 export interface cardBoxProps {
   reports: IDB_Report[];
   type: "local" | "remote" | "remoteChanged" | "sync" | "merge";
+  sync?: (id: string) => void;
 }
 
 export const CardBox = (props: cardBoxProps): React.ReactElement | null => {
 
   console.log(props);
+
+  if (props.sync === undefined && props.type === "sync") {
+    console.error("Sync function not defined");
+    return null;
+  }
 
   return (
     <div id={props.type + "Container"} className="file-grid">
@@ -38,12 +44,14 @@ export const CardBox = (props: cardBoxProps): React.ReactElement | null => {
                 Type: {props.type}<br />
                 ID: {report.id}<br />
                 Title: {report.title}<br />
+                Content: {report.report?.length || 0}<br />
+                Files: {report.fileIDs?.length || 0}<br />
               </Card.Text>
             </Card.Body>
             <Card.Footer>
               <div className="ButtonBox">
                 {props.type !== "merge" ? <Button variant="primary" href={`/report/edit/${report.id}`}>Edit</Button> : null} {" "}
-                {props.type === "sync" ? <Button variant="warning" href={`/report/` /*TODO:*/}>Sync</Button> : null}
+                {props.type === "sync" ? <Button variant="warning" onClick={() => { if (props.sync !== undefined) { props.sync(report.id); console.log("Hello!") } }}>Sync</Button> : null}
                 {props.type === "merge" ? <Button variant="warning" href={`/report/` /*TODO:*/}>Merge</Button> : null}
               </div>
               <div className="last-edited">{lastUpdateString}</div>
