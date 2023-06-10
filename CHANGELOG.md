@@ -1,4 +1,8 @@
-### --- v0.5.0 --- 10.06.23, 99.99 UTC+2 ---
+### --- v0.5.1 --- 10.06.23, 21.40 UTC+2 ---
+* Client: Added: New AlertLoader class for better control
+* Client: Changed: Report sync over Overview is now using the new AlertLoader for better status control
+
+### --- v0.5.0 --- 10.06.23, 19.30 UTC+2 ---
 * Client: Fixed: Editor is now working again
 * Client: Fixed: Files are now correctly synced to the server
 * API: Fixed: Some functions opened a db connection but never closed it

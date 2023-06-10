@@ -1,4 +1,4 @@
-import { Button } from "react-bootstrap";
+import { Alert, Button } from "react-bootstrap";
 import IDB_Report from "../../../types/IDB_report";
 import { FilesDB, ReportDB } from "../../../scripts/IndexedDB";
 import { useState } from "react";
@@ -10,6 +10,7 @@ import CardBox from "./cardBox";
 import HorizontalDivider from "./horizontalDivider";
 import IDB_File from "../../../types/iDB_file";
 import { API_FileMeta } from "../../../types/API_File";
+import { AlertLoader3 } from "../../../scripts/AlertLoader3";
 
 
 declare global {
@@ -131,7 +132,8 @@ export const Overview = () => {
   };
 
   const syncReport = async (reportID: string) => {
-    console.log("Syncing report " + reportID);
+    const loader = new AlertLoader3("Receiving Report...", "info");
+    loader.show();
     // Check if report exists on client
     const location = await ReportDB.existsReport(reportID, "all");
     // Check if report exists on server
@@ -148,15 +150,25 @@ export const Overview = () => {
 
     if (!res.data.success) {
       console.log(res.data);
-      AddAlert(res.data.message, "danger");
+
+      loader.setText("Error: " + res.data.message);
+      loader.setVariant("danger");
+      loader.update();
+      loader.resolve(5000);
+
       return;
     }
 
     if (res.data.data.length === 0) {
-      AddAlert("Report does not exist on server", "danger");
+
+      loader.setText("Error: Report doesn't exist on server");
+      loader.setVariant("danger");
+      loader.update();
+      loader.resolve(5000);
+
       return;
     }
-    console.log(res);
+
     const extReport = res.data.data[0] as any; //TODO: type
 
     const local = await ReportDB.getReport(reportID, "local");
@@ -164,36 +176,66 @@ export const Overview = () => {
 
     if (location === "all") {
       if (local === undefined || remote === undefined) {
-        AddAlert("Internal Error", "danger");
+
+        loader.setText("Error: Internal Error");
+        loader.setVariant("danger");
+        loader.update();
+        loader.resolve(5000);
+
         return;
       }
 
       if (new Date(local.updatedAt) > new Date(remote.updatedAt)) {
-        AddAlert("This report needs to be merged", "warning");
+
+        loader.setText("This report needs to be merged");
+        loader.setVariant("warning");
+        loader.update();
+        loader.resolve(5000);
+
         return;
       }
     }
 
     if (location === "all" || location === "remote") {
       if (remote === undefined) {
-        AddAlert("Internal Error", "danger");
+
+        loader.setText("Error: Internal Error");
+        loader.setVariant("danger");
+        loader.update();
+        loader.resolve(5000);
+
         return;
       }
 
       if (new Date(remote.updatedAt) > new Date(extReport.date_modified)) {
-        AddAlert("This report doesn't need to be synced", "warning");
+
+        loader.setText("This report doesn't need to be synced");
+        loader.setVariant("warning");
+        loader.update();
+        loader.resolve(5000);
+
         return;
       }
     }
 
     if (location === "local") {
       if (local === undefined) {
-        AddAlert("Internal Error", "danger");
+
+        loader.setText("Error: Internal Error");
+        loader.setVariant("danger");
+        loader.update();
+        loader.resolve(5000);
+
         return;
       }
 
       if (new Date(local.updatedAt) > new Date(extReport.date_modified)) {
-        AddAlert("Unexpected edge case! Inform an Admin!", "danger");
+
+        loader.setText("Error: Unexpected edge case! Inform an Admin!");
+        loader.setVariant("danger");
+        loader.update();
+        loader.resolve(5000);
+
         return;
       }
     }
@@ -201,7 +243,12 @@ export const Overview = () => {
     const result = await axios.get(`/api/1/${localStorage.getItem("token") || sessionStorage.getItem("token")}/report/${reportID}`);
     if (!result.data.success) {
       console.log(result.data);
-      AddAlert(result.data.message, "danger");
+
+      loader.setText("Error: " + res.data.message);
+      loader.setVariant("danger");
+      loader.update();
+      loader.resolve(5000);
+
       return;
     }
     const report = result.data.report as IDB_Report;
@@ -213,10 +260,19 @@ export const Overview = () => {
       else
         await ReportDB.overwriteReport(report, "remote");
 
-      AddAlert("Report synced", "success");
+      loader.setText("Report synced. Updating Files..."); 
+      loader.setVariant("success");
+      loader.update();
+
     } catch (err) {
       console.log(err);
-      AddAlert("Internal Error", "danger");
+
+      loader.setText("Error: Internal Error");
+      loader.setVariant("danger");
+      loader.update();
+      loader.resolve(5000);
+
+      return;
     }
     if (location === "all" || location === "local")
       await ReportDB.deleteReport(reportID, "local");
@@ -235,7 +291,12 @@ export const Overview = () => {
 
     const MAX_SIZE_IN_BYTES_PER_FILE = 1000000; // 1MB //TODO: Let user choose
 
+
     for (let i = 0; i < loadableFileIDs.length; i++) {
+
+      loader.setText("Receiving File " + (i + 1) + " of " + loadableFileIDs.length);
+      loader.update();
+
       const fileID = loadableFileIDs[i];
       const fileExists = await FilesDB.existsFile(fileID);
       if (fileExists) {
@@ -271,7 +332,12 @@ export const Overview = () => {
 
       FilesDB.insertFile(idbFile);
     }
-    AddAlert("Files synced", "success");
+
+    loader.setText("Files and Report synced");
+    loader.setVariant("success");
+    loader.update();
+    loader.resolve(5000);
+
     sync();
     return;
   };
