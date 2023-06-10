@@ -8,6 +8,7 @@ export const GetIDB = (): IDBOpenDBRequest => {
 
   reportsDB.onupgradeneeded = (e) => {
     const db = reportsDB.result;
+
     const localReportStore = db.createObjectStore("local", { keyPath: "id" });
     localReportStore.createIndex("title", "title", { unique: false });
     localReportStore.createIndex("createdAt", "createdAt", { unique: false });

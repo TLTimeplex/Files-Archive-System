@@ -14,8 +14,8 @@ export const getFileIDs = (req: Request, res: Response) => {
     connection.query("SELECT * FROM `fas_db`.`report` WHERE `id` = ?",
       [reportID],
       (err, results: any[]) => {
-        if (err) throw err;
         connection.release();
+        if (err) throw err;
 
         if (results.length !== 1) return res.status(200).send({ success: false, message: "Report does not exist" });
 

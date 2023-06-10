@@ -57,8 +57,6 @@ export const Overview = () => {
     const _localReports = await ReportDB.getAllReports("local");
     const _remoteReports = await ReportDB.getAllReports("remote");
 
-    console.log({ _syncedReports, _localReports, _remoteReports });
-
     let localReports: IDB_Report[] = [];
     let remoteReports: IDB_Report[] = [];
     let remoteChangedReports: IDB_Report[] = [];
@@ -124,8 +122,6 @@ export const Overview = () => {
         updatedAt: syncedReport.date_modified
       });
     });
-
-    console.log({ localReports, remoteReports, remoteChangedReports, syncReports, mergeReports });
 
     setLocalReports(localReports);
     setRemoteReports(remoteReports);
@@ -252,12 +248,18 @@ export const Overview = () => {
         continue;
       }
       const fileMetaData = fileMeta.data.meta as API_FileMeta;
+
       if (fileMetaData.size > MAX_SIZE_IN_BYTES_PER_FILE) {
         continue;
-      }
-      const fileData: Blob = await axios.get("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report/" + reportID + "/file/" + fileID, { responseType: "blob" });
+      } // TODO: Maybe only download usable files like images and pdfs?
+
+      const fileData: Blob = (await axios.get("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report/" + reportID + "/file/" + fileID, { responseType: "blob" })).data;
+
+      console.log(fileData);
 
       const file = new File([fileData], fileMetaData.name, { type: fileMetaData.type });
+
+      console.log(file);
 
       const idbFile: IDB_File = {
         id: fileID,

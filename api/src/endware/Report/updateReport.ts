@@ -83,8 +83,8 @@ export const updateReport = (req: Request, res: Response) => {
         JSON.stringify(toRestrictions(JSON.stringify({ ...(reportEntry.restrictions ? JSON.parse(reportEntry.restrictions) : null), ...(newReport.restrictions ? JSON.parse(newReport.restrictions) : null) }))),
         newReport.id],
         (err, results) => {
-          if (err) throw err;
           connection.release();
+          if (err) throw err;
           return res.status(200).send({ success: true, message: "Report uploaded successfully" });
         });
 

@@ -28,19 +28,28 @@ export const unarchiveReport = (req: Request, res: Response) => {
   // Sync with database
   db.pool.getConnection((err, connection) => {
     connection.query("SELECT * FROM report WHERE id = ?", [reportID], (err, result: any[]) => {
-      if (err) return res.status(500).send({ success: false, message: "Internal server error" });
-      if (result.length === 0) return res.status(200).send({ success: false, message: "Report does not exists" });
+      if (err){
+        connection.release();
+        return res.status(500).send({ success: false, message: "Internal server error" });
+      } 
+      if (result.length === 0) {
+        connection.release();
+        return res.status(200).send({ success: false, message: "Report does not exists" });
+      }
       // Check if any required fields are missing
       const report: report = result[0];
       if (!report || !report.id || !report.title || !report.author_id || !report.date_created || !report.date_modified) {
+        connection.release();
         return res.status(200).send({ success: false, message: "Archived report is broken" });
       }
       // Check if the user is the author of the report
       if (report.author_id !== parseInt(req.params.userID) /** OR NOT ADMIN */) { //TODO: Should he be able to do this?
+        connection.release();
         return res.status(200).send({ success: false, message: "You are not the author of this report" });
       }
       let restrictions = toRestrictions(report.restrictions);
       if (!restrictions.archive) {
+        connection.release();
         return res.status(200).send({ success: false, message: "Report is not archived" });
       }
       restrictions.archive = false;
@@ -48,6 +57,7 @@ export const unarchiveReport = (req: Request, res: Response) => {
       report.restrictions = JSON.stringify(restrictions);
       // Update the report entry
       connection.query("UPDATE report SET restrictions = ? WHERE id = ?", [report.restrictions, report.id], (err, result) => {
+        connection.release();
         if (err) return res.status(500).send({ success: false, message: "Internal server error" });
         return res.status(200).send({ success: true, message: "Report unarchived successfully" });
       });

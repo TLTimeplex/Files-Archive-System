@@ -10,8 +10,6 @@ export interface cardBoxProps {
 
 export const CardBox = (props: cardBoxProps): React.ReactElement | null => {
 
-  console.log(props);
-
   if (props.sync === undefined && props.type === "sync") {
     console.error("Sync function not defined");
     return null;

@@ -20,6 +20,7 @@ export const loginUser = (req : Request, res : Response) => {
 
     // Check if user exists
     connection.query('SELECT * FROM users WHERE username = ?', [username], (err : any, results : any[]) => {
+      connection.release();
       if(err) throw err;
 
       if(results.length !== 1) {
@@ -49,9 +50,6 @@ export const loginUser = (req : Request, res : Response) => {
           if(err) throw err;
         });
         
-        connection.release();
-
-
         // Return token
         return res.status(200).send({success : true , token: uuid, expires: expires, user: {id: user.id, username: user.username}});
       });

@@ -8,7 +8,7 @@ const pool = mysql.createPool({
   host: 'localhost',
   user: 'fas_user',
   database: 'fas_db',
-  connectionLimit: 100,
+  connectionLimit: 100
 });
 
 async function autoInit(): Promise<void> {

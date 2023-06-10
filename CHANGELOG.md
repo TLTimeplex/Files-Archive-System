@@ -1,3 +1,8 @@
+### --- v0.5.0 --- 10.06.23, 99.99 UTC+2 ---
+* Client: Fixed: Editor is now working again
+* Client: Fixed: Files are now correctly synced to the server
+* API: Fixed: Some functions opened a db connection but never closed it
+
 ### --- b0.5.0c --- 10.06.23, 15.30 UTC+2 ---
 ### THIS IS A BROKEN BUILD, DO NOT USE IT
 * Client: Changed: Reports that can be synced to a newer version, can now be sync in the overview

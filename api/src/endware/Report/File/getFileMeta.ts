@@ -22,7 +22,7 @@ export const getFileMeta = (req: Request, res: Response) => {
     connection.query("SELECT * FROM `fas_db`.`report` WHERE `id` = ?",
       [reportID],
       (err, results: any[]) => {
-
+        connection.release();
         if (err) throw err;
 
         if (results.length !== 1)

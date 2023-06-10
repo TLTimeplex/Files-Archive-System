@@ -234,6 +234,7 @@ export const getReportIDs = (req: Request, res: Response) => {
     if (err) throw err;
 
     connection.query(query, queryParameter, (err, results: any[]) => {
+      connection.release();
       if (err) throw err;
 
       let output: any[] = [];

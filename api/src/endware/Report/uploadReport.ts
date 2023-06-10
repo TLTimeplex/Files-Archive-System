@@ -51,8 +51,8 @@ export const uploadReport = (req: Request, res: Response) => {
     connection.query("INSERT INTO `fas_db`.`report` (`id`, `title`, `description`, `author_id`, `date_created`, `date_modified`, `restrictions`) VALUES (?, ?, ?, ?, ?, ?, ?)",
       [report.id, report.title, report.description ? report.description : null, report.authorID, new Date(report.createdAt), new Date(report.updatedAt), JSON.stringify(defaultRestrictions)],
       (err, results) => {
-        if (err) throw err;
         connection.release();
+        if (err) throw err;
       });
   });
 

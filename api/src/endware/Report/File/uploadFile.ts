@@ -25,6 +25,7 @@ export const uploadFile = (req: Request, res: Response) => {
   // Check if user is authorized to upload file
   db.pool.getConnection((err, connection) => {
     connection.query("SELECT * FROM `fas_db`.`report` WHERE `id` = ?", [reportID], (err, results: any[]) => {
+      connection.release();
       if (err) throw err;
       if (results.length === 0) {
         return res.status(200).send({ success: false, message: "Report doesn't exists" });
@@ -64,7 +65,6 @@ export const uploadFile = (req: Request, res: Response) => {
       report.fileIDs.push(fileID);
       fs.writeFileSync(`./reports/${reportID}/report.json`, JSON.stringify(report, undefined, 2));
 
-      connection.release();
       return res.status(200).send({ success: true, message: "File uploaded successfully" });
     });
   });

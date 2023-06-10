@@ -18,6 +18,7 @@ export const Editor = () => {
   const { ReportTitel_OR_ID } = useParams();
 
   const [Report, setReport] = useState<IDB_Report>();
+  const [isUploaded, setIsUploaded] = useState<boolean>(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const [init, setInit] = useState(false);
@@ -101,7 +102,7 @@ export const Editor = () => {
     drawPreview();
   }, [Report]);
 
-  //TODO:  FIRST SYNC
+
   if (!Report) {
     if (ReportTitel_OR_ID === undefined) {
       window.location.href = "/write/edit";
@@ -117,30 +118,32 @@ export const Editor = () => {
 
     // if not matches uuid v4 
     if (!ReportTitel_OR_ID.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/)) {
-      /* TODO:
-      ReportsDB.findReport.by.Title(ReportTitel_OR_ID).then(report => {
+      ReportsDB.findReport.by.Title(ReportTitel_OR_ID, "all").then(report => {
         if (!report || report.length !== 1) {
           window.location.href = "/write/edit";
         }
         window.location.href = "/write/edit/" + report[0].id;
       });
-      */
       return (<></>);
     }
-    /* TODO:
-    ReportsDB.getReport(ReportTitel_OR_ID).then(report => {
+    ReportsDB.getReport(ReportTitel_OR_ID, "all").then(report => {
       if (!report) {
         window.location.href = "/write/edit";
+        return;
       }
+      ReportsDB.existsReport(report.id, "remote").then(exists => {
+        if (exists === "remote") {
+          setIsUploaded(true);
+        }
+      });
       setReport(report);
       setInit(true);
     }).catch(error => {
       window.location.href = "/write/edit";
     });
-    */
     return (<></>);
   }
-  //TODO:  REOD Online Sync
+
   const saveReport = async (overwrite?: IDB_Report) => {
     await AddAlertLoader2("Saving report...", "info", new Promise((resolve, reject) => {
       const title = document.getElementById("title") as HTMLInputElement;
@@ -151,56 +154,65 @@ export const Editor = () => {
 
       const newReport = { ...Report, title: titelValue, report: reportValue, updatedAt: new Date(), ...overwrite }
 
+      // Check if any value changed
+      if (newReport.title === Report.title && newReport.report === Report.report && newReport.fileIDs === Report.fileIDs && newReport.description === Report.description) {
+        AddAlert("Nothing changed!", "info");
+        resolve();
+        return;
+      }
+
       setReport(newReport);
 
-      /* TODO:
-      ReportsDB.updateReport(newReport).then(() => {
-        resolve();
+      ReportsDB.existsReport(newReport.id, "local").then((exists) => {
+        if (exists) {
+          ReportsDB.updateReport(newReport, "local").then(() => {
+            resolve();
+          }).catch((error) => {
+            console.error(error);
+            reject();
+          });
+        }
+        else {
+          ReportsDB.insertReport(newReport, "local").then(() => {
+            resolve();
+          }).catch((error) => {
+            console.error(error);
+            reject();
+          });
+        }
       }).catch((error) => {
         console.error(error);
         reject();
       });
-      */
 
     }), "Saved successfully!", "success", "Failed to save report!", "danger");
   }
 
-  const deleteReport = () => {
+  const deleteReport = async () => {
     AddAlertLoader2("Deleting report...", "info", new Promise((resolve, reject) => {
-      FilesDB.findFile.by.reportID(Report.id).then(files => {
-        files.forEach(file => {
-          FilesDB.deleteFile(file.id).catch(error => {
-            console.error(error);
-          });
-        });
-
-        /* TODO:
-        if (false  ) {
-          axios.delete("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report/" + report.id ).then(result => {
+      ReportsDB.existsReport(Report.id, "remote").then(exists => { //TODO: Take Exists and seperate in two functions (exists, locate)
+        if (exists === "remote") {
+          axios.delete("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report/" + Report.id).then(result => {
             if (!result.data.success) {
               AddAlert(result.data.message, "danger");
               reject();
               return;
             }
           });
-          ReportsDB.deleteReport(report.id).then(() => {
+        }
+        FilesDB.findFile.by.reportID(Report.id).then(files => {
+          files.forEach(file => {
+            FilesDB.deleteFile(file.id).catch(error => {
+              console.error(error);
+            });
+          });
+          ReportsDB.deleteReport(Report.id, "all").then(() => {
             resolve();
           }).catch(error => {
             console.error(error);
             reject();
           });
-          return;
-        }
-        */
-        
-        /* TODO:
-        ReportsDB.deleteReport(Report.id).then(() => {
-          resolve();
-        }).catch(error => {
-          console.error(error);
-          reject();
         });
-        */
       });
     }), "Deleted successfully!", "success", "Failed to delete report!", "danger").then(() => {
       window.location.href = "/report";
@@ -212,8 +224,7 @@ export const Editor = () => {
     const shadowReport = createShadowReport();
 
     // If report is not uploaded, create a new one
-    /* TODO:
-    if (!Report.uploaded) {
+    if (!isUploaded) {
       const result = await axios.put("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report", shadowReport);
       if (!result.data.success) {
         AddAlert(result.data.message, "danger");
@@ -228,7 +239,6 @@ export const Editor = () => {
         return;
       }
     }
-    */
 
     if (!Report.fileIDs)
       Report.fileIDs = [];
@@ -324,12 +334,6 @@ export const Editor = () => {
             return;
           }
 
-          /* TODO:
-          if (file.meta.uploaded !== 0) {
-            AddAlert("Data discrepancy!", "warning");
-          }
-          */
-
           var formData = new FormData();
           formData.append("id", file.id);
           formData.append("data", file.data);
@@ -341,10 +345,7 @@ export const Editor = () => {
               reject();
               return;
             }
-            FilesDB.updateFileMeta(file.id, { ...file.meta, /** TODO: */ }).then(() => {
-              resolve();
-              return;
-            });
+            resolve();
           }).catch((err) => {
             console.log(err);
             reject();
@@ -386,7 +387,13 @@ export const Editor = () => {
     await Promise.all(promises).catch((err) => { console.log(err) });
 
     AddAlert("Report saved and uploaded!", "success");
-    /* await saveReport({ ...shadowReport, uploaded: true }); TODO: */ 
+    if(isUploaded) {
+      await ReportsDB.updateReport({...shadowReport, updatedAt: new Date()}, "remote");
+    }
+    else {
+      await ReportsDB.insertReport({...shadowReport, updatedAt: new Date()}, "remote");
+      setIsUploaded(true);
+    }
   }
 
   const addFiles = async () => {
@@ -402,8 +409,6 @@ export const Editor = () => {
     }
     saveReport();
   }
-
-
 
   const removeFile = async (fileID: string) => {
     if (!Report.fileIDs) return;
@@ -443,8 +448,8 @@ export const Editor = () => {
       </div>
       <div className='button-group'>
         <Button variant="primary" id="new-save" type='submit' onClick={() => saveReport()}>Save</Button>{' '}
-        <Button variant={/** Report?.uploaded TODO: */ false ? "success" : "outline-success"} id="new-sync" type='submit' onClick={syncReport}>Sync</Button>{' '}
-        {/** Report?.uploaded TODO: */ false ? <Button variant="warning" id="new-archive" type='submit'>Archive</Button> : <></>}{' '}
+        <Button variant={isUploaded ? "success" : "outline-success"} id="new-sync" type='submit' onClick={syncReport}>Sync</Button>{' '}
+        {isUploaded ? <Button variant="warning" id="new-archive" type='submit'>Archive</Button> : <></>}{' '}
         <Button variant="danger" id="new-delete" onClick={() => setShowDeleteModal(true)}>Delete</Button>
         <Button variant="secondary" href="/report" className="Button-Back">Back</Button>
       </div>
