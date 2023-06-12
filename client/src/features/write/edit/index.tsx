@@ -23,6 +23,11 @@ export const Editor = () => {
 
   const [init, setInit] = useState(false);
 
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+
+  window.addEventListener('online', () => setIsOnline(true));
+  window.addEventListener('offline', () => setIsOnline(false));
+
   useEffect(() => {
     if (!Report || !init) return;
 
@@ -189,6 +194,11 @@ export const Editor = () => {
   }
 
   const deleteReport = async () => {
+    if (!navigator.onLine && isUploaded) {
+      AddAlert("You need to be online to delete a report!", "danger");
+      return;
+    }
+
     AddAlertLoader2("Deleting report...", "info", new Promise((resolve, reject) => {
       ReportsDB.existsReport(Report.id, "remote").then(exists => { //TODO: Take Exists and seperate in two functions (exists, locate)
         if (exists === "remote") {
@@ -220,6 +230,10 @@ export const Editor = () => {
   }
 
   const syncReport = async () => {
+    if (!navigator.onLine) {
+      AddAlert("You need to be online to sync a report!", "danger");
+      return;
+    }
     // Save report temporary
     const shadowReport = createShadowReport();
 
@@ -387,11 +401,11 @@ export const Editor = () => {
     await Promise.all(promises).catch((err) => { console.log(err) });
 
     AddAlert("Report saved and uploaded!", "success");
-    if(isUploaded) {
-      await ReportsDB.updateReport({...shadowReport, updatedAt: new Date()}, "remote");
+    if (isUploaded) {
+      await ReportsDB.updateReport({ ...shadowReport, updatedAt: new Date() }, "remote");
     }
     else {
-      await ReportsDB.insertReport({...shadowReport, updatedAt: new Date()}, "remote");
+      await ReportsDB.insertReport({ ...shadowReport, updatedAt: new Date() }, "remote");
       setIsUploaded(true);
     }
   }
@@ -448,9 +462,9 @@ export const Editor = () => {
       </div>
       <div className='button-group'>
         <Button variant="primary" id="new-save" type='submit' onClick={() => saveReport()}>Save</Button>{' '}
-        <Button variant={isUploaded ? "success" : "outline-success"} id="new-sync" type='submit' onClick={syncReport}>Sync</Button>{' '}
-        {isUploaded ? <Button variant="warning" id="new-archive" type='submit'>Archive</Button> : <></>}{' '}
-        <Button variant="danger" id="new-delete" onClick={() => setShowDeleteModal(true)}>Delete</Button>
+        {isOnline ? <Button variant={isUploaded ? "success" : "outline-success"} id="new-sync" type='submit' onClick={syncReport}>Sync</Button> : <></>}{' '}
+        {isUploaded && isOnline ? <Button variant="warning" id="new-archive" type='submit'>Archive</Button> : <></>}{' '}
+        {isOnline || (!isOnline && !isUploaded) ? <Button variant="danger" id="new-delete" onClick={() => setShowDeleteModal(true)}>Delete</Button> : <></>}
         <Button variant="secondary" href="/report" className="Button-Back">Back</Button>
       </div>
       <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>

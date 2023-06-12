@@ -1,3 +1,8 @@
+### --- v0.6.0a --- 12.06.23, 14.28 UTC+2 ---
+* Client: Added: Archive overview page
+* Client: Added: "Offline" mode for current components
+* Client: Added: Archive IDB store and functions
+
 ### --- v0.5.1 --- 10.06.23, 21.40 UTC+2 ---
 * Client: Added: New AlertLoader class for better control
 * Client: Changed: Report sync over Overview is now using the new AlertLoader for better status control

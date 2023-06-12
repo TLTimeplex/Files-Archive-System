@@ -1,4 +1,4 @@
-import { Alert, Button } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import IDB_Report from "../../../types/IDB_report";
 import { FilesDB, ReportDB } from "../../../scripts/IndexedDB";
 import { useState } from "react";
@@ -28,12 +28,17 @@ export const Overview = () => {
   const [RemoteReports, setRemoteReports] = useState<IDB_Report[]>([]);
   const [RemoteChangedReports, setRemoteChangedReports] = useState<IDB_Report[]>([]);
 
-  const [SyncReports, setSyncReports] = useState<IDB_Report[]>([]); //TODO:
+  const [SyncReports, setSyncReports] = useState<IDB_Report[]>([]);
   const [MergeReports, setMergeReports] = useState<IDB_Report[]>([]); //TODO:
+
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+
+  window.addEventListener('online', () => setIsOnline(true));
+  window.addEventListener('offline', () => setIsOnline(false));
 
   const [init, setInit] = useState<boolean>(false);
 
-  //TODO: REDO!
+
   const sync = async () => {
     const filter: ReportFilter = {
       author_id: [1], //TODO: Get own ID
@@ -46,14 +51,18 @@ export const Overview = () => {
       date_modified: true,
     }
 
-    const res = await axios.post(`/api/1/${localStorage.getItem("token") || sessionStorage.getItem("token")}/report`, { filter: filter, select: select });
-    if (!res.data.success) {
-      console.log(res.data);
-      AddAlert(res.data.message, "danger");
-      return;
-    }
+    let _syncedReports: any[] = [];
 
-    const _syncedReports = res.data.data as any[]; //TODO: type
+    if (isOnline) {
+      const res = await axios.post(`/api/1/${localStorage.getItem("token") || sessionStorage.getItem("token")}/report`, { filter: filter, select: select });
+      if (!res.data.success) {
+        console.log(res.data);
+        AddAlert(res.data.message, "danger");
+        return;
+      }
+
+      _syncedReports = res.data.data as any[]; //TODO: type
+    }
 
     const _localReports = await ReportDB.getAllReports("local");
     const _remoteReports = await ReportDB.getAllReports("remote");
@@ -132,6 +141,12 @@ export const Overview = () => {
   };
 
   const syncReport = async (reportID: string) => {
+
+    if(!isOnline){
+      AddAlert("You are offline", "danger");
+      return;
+    }
+
     const loader = new AlertLoader3("Receiving Report...", "info");
     loader.show();
     // Check if report exists on client
@@ -260,7 +275,7 @@ export const Overview = () => {
       else
         await ReportDB.overwriteReport(report, "remote");
 
-      loader.setText("Report synced. Updating Files..."); 
+      loader.setText("Report synced. Updating Files...");
       loader.setVariant("success");
       loader.update();
 

@@ -12,7 +12,7 @@ export const Login = () => {
 
   const token = localStorage.getItem("token") || sessionStorage.getItem("token");
 
-  if (token) {
+  if (token || !navigator.onLine) {
     window.location.href = "/";
   }
 
