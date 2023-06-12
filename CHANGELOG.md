@@ -1,3 +1,8 @@
+### --- v0.6.0b --- 12.06.23, 15.30 UTC+2 ---
+* API: Added: New routes for getting user info about self and other users (username, groups, etc.)
+* API: Added: Middleware check for userIDs
+* ALL: Added: New Type for sharable user info and a mask for selecting the fields
+
 ### --- v0.6.0a --- 12.06.23, 14.28 UTC+2 ---
 * Client: Added: Archive overview page
 * Client: Added: "Offline" mode for current components

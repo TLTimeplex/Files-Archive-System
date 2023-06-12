@@ -86,6 +86,12 @@ app.get('/:version/:token/report/:reportID/archive', middleware.verifyToken, mid
 
 app.get('/:version/:token/report/:reportID/unarchive', middleware.verifyToken, middleware.verifyReportID, endware.Report.Archive.unarchiveReport);
 
+app.get('/:version/:token/user/info', middleware.verifyToken, endware.User.getUserInfo);
+app.post('/:version/:token/user/info', middleware.verifyToken, endware.User.getUserInfo);
+
+app.get('/:version/:token/user/:userID/info', middleware.verifyToken, middleware.verifyUserID_lite, endware.User.getUserInfo);
+app.post('/:version/:token/user/:userID/info', middleware.verifyToken, middleware.verifyUserID_lite, endware.User.getUserInfo);
+
 //-----------------------------------------------------------//
 //---------------------| START SERVER |----------------------//
 //-----------------------------------------------------------//

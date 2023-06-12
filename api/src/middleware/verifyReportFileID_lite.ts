@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import fs from 'fs';
 
 //Authentication check
-export const verifyReportFileID_min = (req: Request, res: Response, next: NextFunction) => {
+export const verifyReportFileID_lite = (req: Request, res: Response, next: NextFunction) => {
   const reportID = req.params.reportID;
   const fileID = req.params.fileID;
 
@@ -17,4 +17,4 @@ export const verifyReportFileID_min = (req: Request, res: Response, next: NextFu
 
 };
 
-export default verifyReportFileID_min;
+export default verifyReportFileID_lite;
