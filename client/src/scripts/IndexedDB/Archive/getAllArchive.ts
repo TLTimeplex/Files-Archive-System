@@ -1,5 +1,5 @@
 import { IDB_Archive } from "../../../types/IDB_Archive";
-import { getIDB } from "../Files";
+import getIDB from "./getIDB";
 
 export const getAllArchive = async (): Promise<IDB_Archive[]> => {
   return new Promise((resolve, reject) => {

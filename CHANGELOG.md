@@ -1,3 +1,7 @@
+### --- v0.6.0d --- 14.06.23, 14.15 UTC+2 ---
+* ALL: Added: New field to query of reports for getting the author name
+* Client: Fix: GetAllArchives now uses the archiveDB and not the reportDB
+
 ### --- v0.6.0c --- 14.06.23, 12.30 UTC+2 ---
 * Client: Added: New component for locally stored archives
 * Client: Added: Frame for online archive component

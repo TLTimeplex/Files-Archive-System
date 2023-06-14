@@ -33,7 +33,8 @@ export const getReportIDs = (req: Request, res: Response) => {
         date_created: reportFieldSelectRaw.date_created,
         date_modified: reportFieldSelectRaw.date_modified,
         archived: reportFieldSelectRaw.archived,
-        access: reportFieldSelectRaw.access
+        access: reportFieldSelectRaw.access,
+        author_name: reportFieldSelectRaw.author_name
       } :
       {
         id: true
@@ -234,7 +235,8 @@ export const getReportIDs = (req: Request, res: Response) => {
     if (err) throw err;
 
     connection.query(query, queryParameter, (err, results: any[]) => {
-      connection.release();
+      if (!reportFieldSelect.author_name)
+        connection.release();
       if (err) throw err;
 
       let output: any[] = [];
@@ -275,10 +277,20 @@ export const getReportIDs = (req: Request, res: Response) => {
             }
           }
         }
-
         output.push(report);
       });
-      return res.status(200).send({ success: true, data: output });
+      if (!reportFieldSelect.author_name || output.length === 0)
+        return res.status(200).send({ success: true, data: output });
+      const authorIDs = results.map((result) => result.author_id);
+      connection.query("SELECT `id`, `username` FROM `users` WHERE `id` IN (?)", [authorIDs], (err, results: any[]) => {
+        connection.release();
+        if (err) throw err;
+        output.forEach((report, index) => {
+          const author = results.find((result) => result.id === report.author_id);
+          if (author) output[index].author_name = author.username;
+        });
+        return res.status(200).send({ success: true, data: output});
+      });
     });
 
   });
