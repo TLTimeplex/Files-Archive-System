@@ -1,4 +1,6 @@
 import { Tabs, Tab } from "react-bootstrap";
+import Saved from "./saved";
+import Archived from "./archived";
 
 export const Overview = () => {
   return (
@@ -10,10 +12,10 @@ export const Overview = () => {
         justify
       >
         <Tab eventKey="archive" title="Archive" disabled={!navigator.onLine}>
-          Tab content for Home
+          <Archived />
         </Tab>
         <Tab eventKey="saved" title="Saved">
-          Tab content for Profile
+          <Saved />
         </Tab>
       </Tabs>
     </>

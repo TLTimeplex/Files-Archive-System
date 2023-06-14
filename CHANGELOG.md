@@ -1,3 +1,8 @@
+### --- v0.6.0c --- 14.06.23, 12.30 UTC+2 ---
+* Client: Added: New component for locally stored archives
+* Client: Added: Frame for online archive component
+* Client: Changed: New possible fiel for author_name in report info requests
+
 ### --- v0.6.0b --- 12.06.23, 15.30 UTC+2 ---
 * API: Added: New routes for getting user info about self and other users (username, groups, etc.)
 * API: Added: Middleware check for userIDs
