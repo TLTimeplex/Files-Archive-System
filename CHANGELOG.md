@@ -1,3 +1,4 @@
+## 0.6
 ### --- v0.6.0d --- 14.06.23, 14.15 UTC+2 ---
 * ALL: Added: New field to query of reports for getting the author name
 * Client: Fix: GetAllArchives now uses the archiveDB and not the reportDB
@@ -17,6 +18,7 @@
 * Client: Added: "Offline" mode for current components
 * Client: Added: Archive IDB store and functions
 
+## 0.5
 ### --- v0.5.1 --- 10.06.23, 21.40 UTC+2 ---
 * Client: Added: New AlertLoader class for better control
 * Client: Changed: Report sync over Overview is now using the new AlertLoader for better status control
@@ -46,6 +48,7 @@
 * Client: Changed: Report IDB functions now use the new store types
 * Client: Broken: Overview and Edit are broken, because of the new IDB structure (Errors are commented out)
 
+## 0.4
 ### --- v0.4.4 --- 09.06.23, 15.05 UTC+2 ---
 * API: Added: Added filter for getting reports over their id to get only partial or full report meta data
 
@@ -66,6 +69,7 @@
 * API: Changed: Restrictions have now a new field "archive"
 * API: Added: Checks if a report is archived or not in get and update routes
 
+## 0.3
 ### --- v0.3.8 --- 05.06.23, 12.42 UTC+2 ---
 * API: Added: Archived Reports can now be "unarchived"
 * API: Added: Middleware check for archived reports if they exist
@@ -108,6 +112,7 @@
 * API: Changed: API also deletes the meta of a file when deleting the file
 * CLIENT: Added: Client now requests file from the server, when the file is not in the storage and the report is uploaded
 
+## 0.2
 ### --- v0.2.2 --- 29.05.23, 13.58 UTC+2 ---
 * API: Changed: Changed the get Report IDs with filter method from GET to POST to support the filter mask.
 * CLIENT: Added: Client now syncs the list of reports with the server and updates them if necessary.
@@ -121,6 +126,7 @@
 * API: Added: Filter mask for reports
 * CLIENT: Fix: Changed some more write -> report stuff
 
+## 0.1
 ### --- v0.1.8 --- 28.05.23, 13.08 UTC+2 ---
 * API: Added: Files can now be deleted by their id
 * API: Change: Reports get now saved in a more human readable format
