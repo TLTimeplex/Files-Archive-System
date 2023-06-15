@@ -89,8 +89,8 @@ app.get('/:version/:token/report/:reportID/unarchive', middleware.verifyToken, m
 app.get('/:version/:token/user/info', middleware.verifyToken, endware.User.getUserInfo);
 app.post('/:version/:token/user/info', middleware.verifyToken, endware.User.getUserInfo);
 
-app.get('/:version/:token/user/:userID/info', middleware.verifyToken, middleware.verifyUserID_lite, endware.User.getUserInfo);
-app.post('/:version/:token/user/:userID/info', middleware.verifyToken, middleware.verifyUserID_lite, endware.User.getUserInfo);
+app.get('/:version/:token/user/:trgUserID/info', middleware.verifyToken, middleware.verifyUserID_lite, endware.User.getUserInfo);
+app.post('/:version/:token/user/:trgUserID/info', middleware.verifyToken, middleware.verifyUserID_lite, endware.User.getUserInfo);
 
 //-----------------------------------------------------------//
 //---------------------| START SERVER |----------------------//

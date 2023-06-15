@@ -1,4 +1,7 @@
 ## 0.6
+### --- v0.6.0e --- 14.06.23, 14.15 UTC+2 ---
+* API: Fix: User route with custom id now returns the correct user info
+
 ### --- v0.6.0d --- 14.06.23, 14.15 UTC+2 ---
 * ALL: Added: New field to query of reports for getting the author name
 * Client: Fix: GetAllArchives now uses the archiveDB and not the reportDB

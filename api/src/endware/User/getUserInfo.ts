@@ -8,8 +8,9 @@ export const getUserInfo = (req: Request, res: Response) => {
   const select = req.body.select as User_Data_Select | undefined;
 
   try {
-    if (req.params.userID && req.params.userID !== "") {
-      userID = parseInt(req.params.userID);
+    if (req.params.trgUserID && req.params.trgUserID !== "") {
+      userID = parseInt(req.params.trgUserID);
+      console.log(userID);
     }
   }
   catch (e) {
@@ -20,7 +21,7 @@ export const getUserInfo = (req: Request, res: Response) => {
     if (err) {
       console.log(err);
       connection.release();
-      return res.status(500).send("Internal server error");
+      return res.status(500).send("Internal server errors");
     }
     let getUserID = new Promise<number>((resolve, reject) => {
       if (userID) {
@@ -40,7 +41,7 @@ export const getUserInfo = (req: Request, res: Response) => {
       }
     });
     getUserID.then((userID) => {
-      connection.query("SELECT id, username FROM user WHERE id = ?", [userID], (err, result: any[]) => {
+      connection.query("SELECT id, username FROM users WHERE id = ?", [userID], (err, result: any[]) => {
         if (err) {
           console.log(err);
           connection.release();
@@ -55,7 +56,7 @@ export const getUserInfo = (req: Request, res: Response) => {
         let output: User_Data = {};
 
         if (!select || select.id)
-          output.username = user.username;
+          output.id = user.id;
 
         if (!select) {
           connection.release();
