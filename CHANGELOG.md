@@ -1,5 +1,5 @@
 ## 0.6
-### --- v0.6.0e --- 14.06.23, 14.15 UTC+2 ---
+### --- v0.6.0e --- 15.06.23, 14.30 UTC+2 ---
 * API: Fix: User route with custom id now returns the correct user info
 
 ### --- v0.6.0d --- 14.06.23, 14.15 UTC+2 ---
