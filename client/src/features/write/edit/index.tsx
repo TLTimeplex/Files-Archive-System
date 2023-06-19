@@ -445,6 +445,19 @@ export const Editor = () => {
     return newReport;
   }
 
+  const archiveReport = async () => {
+    await syncReport();
+    const res = await axios.get("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report/" + Report.id + "/archive");
+    if (!res.data.success) {
+      AddAlert(res.data.message, "danger");
+      return;
+    }
+    //TODO: Remove files from storage
+    await ReportsDB.deleteReport(Report.id, "all");
+    AddAlert("Report archived!", "success");
+    window.location.href = "/reports";
+  }
+
 
   return (
     <Form id="new-form" onSubmit={(event) => event.preventDefault()}>
@@ -463,7 +476,7 @@ export const Editor = () => {
       <div className='button-group'>
         <Button variant="primary" id="new-save" type='submit' onClick={() => saveReport()}>Save</Button>{' '}
         {isOnline ? <Button variant={isUploaded ? "success" : "outline-success"} id="new-sync" type='submit' onClick={syncReport}>Sync</Button> : <></>}{' '}
-        {isUploaded && isOnline ? <Button variant="warning" id="new-archive" type='submit'>Archive</Button> : <></>}{' '}
+        {isUploaded && isOnline ? <Button variant="warning" id="new-archive" type='submit' onClick={() => archiveReport()}>Archive</Button> : <></>}{' '}
         {isOnline || (!isOnline && !isUploaded) ? <Button variant="danger" id="new-delete" onClick={() => setShowDeleteModal(true)}>Delete</Button> : <></>}
         <Button variant="secondary" href="/report" className="Button-Back">Back</Button>
       </div>

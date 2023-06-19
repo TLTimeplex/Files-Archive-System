@@ -1,4 +1,10 @@
 ## 0.6
+### --- v0.6.0 --- 19.06.23, 13.30 UTC+2 ---
+* Client: Added: Implemented the Archive overview
+* Client: Added: View mode for Archived Reports (Files are not working yet)
+* Client: Added: User can now archive Reports
+* Client: Changed: Archive Type now has IDB_Files again instead of File
+
 ### --- v0.6.0e --- 15.06.23, 14.30 UTC+2 ---
 * API: Fix: User route with custom id now returns the correct user info
 

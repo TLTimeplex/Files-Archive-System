@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { ArchiveDB } from "../../../scripts/IndexedDB";
 import { IDB_Archive } from "../../../types/IDB_Archive";
-import { Card } from "react-bootstrap";
+import { Button, Card } from "react-bootstrap";
 
 export const Saved = () => {
 
@@ -40,7 +40,7 @@ export const Saved = () => {
                     </Card.Text>
                   </Card.Body>
                   <Card.Footer>
-                    <Card.Link href={`/archive/${value.id}`}>View</Card.Link>
+                    <Button variant="primary" href={`/archive/${value.id}`}>View</Button>
                   </Card.Footer>
                 </Card>
               )
