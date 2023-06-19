@@ -1,4 +1,10 @@
 ## 0.6
+### --- v0.6.2 --- 19.06.23, 22.10 UTC+2 ---
+* Client: Added: New ArchiveDB function to check if a report is already saved there
+* Client: Added: Archived reports can now be saved for offline usage
+* Client: Changed: The view tab for archived reports now recognizes if the report is saved for offline usage
+* Client: Fix: Saved Tab now interprets the date as a DATE instead of a string
+
 ### --- v0.6.1 --- 19.06.23, 21.55 UTC+2 ---
 * Client: Fixed: Archived reports now load files correctly again (Still not showing them)
 

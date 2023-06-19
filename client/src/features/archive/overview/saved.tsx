@@ -34,7 +34,7 @@ export const Saved = () => {
                       DEBUG INFO <br />
                       ID: {value.id} <br />
                       Title: {value.data.title} <br />
-                      Date: {value.meta.date.toUTCString()} <br />
+                      Date: {new Date(value.meta.date).toUTCString()} <br />
                       Author: {value.meta.author}/{value.meta.authorID} <br />
                       files: {value.meta.fileIDs.length} <br />
                     </Card.Text>

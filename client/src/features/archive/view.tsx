@@ -8,12 +8,14 @@ import ReportFilter, { ReportFieldSelect } from "../../types/ReportFilter";
 import { API_FileMeta } from "../../types/API_File";
 import IDB_File from "../../types/iDB_file";
 import { FloatingLabel, Spinner, Form, Button } from "react-bootstrap";
+import AddAlert from "../../scripts/addAlert";
 
 export const ViewArchive = () => {
 
   const { archiveID } = useParams();
 
   const [report, setReport] = useState<IDB_Archive>();
+  const [isArchived, setIsArchived] = useState<boolean>(false);
 
   if (!archiveID) {
     window.location.href = "/archive";
@@ -27,12 +29,15 @@ export const ViewArchive = () => {
     ArchiveDB.getArchive(archiveID).then((archive: IDB_Archive) => {
       if (!archive) {
         getArchive();
+        setIsArchived(false);
         return;
       }
       setReport(archive);
+      setIsArchived(true);
     }).catch((err) => {
       console.log(err);
       getArchive();
+      setIsArchived(false);
     });
   });
 
@@ -78,11 +83,7 @@ export const ViewArchive = () => {
 
       const reportMeta: any = res.data.data[0];
 
-      console.log(reportMeta)
-
-
       axios.get(`/api/1/${localStorage.getItem("token") || sessionStorage.getItem("token")}/report/${archiveID}`).then((res) => {
-        console.log(res.data)
         if (!res.data.success) {
           console.log(res.data.message);
           window.location.href = "/archive";
@@ -149,7 +150,7 @@ export const ViewArchive = () => {
               fileIDs: report.fileIDs || [],
             }
           }
-          console.log(archive);
+          console.log(archive); //TODO: Remove
 
           setReport(archive);
         }).catch((err) => {
@@ -169,11 +170,19 @@ export const ViewArchive = () => {
   }
 
 
-  const saveArchived = () => {
+  const saveArchived = async () => {
     if (!report)
       return;
-    //TODO:
-    //TODO: Check if already saved
+    
+    const exists = await ArchiveDB.existsArchive(report.id);
+    if (exists) {
+      AddAlert("Archive already saved", "warning");
+      setIsArchived(true);
+      return;
+    }
+    setIsArchived(true);
+    await ArchiveDB.setArchive(report);
+    AddAlert("Archive saved", "success");
   }
 
   return (
@@ -189,7 +198,7 @@ export const ViewArchive = () => {
           <div className='uploaded-files-preview form-control mb-3' id="uploaded-files-preview">
           </div>
           <div className='button-group'>
-            <Button variant="primary" id="new-save" type='submit' onClick={() => saveArchived()}>Save</Button>{' '}
+            <Button variant="primary" id="new-save" type='submit' onClick={() => saveArchived()} disabled={isArchived}>Save</Button>{' '}
             <Button variant="secondary" href="/archive" className="Button-Back">Back</Button>
           </div>
         </Form>
