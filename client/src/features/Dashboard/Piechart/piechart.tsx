@@ -10,7 +10,7 @@ import {
   Legend,
 } from 'chart.js';
 import { useEffect, useState } from 'react';
-import { Bar, Doughnut } from 'react-chartjs-2';
+import { Doughnut } from 'react-chartjs-2';
 import './piechart.css'
 import { ReportDB } from '../../../scripts/IndexedDB';
 import axios from 'axios';
@@ -28,41 +28,31 @@ ChartJS.register(
   Legend
 );
 
+async function getNumberOfReports() {
+  let online: boolean = navigator.onLine;
 
-
-async function getReports(){
-  let numberOfLocalReports :number = 0;
+  let numberOfLocalReports: number = 0;
+  const _localReports: IDB_Report[] = await ReportDB.getAllReports("local");
   let localReports: IDB_Report[] = [];
 
-  let numberOfRemoteReports :number = 0;
-  let remoteReports: IDB_Report[] = [];
+  let numberOfRemoteReports: number = 0;
+  const remoteReports: IDB_Report[] = await ReportDB.getAllReports("remote");
 
-  let numberOfSyncReports :number = 0;
+  let numberOfUnsyncReports: number = 0;
 
-  await ReportDB.getAllReports("remote").then(
-    response => {
-      numberOfRemoteReports = response.length;
-      remoteReports = response;
+  _localReports.forEach((localReport: IDB_Report) => {
+    let remote: any = remoteReports.find((remote) => remote.id === localReport.id);
+    if (remote === undefined) {
+      localReports.push(localReport);
     }
-  );
-
-  await ReportDB.getAllReports("local").then(
-    response => {
-      response.forEach((local:any) => {
-        remoteReports.forEach((remoteReport:any) => {
-          if (local.id == remoteReport.id) {
-            localReports.push(local);
-          }
-        })
-      })
-    }
-  );
-
+  });
   numberOfLocalReports = localReports.length;
 
-  if (navigator.onLine) {
+  numberOfRemoteReports = remoteReports.length;
+
+  if (online) {
     const filter: ReportFilter = {
-      author_id: [1], //TODO: Get own ID
+      author_id: [1],
       archived: false,
     };
 
@@ -72,64 +62,74 @@ async function getReports(){
       date_modified: true,
     }
 
-    let allSyncedReports: any[] = [];
+    let allSyncedReports: IDB_Report[] = [];
 
     const res = await axios.post(`/api/1/${localStorage.getItem("token") || sessionStorage.getItem("token")}/report`, { filter: filter, select: select });
-    if (!res.data.success) return;
-    allSyncedReports = res.data.data as any[]; //TODO: type
+    if (!res.data.success) {
+      console.log("Not possible to get Data from Server.");
+      return;
+    }
+    allSyncedReports = res.data.data as any[];
 
-    localReports.forEach((localReport:any) =>{
-      remoteReports.forEach((remoteReport:any) =>{
-        allSyncedReports.forEach((syncReport:any) =>{
-          if (((localReport.id === syncReport.id) && (syncReport.id === remoteReport.id))) {
-            console.log(localReport.id);
-            console.log(syncReport.id)
-            console.log("Error!!!");
-          }
-        });
-      });
+
+    let unsyncReports: IDB_Report[] = [];
+
+    allSyncedReports.forEach((sync: IDB_Report) => {
+      let local: any = localReports.find((local) => local.id === sync.id)
+      let remote: any = remoteReports.find((remote) => remote.id === sync.id);
+
+      if ((local !== undefined) && (remote === undefined)) {
+        console.log("Error");
+        return;
+      }
+      if ((local === undefined) && (remote === undefined)) {
+        unsyncReports.push(sync);
+      }
     });
-
-    remoteReports.forEach((remoteReport:any) =>{
-      allSyncedReports.forEach((syncReport:any) =>{
-        if (remoteReport.id !== syncReport.id) {
-          numberOfSyncReports += 1;
-        }
-      });
-    });
-
+    numberOfUnsyncReports = unsyncReports.length;
   }
-  
-  //console.log([localReports, remoteReports])
-  return navigator.onLine ? [numberOfLocalReports, numberOfRemoteReports, numberOfSyncReports] : [numberOfLocalReports, numberOfRemoteReports];
+
+  return online ? [numberOfLocalReports, numberOfRemoteReports, numberOfUnsyncReports] : [numberOfLocalReports, numberOfRemoteReports];
 }
 
-export const DemoComponent = () => {
-  //const labels = navigator.onLine ? ['Local Reports ', 'Remote Reports', 'Reports to synchronise'] : ['Local Reports', 'Remote Reports'];
-  const [data, setData] = useState<any>();
+export const Piechart = () => {
+  const [data, setData] = useState<any>(); //TODO: data define as Interface => but Doughnut need "ChartData<"doughnut", number[], unknown>" as input var
   const [init, setInit] = useState<boolean>(false);
 
-  useEffect(()=>{
+  useEffect(() => {
     if (init) return;
-    getReports().then((e) => {
-      if (e?.length !== undefined){
-        let local: string = ' ' + e[0].toString();
-        let remote: string = ' ' + e[1].toString();
-        let sync: string = '';
-        if (e?.length > 2) sync = ' ' + e[2].toString();
+    getNumberOfReports().then((reports) => {
+      let labels: string[] = [];
+      let online: boolean = navigator.onLine;
 
-        var labels = navigator.onLine ? ['Local Reports' + local, 'Remote Reports' + remote, 'Reports to synchronise' + sync] : ['Local Reports'+local, 'Remote Reports'+remote];
+      if (reports?.length !== undefined) {
+        let local: string = ' ' + reports[0].toString();
+        let remote: string = ' ' + reports[1].toString();
+        let sync: string = '';
+        if (reports?.length > 2) sync = ' ' + reports[2].toString();
+
+        labels = online ? ['Local Reports' + local,
+                            'Remote Reports' + remote,
+                            'Reports to synchronise' + sync]
+                            :
+                            ['Local Reports' + local,
+                            'Remote Reports' + remote];
       } else {
-        var labels = navigator.onLine ? ['Local Reports ', 'Remote Reports', 'Reports to synchronise'] : ['Local Reports', 'Remote Reports'];
+        labels = online ? ['Local Reports ',
+                          'Remote Reports',
+                          'Reports to synchronise']
+                          :
+                          ['Local Reports',
+                          'Remote Reports'];
       }
 
       let copyData = {
         labels: labels,
         datasets: [{
-          label: 'Expenses by Month',
-          data: e,
+          label: 'Reports',
+          data: reports,
           backgroundColor: [
-            'rgb(153, 102, 255)', 'rgb(0,255,255)', 'rgb(0,0,255)'
+            'rgb(13, 110, 253)', 'rgb(220,53,69)', 'rgb(25,135,84)'
           ],
           borderColor: [
             'rgb(255, 255, 255)'
@@ -142,6 +142,10 @@ export const DemoComponent = () => {
     });
   });
 
-  return (<>{data ? <Doughnut data={data}/> : <></>}</>);
+  return (<>
+            {data ? <Doughnut data={data} />
+            :
+            <></>}
+          </>);
 };
 
