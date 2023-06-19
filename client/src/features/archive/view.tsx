@@ -102,7 +102,7 @@ export const ViewArchive = () => {
                 return;
               }
 
-              const fileMetaData: API_FileMeta = res.data.file;
+              const fileMetaData: API_FileMeta = res.data.meta;
 
               axios.get("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report/" + archiveID + "/file/" + fileID, { responseType: "blob" }).then((res) => {
                 const fileData: Blob = res.data;
