@@ -414,14 +414,16 @@ export const Editor = () => {
     const fileUpload = document.getElementById("fileUpload") as HTMLInputElement;
 
     const files = fileUpload.files;
+    let fileIDs: string[]= [];
+    Report.fileIDs?.forEach(id => fileIDs.push(id));
     if (!files) return;
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       const result = await FilesDB.createFile(file, Report.id);
-      if (!Report.fileIDs) Report.fileIDs = [];
-      Report.fileIDs.push(result);
+      if (fileIDs === undefined) fileIDs = [];
+      fileIDs.push(result);
     }
-    saveReport();
+    saveReport({...Report, fileIDs: fileIDs});
   }
 
   const removeFile = async (fileID: string) => {

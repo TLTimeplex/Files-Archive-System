@@ -1,4 +1,6 @@
 ## 0.6
+### --- v0.6.3 --- 23.06.23, 13.19 UTC+2 ---
+* Client: Fixed: Reports save now when a new image is uploaded
 ### --- v0.6.2 --- 19.06.23, 22.10 UTC+2 ---
 * Client: Added: New ArchiveDB function to check if a report is already saved there
 * Client: Added: Archived reports can now be saved for offline usage
