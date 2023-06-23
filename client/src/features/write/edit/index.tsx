@@ -12,6 +12,7 @@ import axios from "axios";
 import AddAlert from "../../../scripts/addAlert";
 import { API_FileMeta } from "../../../types/API_File";
 import IDB_File from "../../../types/iDB_file";
+import PreviewBox from "../../../compnents/PreviewBox";
 
 
 export const Editor = () => {
@@ -24,6 +25,8 @@ export const Editor = () => {
   const [init, setInit] = useState(false);
 
   const [isOnline, setIsOnline] = useState(navigator.onLine);
+
+  const [Files, setFiles] = useState<File[]>([]);
 
   window.addEventListener('online', () => setIsOnline(true));
   window.addEventListener('offline', () => setIsOnline(false));
@@ -79,27 +82,29 @@ export const Editor = () => {
     [init]);
 
   const drawPreview = async () => {
-    const uploadedFilesPreview = document.getElementById("uploaded-files-preview") as HTMLDivElement;
-
-    uploadedFilesPreview.innerHTML = "";
-
-    const awaitFiles: Promise<string | void>[] = [];
+    const awaitFiles: Promise<File | undefined>[] = [];
 
     Report?.fileIDs?.forEach((fileID: string) => {
-      awaitFiles.push(new Promise(async (resolve, reject) => {
+      awaitFiles.push(new Promise<File | undefined>((resolve, reject) => {
         FilesDB.getFile(fileID).then(file => {
-          if (!file) return;
-          const card = createCard(file.data.name, file.data, file.data.type.split("/")[0], FancyFileSize(file.data.size), async () => await removeFile(fileID));
-          uploadedFilesPreview.appendChild(card);
-          resolve(fileID);
+          resolve(file?.data);
         }).catch(error => {
-          const card = createCard(fileID, "Please sync to load this file!", undefined, undefined, async () => await removeFile(fileID));
-          uploadedFilesPreview.appendChild(card);
-          resolve();
+          resolve(undefined);
         });
-      }))
+      }));
     });
-    await Promise.all(awaitFiles);
+    await Promise.all(awaitFiles).then(files => {
+      let Files: File[] = [];
+      let missingFile: boolean = false;
+      for (const file of files) {
+        if (file) Files.push(file);
+        else missingFile = true;
+      }
+      setFiles(Files);
+      if (missingFile) {
+        AddAlert("Some files are missing! Syncing might solve the problem", "warning");
+      }
+    });
   }
 
   useEffect(() => {
@@ -473,8 +478,7 @@ export const Editor = () => {
         <Form.Label>Upload Files</Form.Label>
         <Form.Control type="file" id="fileUpload" multiple onChange={addFiles} />
       </Form.Group>
-      <div className='uploaded-files-preview form-control mb-3' id="uploaded-files-preview">
-      </div>
+      <PreviewBox files={Files} />
       <div className='button-group'>
         <Button variant="primary" id="new-save" type='submit' onClick={() => saveReport()}>Save</Button>{' '}
         {isOnline ? <Button variant={isUploaded ? "success" : "outline-success"} id="new-sync" type='submit' onClick={syncReport}>Sync</Button> : <></>}{' '}
