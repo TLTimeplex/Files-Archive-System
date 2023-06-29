@@ -1,4 +1,7 @@
 ## 0.7
+### --- v0.7.0b --- 29.06.23, 16.05 UTC+2 ---
+* Client: Changed: PreviewBox Mask restyling
+
 ### --- v0.7.0a --- 23.06.23, 16.05 UTC+2 ---
 * Client: Added: New PreviewBox component for the Editor (and later for the Viewer)
 

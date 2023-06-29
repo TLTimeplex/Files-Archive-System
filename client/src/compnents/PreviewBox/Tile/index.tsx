@@ -9,7 +9,7 @@ export const Tile = (props: TileProps) => {
   return (
     <div className="preview-box__item">
       <TileContent file={props.file} />
-      <Mask file={props.file} />
+      <Mask file={props.file} removeCallback={()=>{}} />
     </div>
   );
 };
