@@ -69,7 +69,7 @@ async function getNumberOfReports() {
       console.log("Not possible to get Data from Server.");
       return;
     }
-    allSyncedReports = res.data.data as any[];
+    allSyncedReports = res.data.data as IDB_Report[];
 
 
     let unsyncReports: IDB_Report[] = [];
@@ -95,6 +95,17 @@ async function getNumberOfReports() {
 export const Piechart = () => {
   const [data, setData] = useState<any>(); //TODO: data define as Interface => but Doughnut need "ChartData<"doughnut", number[], unknown>" as input var
   const [init, setInit] = useState<boolean>(false);
+  const ChartOptions :any = {
+    cutout: '80%',
+    responsive: true,
+    plugins: {
+      legend: {
+        display: true,
+        position: "bottom",
+        align: 'start',
+      },
+    }
+  }
 
   useEffect(() => {
     if (init) return;
@@ -134,7 +145,7 @@ export const Piechart = () => {
           borderColor: [
             'rgb(255, 255, 255)'
           ],
-          borderWidth: 1
+          borderWidth: 1,
         }]
       };
       setData(copyData);
@@ -142,10 +153,13 @@ export const Piechart = () => {
     });
   });
 
-  return (<>
-            {data ? <Doughnut data={data} />
-            :
-            <></>}
-          </>);
+  return (<div className='DoughnutChart'>
+            <p className='Headline'>Open Reports</p>
+            <div className='Chart'>
+              {data ? <Doughnut className='Chart' data={data} options={ChartOptions}/> 
+              :
+              <></>}
+            </div>  
+          </div>);
 };
 

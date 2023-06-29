@@ -1,0 +1,114 @@
+@media (max-width: 480px) {
+    .Feed {
+        width: 100vw;
+        height: 100vw;
+    }
+}
+
+@media (min-width: 481px) {
+    .Feed {
+        height:40vh;
+        width: 40vh;
+    }
+}
+
+.Feed {
+    display: block;
+    float: left;
+    margin-top: 0%;
+    margin-left: 0%;
+    border-style: groove;
+    border-color: white;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.HeadLine {
+    width: 100%;
+    height: 6%;
+    margin: 0%;
+    margin-bottom: 3%;
+    text-align: center;
+    font-weight: bold;
+    font-family: "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; /* font family from Bootstrap */
+}
+
+.lastReports {
+    margin: 0%;
+    display: block;
+    width: 100%;
+    height: 94%;
+}
+
+.SingleReport {
+    width: 100%;
+    height: 100%;
+    margin: 0%;
+    margin-top: 1%;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 5px;
+    padding: 5px;
+    display: block;
+    min-height: 20%;
+}
+
+.SingleReport:hover {
+    background-color:lightskyblue;
+}
+
+.title {
+    width: 100%;
+    height: 40%;
+    margin: 0%;
+    display: inline-block;
+    font-weight: 500;
+    border-bottom-style: solid;
+    border-width: 1px;
+
+    overflow: hidden; 
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.title:empty::before {
+    content: "";
+    display: inline-block; 
+}
+
+.discription {
+    display: inline-block;
+    width: 100%;
+    height: 94%;
+    margin-top: 0%;
+    margin-left: 0%;
+    margin-right: 0%;
+    font-size: 90%;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.discriptionBold {
+    font-weight: 500;
+}
+
+.discriptionItalic {
+    font-style: italic;
+}
+
+.discription:empty::before {
+    content: "";
+    display: inline-block;
+}
+
+.date {
+    float: right;
+    display: block;
+    margin: 0%;
+    margin-right: 1%;
+    margin-top: -4%;
+    font-size: 65%;
+    color: gray;
+}

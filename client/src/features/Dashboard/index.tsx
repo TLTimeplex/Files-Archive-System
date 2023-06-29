@@ -1,10 +1,11 @@
+import { LastFileChanged } from "./LastChangedFiles/lastChangedFiles";
 import { Piechart } from "./Piechart/piechart"
-import "./Piechart/piechart.css"
 
 export const Dashboard = () => {
     return (
-        <div className="DoughnutChart">
+        <div>
             <Piechart />
+            <LastFileChanged/> 
         </div>
     );
 }
