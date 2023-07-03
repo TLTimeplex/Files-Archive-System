@@ -11,3 +11,126 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+#preview-root {
+  display: none;
+  transition: all 0.3s ease-in-out;
+}
+
+#preview-root.active {
+  background: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.preview-container{
+  top: 2.5%;
+  width: 90%;
+  height: 90%;
+}
+
+.preview-header{
+  background: rgba(0, 0, 0, 0.1);
+  height: 10%;
+  border-radius: 5px;
+  box-sizing: border-box;
+  box-shadow: 0 0 0 15px rgba(0, 0, 0, 0.1);
+  color: #ddd;
+  max-width: 800px;
+  margin: auto;
+}
+
+.preview-body{
+  height: 75%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1% 0;
+}
+
+.preview-body * {
+  max-width: 100%;
+  max-height: 100%;
+  overflow: hidden;
+}
+
+.preview-footer{
+  background: green;
+  height: 10%;
+  max-width: 800px;
+  margin: auto;
+}
+
+.close-preview {
+  width: 2.4rem;
+  height: 2.4rem;
+  top: 1%;
+  right: 1%;
+  position: fixed;
+  cursor: pointer;
+}
+
+#close-preview-a, #close-preview-b {
+  background: black;
+  width: 100%;
+  height: 15%;
+  position: relative;
+  inset: 42.5% 0%;
+  transform: rotate(45deg);
+  border:1px solid gray;
+  border-radius: 5px;
+}
+
+#close-preview-b {    
+  top: 27.5%;
+  transform: rotate(315deg);
+}
+
+.preview-header.image-preview {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 60% 40%;
+  max-height: 100%;
+  overflow: hidden;
+}
+
+.image-preview > .preview-title {
+  grid-column: 1 / 4;
+  grid-row: 1 / 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font: optional;
+}
+
+.image-preview > .preview-type , .image-preview > .preview-size, .image-preview > .preview-date {
+  width: 1/3%;
+  text-align: center;
+  font: optional;
+}
+
+.image-preview > .preview-type {
+  grid-column: 1 / 2;
+  grid-row: 2 / 3;
+}
+
+.image-preview > .preview-size {
+  grid-column: 2 / 3;
+  grid-row: 2 / 3;
+  border-left: 2px solid darkgray;
+  border-right: 2px solid darkgray;
+  box-sizing: border-box;
+  margin: 0 5px;
+  padding: 0 5px;
+}
+
+.image-preview > .preview-date {
+  grid-column: 3 / 4;
+  grid-row: 2 / 3;
+}

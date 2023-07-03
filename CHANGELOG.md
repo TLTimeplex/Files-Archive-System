@@ -1,4 +1,7 @@
 ## 0.7
+### --- v0.7.0c --- 03.07.23, 19.15 UTC+2 ---
+* Client: Added: New root for a file Viewer and fist implementation for images
+
 ### --- v0.7.0b --- 29.06.23, 16.05 UTC+2 ---
 * Client: Changed: PreviewBox Mask restyling
 
