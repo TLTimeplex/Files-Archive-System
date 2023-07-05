@@ -35,14 +35,14 @@ async function getlastReports(numberOfLastReports :number) {
         doubleReports.push([]);
         doubleReports.at(index)?.push(report);
         Reports.forEach((innerReport, innerIndex) => {
-            if ((report.id == innerReport.id) && (index != innerIndex)){
+            if ((report.id === innerReport.id) && (index !== innerIndex)){
                 doubleReports.at(index)?.push(innerReport);
             }
         });
     });
 
     doubleReports.forEach((reports) => {
-        if (reports.length == 1){
+        if (reports.length === 1){
             reports.forEach((report) => {clearReports.push(report)});
         } else {
             let updatedRepord: Report_Date = {
@@ -53,7 +53,7 @@ async function getlastReports(numberOfLastReports :number) {
             let maxDate: Date;
             let indexMaxDate: number = 0;
             reports.forEach((report, index) =>{
-                if (index = 0) {
+                if (index === 0) {
                     maxDate = report.updatedAt;
                     indexMaxDate = index;
                 } else {
@@ -65,10 +65,10 @@ async function getlastReports(numberOfLastReports :number) {
             });
             
             reports.forEach((report, index) => {
-                if (index == indexMaxDate) updatedRepord = report;
+                if (index === indexMaxDate) updatedRepord = report;
             });
 
-            let tempReport: Report_Date|undefined = clearReports.find((report) => report == updatedRepord);
+            let tempReport: Report_Date|undefined = clearReports.find((report) => report === updatedRepord);
             if (tempReport !== undefined){
                 clearReports.push(updatedRepord);
             }
@@ -85,9 +85,9 @@ async function getlastReports(numberOfLastReports :number) {
         };
 
         for (let i = 0; i<numberOfLastReports; i++){
-            if (clearReports.length == 0) break;
+            if (clearReports.length === 0) break;
             clearReports.forEach((report, index) => {
-                if (index == 0) {
+                if (index === 0) {
                     maxDate = report.updatedAt;
                     reportMaxDate = report;
                     maxDateIndex = index;
@@ -139,7 +139,7 @@ const lastReportsElement = (Reports: Report_Date[]) => {
         return (<div className='SingleReport' onClick={clickSingleReport} title={singleReportHoverText}>
                     <p className='title'>{titleText}</p>
                     <p className='discription'><span className='discriptionBold'>Discription:</span><br></br>
-                                               <span className='discriptionItalic'>{discriptionText}</span> 
+                                               <span className='discriptionItalic'>{discriptionText}Hdsfdsagfdgfdgdafgafdsgfdggfdafgfdagdfagdag</span> 
                     </p>
                     <p className='date'>{time}</p>
                 </div>);

@@ -1,14 +1,14 @@
 @media (max-width: 480px) {
     .DoughnutChart {
-        width: 100vw;
-        height: 100vw;
+        width: 100%;
+        height: 100%;
     }
 }
 
 @media (min-width: 481px) {
     .DoughnutChart {
-        height:40vh;
-        width: 40vh;
+        height: 320px;
+        width: 320px;
     }
 }
 
@@ -16,11 +16,12 @@
     display: block;
     float: left;
     margin: 0%;
+    margin-left: 1px;
+    margin-right: 1px;
     border-style: groove;
     border-radius: 1px;
     border-color: white;
     border-radius: 5px;
-    padding: 5px;
 }
 
 .Headline {
