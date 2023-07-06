@@ -1,4 +1,8 @@
 ## 0.7
+### --- v0.7.0d --- 06.07.23, 10.40 UTC+2 ---
+* Client: Added: Download button for images in the Viewer
+* Client: Fixed: User can now delete files from reports again
+
 ### --- v0.7.0c --- 03.07.23, 19.15 UTC+2 ---
 * Client: Added: New root for a file Viewer and fist implementation for images
 

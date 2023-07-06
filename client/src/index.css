@@ -61,11 +61,39 @@ code {
 }
 
 .preview-footer{
-  background: green;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  box-shadow: 0 0 0 15px rgba(0, 0, 0, 0.1);
   height: 10%;
   max-width: 800px;
   margin: auto;
+  color: #ddd;
+  display: flex;
+  justify-content: center;
+  flex-wrap: nowrap;
+  align-items: center;
 }
+
+.download-button-container {
+  height: 100%;
+  width: auto;
+  border : 1px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.download-button{
+  height: 95%;
+  width: 95%;
+  color: #ddd;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+
 
 .close-preview {
   width: 2.4rem;

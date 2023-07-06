@@ -1,9 +1,10 @@
+import IDB_File from "../../../types/iDB_file";
 import TileContent from "./Content";
 import Mask from "./Mask";
 
 export interface TileProps {
-  file: File;
-  removeCallback?: (file: File) => void;
+  file: IDB_File;
+  removeCallback?: (fileID: string) => void;
 }
 
 export const Tile = (props: TileProps) => {

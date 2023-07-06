@@ -1,12 +1,13 @@
+import IDB_File from "../../../../../types/iDB_file";
 import Icon_PDF from "./icons/PDF.png";
 import Icon_UKN from "./icons/Unknown.png";
 
 export interface ApplicationProps {
-  file: File;
+  file: IDB_File;
 }
 
 export const Application = (props: ApplicationProps) => {
-  const type = props.file.type.split("/")[1];
+  const type = props.file.data.type.split("/")[1];
 
   let icon = <></>;
 
@@ -25,7 +26,7 @@ export const Application = (props: ApplicationProps) => {
         {icon}
       </div>
       <div className="preview-box__item__content__application__name">
-        {props.file.name.replace(/\.[^/.]+$/, "")}
+        {props.file.data.name.replace(/\.[^/.]+$/, "")}
       </div>
     </div>
   )

@@ -1,13 +1,14 @@
+import IDB_File from "../../../../types/iDB_file";
 import Image from "./Image";
 import Application from "./application";
 
 export interface TileContentProps {
-  file: File
+  file: IDB_File;
 };
 
 export const TileContent = (props: TileContentProps) => {
 
-  const [Class, Type] = props.file.type.split("/");
+  const [Class, Type] = props.file.data.type.split("/");
 
   if (Class === "image") {
     return (

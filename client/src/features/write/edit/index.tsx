@@ -6,8 +6,6 @@ import "./style.css";
 import * as ReportsDB from "../../../scripts/IndexedDB/Reports"
 import AddAlertLoader2 from "../../../scripts/addAlertLoader2";
 import { FilesDB } from "../../../scripts/IndexedDB";
-import createCard from "../../../scripts/createCard";
-import FancyFileSize from "../../../scripts/fancyFileSize";
 import axios from "axios";
 import AddAlert from "../../../scripts/addAlert";
 import { API_FileMeta } from "../../../types/API_File";
@@ -26,7 +24,7 @@ export const Editor = () => {
 
   const [isOnline, setIsOnline] = useState(navigator.onLine);
 
-  const [Files, setFiles] = useState<File[]>([]);
+  const [Files, setFiles] = useState<IDB_File[]>([]);
 
   window.addEventListener('online', () => setIsOnline(true));
   window.addEventListener('offline', () => setIsOnline(false));
@@ -82,19 +80,19 @@ export const Editor = () => {
     [init]);
 
   const drawPreview = async () => {
-    const awaitFiles: Promise<File | undefined>[] = [];
+    const awaitFiles: Promise<IDB_File | undefined>[] = [];
 
     Report?.fileIDs?.forEach((fileID: string) => {
-      awaitFiles.push(new Promise<File | undefined>((resolve, reject) => {
+      awaitFiles.push(new Promise<IDB_File | undefined>((resolve, reject) => {
         FilesDB.getFile(fileID).then(file => {
-          resolve(file?.data);
+          resolve(file);
         }).catch(error => {
           resolve(undefined);
         });
       }));
     });
     await Promise.all(awaitFiles).then(files => {
-      let Files: File[] = [];
+      let Files: IDB_File[] = [];
       let missingFile: boolean = false;
       for (const file of files) {
         if (file) Files.push(file);
@@ -478,7 +476,7 @@ export const Editor = () => {
         <Form.Label>Upload Files</Form.Label>
         <Form.Control type="file" id="fileUpload" multiple onChange={addFiles} />
       </Form.Group>
-      <PreviewBox files={Files} />
+      <PreviewBox files={Files} removeCallback={removeFile} />
       <div className='button-group'>
         <Button variant="primary" id="new-save" type='submit' onClick={() => saveReport()}>Save</Button>{' '}
         {isOnline ? <Button variant={isUploaded ? "success" : "outline-success"} id="new-sync" type='submit' onClick={syncReport}>Sync</Button> : <></>}{' '}
