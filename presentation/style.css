@@ -1,0 +1,27 @@
+.horizontal-flex {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.margin-right-1rem {
+  margin-right: 1rem !important;
+}
+
+container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+}
+
+.API_Container, .Client_Container {
+  width: 25rem;
+  height: 25rem;
+  margin: 0;
+  border: 1px solid white;
+  border-radius: 50%;
+  padding: 2rem;
+  box-sizing: border-box;
+}

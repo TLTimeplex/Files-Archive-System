@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="de">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>reveal.js</title>
+
+  <link rel="stylesheet" href="dist/reset.css">
+  <link rel="stylesheet" href="dist/reveal.css">
+  <link rel="stylesheet" href="dist/theme/night.css">
+
+  <!-- Theme used for syntax highlighted code -->
+  <link rel="stylesheet" href="plugin/highlight/monokai.css">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <section>
+        <section data-auto-animate>
+          <div class="horizontal-flex">
+            <h2>F</h2>
+            <h2 class="margin-right-1rem">ile</h2>
+            <h2>A</h2>
+            <h2 class="margin-right-1rem">rchive</h2>
+            <h2>S</h2>
+            <h2>ystem</h2>
+          </div>
+          <p>Tim Götzelmann & Tim Kröckel</p>
+        </section>
+        <section data-auto-animate>
+          <div class="horizontal-flex">
+            <h2>F</h2>
+            <h2 style="width: 6rem;">A</h2>
+            <h2>S</h2>
+          </div>
+          <p>Tim Götzelmann & Tim Kröckel</p>
+        </section>
+      </section>
+      <section>
+        <container>
+          <left>
+            <h2>Übersicht</h2>
+          </left>
+          <right>
+            <ul>
+              <li>Was ist FAS</li>
+              <li>Aufbau</li>
+              <li>Features</li>
+              <li>Beispiel</li>
+            </ul>
+          </right>
+        </container>
+      </section>
+      <section>
+        <section data-auto-animate>
+          <h2>Was ist FAS</h2>
+        </section>
+        <section data-auto-animate>
+          <h2>Was ist FAS</h2>
+          <li>Berichte erstellen und speichern</li>
+        </section>
+        <section data-auto-animate>
+          <h2>Was ist FAS</h2>
+          <li>Bilder, Audio, Videos und andere Daten hochladen</li>
+        </section>
+        <section data-auto-animate>
+          <h2>Was ist FAS</h2>
+          <li>Synchronisierung von Berichten und ihren Anhängen</li>
+        </section>
+        <section data-auto-animate>
+          <h2>Was ist FAS</h2>
+          <li>Archivierung von Berichten</li>
+        </section>
+        <section data-auto-animate>
+          <h2>Was ist FAS</h2>
+          <div style="display:flex;flex-direction:column;justify-content:space-around;">
+            <li style="font-size: 2.3rem; margin-bottom:.5rem;">Berichte erstellen und speichern</li>
+            <li style="font-size: 2.3rem; margin-bottom:.5rem;">Bilder, Audio, Videos und andere Daten hochladen</li>
+            <li style="font-size: 2.3rem; margin-bottom:.5rem;">Synchronisierung von Berichten und ihren Anhängen</li>
+            <li style="font-size: 2.3rem;">Archivierung von Berichten</li>
+          </div>
+        </section>
+      </section>
+      <section>
+        <section data-auto-animate>
+          <h2>Aufbau</h2>
+        </section>
+        <section data-auto-animate>
+          <h2>Aufbau</h2>
+          <img src="img/nodejs.png" alt="NodeJS Logo" style="width: 10rem; height: 10rem;">
+        </section>
+        <section data-auto-animate>
+          <h2>Aufbau</h2>
+          <img src="img/nodejs.png" alt="NodeJS Logo" style="width: 10rem; height: 10rem;">
+          <img src="img/mysql.png" alt="MySQL Logo" style="width: 10rem; height: 10rem;">
+        </section>
+        <section data-auto-animate>
+          <h2>Aufbau</h2>
+          <img src="img/nodejs.png" alt="NodeJS Logo" style="width: 10rem; height: 10rem;">
+          <img src="img/mysql.png" alt="MySQL Logo" style="width: 10rem; height: 10rem;">
+          <img src="img/ts-logo-512.svg" alt="TypeScript Logo" style="width: 10rem; height: 10rem;">
+        </section>
+        <section data-auto-animate>
+          <h2>Aufbau</h2>
+          <img src="img/nodejs.png" alt="NodeJS Logo" style="width: 10rem; height: 10rem;">
+          <img src="img/mysql.png" alt="MySQL Logo" style="width: 10rem; height: 10rem;">
+          <img src="img/ts-logo-512.svg" alt="TypeScript Logo" style="width: 10rem; height: 10rem;">
+          <img src="img/expressjs-icon.svg" alt="Express Logo"
+            style="width: 10rem; height: 10rem;background-color: white;border-radius: 10%;">
+        </section>
+        <section data-auto-animate>
+          <h2>Aufbau</h2>
+          <img src="img/nodejs.png" alt="NodeJS Logo" style="width: 10rem; height: 10rem;">
+          <img src="img/mysql.png" alt="MySQL Logo" style="width: 10rem; height: 10rem;">
+          <img src="img/ts-logo-512.svg" alt="TypeScript Logo" style="width: 10rem; height: 10rem;">
+          <img src="img/expressjs-icon.svg" alt="Express Logo"
+            style="width: 10rem; height: 10rem;background-color: white;border-radius: 10%;">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg" alt="React Logo"
+            style="width: 10rem; height: 10rem;">
+        </section>
+      </section>
+      <section>
+        <section data-auto-animate>
+          <h2>Aufbau</h2>
+          <div style="display: flex; justify-content: space-around;">
+            <div data-id="API_Container" class="API_Container">
+              <img src="img/API.png" style="height: 3rem; margin-top: 0;">
+              <img src="img/FAS - Pages-API-Pages.drawio (2).svg" style="width: 70%; height: auto;">
+            </div>
+            <div data-id="Client_Container" class="Client_Container">
+              <h3>Client</h3>
+              <img src="img/FAS - Pages-Seite-8.drawio.svg" style="width: 60%; height: auto;">
+            </div>
+          </div>
+        </section>
+        <section data-auto-animate>
+          <h3 data-id="API1">API</h3>
+          <img src="img/FAS - Pages-API-Pages.drawio (2).svg" style="width: 65%; height: auto;">
+        </section>
+        <section data-auto-animate>
+          <h3 data-id="API1">API</h3>
+          <img src="img/FAS - Pages-API-Pages.drawio (2).svg" style="
+          width: 1793px;
+          height: auto;
+          position: relative;
+          left: -563px;
+          max-width: none;
+          max-height: none;
+          ">
+        </section>
+        <section data-auto-animate>
+          <img src="img/FAS - Pages-API-Pages.drawio (2).svg" style="
+          width: 1500px;
+          height: auto;
+          position: relative;
+          left: -85px;
+          max-width: none;
+          max-height: none;
+          top: -571px;
+          ">
+        </section>
+        <section data-auto-animate>
+          <img src="img/FAS - Pages-API-Pages.drawio (2).svg" style="
+          width: 1831px;
+          height: auto;
+          position: relative;
+          left: -514px;
+          max-width: none;
+          max-height: none;
+          top: -693px;
+          ">
+        </section>
+        <section data-auto-animate>
+          <img src="img/FAS - Pages-API-Pages.drawio (2).svg" style="
+          width: 2001px;
+          height: auto;
+          position: relative;
+          left: -153px;
+          max-width: none;
+          max-height: none;
+          top: -972px;
+          ">
+        </section>
+        <section data-auto-animate>
+          <img src="img/FAS - Pages-API-Pages.drawio (2).svg" style="
+          width: 2941px;
+          height: auto;
+          position: relative;
+          left: -151px;
+          max-width: none;
+          max-height: none;
+          top: -933px;
+          ">
+        </section>
+        <section data-auto-animate>
+          <img src="img/FAS - Pages-API-Pages.drawio (2).svg" style="
+          width: 1500px;
+          height: auto;
+          position: relative;
+          left: -85px;
+          max-width: none;
+          max-height: none;
+          top: -571px;
+          ">
+        </section>
+        <section data-auto-animate>
+          <img src="img/FAS - Pages-API-Pages.drawio (2).svg" style="
+          width: 1865px;
+          height: auto;
+          position: relative;
+          left: -1144px;
+          max-width: none;
+          max-height: none;
+          top: -649px;
+          ">
+        </section>
+        <section data-auto-animate>
+          <h3 data-id="API1">API</h3>
+          <img src="img/FAS - Pages-API-Pages.drawio (2).svg" style="width: 65%; height: auto;">
+        </section>
+        <section data-auto-animate>
+          <h2>Aufbau</h2>
+          <div style="display: flex; justify-content: space-around;">
+            <div data-id="API_Container" class="API_Container">
+              <img src="img/API.png" style="height: 3rem; margin-top: 0;">
+              <img src="img/FAS - Pages-API-Pages.drawio (2).svg" style="width: 70%; height: auto;">
+            </div>
+            <div data-id="Client_Container" class="Client_Container">
+              <img src="img/Client.png" style="height: 3.5rem; margin-top: 0;">
+              <img src="img/FAS - Pages-Seite-8.drawio.svg" style="width: 60%; height: auto;">
+            </div>
+          </div>
+        </section>
+        <section data-auto-animate>
+          <h3>Client</h3>
+          <img src="img/FAS - Pages-Seite-8.drawio.svg" style="width: 60%; height: auto;">
+        </section>
+        <section data-auto-animate>
+          <h3>Client</h3>
+          <img src="img/FAS - Pages-Seite-8.drawio.svg" style="width: 60%; height: auto;">
+          <div data-id="markerBox" style="width: 11.5rem; height: 6.5rem; position: fixed; border:red solid 1px; inset: 10rem 11rem;"></div>
+        </section>
+        <section data-auto-animate>
+          <h3>Client</h3>
+          <img src="img/FAS - Pages-Seite-8.drawio.svg" style="width: 60%; height: auto;">
+          <div data-id="markerBox" style="width: 11.5rem; height: 6.5rem; position: fixed; border:red solid 1px; inset: 20rem 16rem;"></div>
+        </section>
+        <section data-auto-animate>
+          <h3>Client</h3>
+          <img src="img/FAS - Pages-Seite-8.drawio.svg" style="width: 60%; height: auto;">
+          <div data-id="markerBox" style="width: 25rem; height: 13rem; position: fixed; border:red solid 1px; inset: 26.5rem 17.5rem;"></div>
+        </section>
+        <section data-auto-animate>
+          <h3>Client</h3>
+          <img src="img/FAS - Pages-Seite-8.drawio.svg" style="width: 60%; height: auto;">
+          <div data-id="markerBox" style="width: 16rem; height: 13rem; position: fixed; border:red solid 1px; inset: 20rem 32.5rem;"></div>
+        </section>
+        <section data-auto-animate>
+          <h2>Aufbau</h2>
+          <div style="display: flex; justify-content: space-around;">
+            <div data-id="API_Container" class="API_Container">
+              <img src="img/API.png" style="height: 3rem; margin-top: 0;">
+              <img src="img/FAS - Pages-API-Pages.drawio (2).svg" style="width: 70%; height: auto;">
+            </div>
+            <div data-id="Client_Container" class="Client_Container">
+              <img src="img/Client.png" style="height: 3.5rem; margin-top: 0;">
+              <img src="img/FAS - Pages-Seite-8.drawio.svg" style="width: 60%; height: auto;">
+            </div>
+          </div>
+        </section>
+      </section>
+      <section>
+        <section>
+          <h2>Features</h2>
+        </section>
+      </section>
+    </div>
+  </div>
+
+
+
+  <script src="dist/reveal.js"></script>
+  <script src="plugin/notes/notes.js"></script>
+  <script src="plugin/markdown/markdown.js"></script>
+  <script src="plugin/highlight/highlight.js"></script>
+  <script>
+    // More info about initialization & config:
+    // - https://revealjs.com/initialization/
+    // - https://revealjs.com/config/
+    Reveal.initialize({
+      hash: true,
+      slideNumber: 'h.v',
+      controlsTutorial: false,
+      // Learn about plugins: https://revealjs.com/plugins/
+      plugins: [RevealMarkdown, RevealHighlight, RevealNotes]
+    });
+  </script>
+</body>
+
+</html>
+
+
+
+<container>
+  <left>
+  </left>
+  <right>
+  </right>
+</container>
