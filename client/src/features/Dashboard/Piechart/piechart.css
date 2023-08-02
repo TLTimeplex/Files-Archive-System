@@ -1,7 +1,7 @@
 @media (max-width: 480px) {
     .DoughnutChart {
-        width: 100%;
-        height: 100%;
+        width: 100vmin;
+        height: 100vmin;
     }
 }
 
@@ -11,6 +11,7 @@
         width: 320px;
     }
 }
+
 
 .DoughnutChart {
     display: block;

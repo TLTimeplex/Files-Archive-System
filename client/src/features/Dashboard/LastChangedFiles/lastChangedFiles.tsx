@@ -1,10 +1,11 @@
-import { ReportDB } from '../../../scripts/IndexedDB';
+import { ArchiveDB, ReportDB } from '../../../scripts/IndexedDB';
+import { IDB_Archive } from '../../../types/IDB_Archive';
 import IDB_Report from '../../../types/IDB_report';
 import './lastChangedFiles.css'
 import { useEffect, useState } from 'react';
 
 
-interface Report_Date {
+interface Archive_Date {
     updatedAt: Date, 
     id: string,
     title?: string, 
@@ -12,29 +13,31 @@ interface Report_Date {
 }
 
 async function getlastReports(numberOfLastReports :number) {
-    const allReports: IDB_Report[] = await ReportDB.getAllReports("all");
-    let Reports: Report_Date[] = [];
-    let clearReports: Report_Date[] = [];
-    let sortedReports: Report_Date[] = [];
+    //const allReports: IDB_Report[] = await ReportDB.getAllReports("all");
+    const allArchive: IDB_Archive[] = await ArchiveDB.getAllArchive();
+
+    let Archive: Archive_Date[] = [];
+    let clearArchive: Archive_Date[] = [];
+    let sortedArchive: Archive_Date[] = [];
 
     //verify all Reports have an update date and convert into Report_Data (shorter Interface)
-    allReports.forEach((report) => {
-        if (report.updatedAt !== undefined) {
-            Reports.push({
-                updatedAt: report.updatedAt,
-                id: report.id,
-                title: report.title,
-                discription: report.description,
+    allArchive.forEach((arch) => {
+        if (arch.meta.date !== undefined) {
+            Archive.push({
+                updatedAt: arch.meta.date,
+                id: arch.id,
+                title: arch.data.title,
+                discription: arch.data.description,
             })
         }
     });
 
     //remove double elemets 
-    let doubleReports :Report_Date[][] = [];
-    Reports.forEach((report, index) => {
+    let doubleReports :Archive_Date[][] = [];
+    Archive.forEach((report, index) => {
         doubleReports.push([]);
         doubleReports.at(index)?.push(report);
-        Reports.forEach((innerReport, innerIndex) => {
+        Archive.forEach((innerReport, innerIndex) => {
             if ((report.id === innerReport.id) && (index !== innerIndex)){
                 doubleReports.at(index)?.push(innerReport);
             }
@@ -43,9 +46,9 @@ async function getlastReports(numberOfLastReports :number) {
 
     doubleReports.forEach((reports) => {
         if (reports.length === 1){
-            reports.forEach((report) => {clearReports.push(report)});
+            reports.forEach((report) => {clearArchive.push(report)});
         } else {
-            let updatedRepord: Report_Date = {
+            let updatedRepord: Archive_Date = {
                 updatedAt: new Date(),
                 id: ''
             }; //set standard Value
@@ -68,25 +71,25 @@ async function getlastReports(numberOfLastReports :number) {
                 if (index === indexMaxDate) updatedRepord = report;
             });
 
-            let tempReport: Report_Date|undefined = clearReports.find((report) => report === updatedRepord);
+            let tempReport: Archive_Date|undefined = clearArchive.find((report) => report === updatedRepord);
             if (tempReport !== undefined){
-                clearReports.push(updatedRepord);
+                clearArchive.push(updatedRepord);
             }
         }
     });
 
     //sorted the first numberOfLastReports by date and return 
-    if (clearReports.length > 0) {
+    if (clearArchive.length > 0) {
         let maxDate: Date;
         let maxDateIndex: number = 0;
-        let reportMaxDate: Report_Date = {
+        let reportMaxDate: Archive_Date = {
             id: '',
             updatedAt: new Date(),
         };
 
         for (let i = 0; i<numberOfLastReports; i++){
-            if (clearReports.length === 0) break;
-            clearReports.forEach((report, index) => {
+            if (clearArchive.length === 0) break;
+            clearArchive.forEach((report, index) => {
                 if (index === 0) {
                     maxDate = report.updatedAt;
                     reportMaxDate = report;
@@ -99,14 +102,14 @@ async function getlastReports(numberOfLastReports :number) {
                 }
             });
 
-            sortedReports.push(reportMaxDate);
-            clearReports.splice(maxDateIndex, 1);
+            sortedArchive.push(reportMaxDate);
+            clearArchive.splice(maxDateIndex, 1);
         }
     }
-    return (sortedReports);
+    return (sortedArchive);
 }
 
-const lastReportsElement = (Reports: Report_Date[]) => {
+const lastReportsElement = (Reports: Archive_Date[]) => {
     
     const rewriteDateHour = (dateHour: string|undefined) => {
         if (dateHour !== undefined){
@@ -158,14 +161,14 @@ const lastReportsElement = (Reports: Report_Date[]) => {
 
 export const LastFileChanged = () =>{
     const [init, setInit] = useState<boolean>(false);
-    const [lastupdatedReports, setReport] = useState<Report_Date[]>();
+    const [lastupdatedReports, setReport] = useState<Archive_Date[]>();
     const numberOfShownReports :number = 3;
     
  
     useEffect(() => {
         if (init) return;
         getlastReports(numberOfShownReports).then((reports) => {
-            let innerLastUpdatedReports: Report_Date[] = [];
+            let innerLastUpdatedReports: Archive_Date[] = [];
             reports.forEach((report) => {
                 innerLastUpdatedReports.push(report);
             });
