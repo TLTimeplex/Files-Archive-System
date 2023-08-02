@@ -131,7 +131,7 @@ const lastReportsElement = (Reports: Archive_Date[]) => {
                           rewriteDateHour(Reports.at(index)?.updatedAt.getFullYear().toString());
 
         const clickSingleReport = () =>{
-            window.location.href = `/report/edit/${Reports.at(index)?.id}`
+            window.location.href = `/archive/${Reports.at(index)?.id}`
         }
 
         let singleReportHoverText =  `/report/edit/${Reports.at(index)?.id}`;
@@ -142,7 +142,7 @@ const lastReportsElement = (Reports: Archive_Date[]) => {
         return (<div className='SingleReport' onClick={clickSingleReport} title={singleReportHoverText}>
                     <p className='title'>{titleText}</p>
                     <p className='discription'><span className='discriptionBold'>Discription:</span><br></br>
-                                               <span className='discriptionItalic'>{discriptionText}Hdsfdsagfdgfdgdafgafdsgfdggfdafgfdagdfagdag</span> 
+                                               <span className='discriptionItalic'>{discriptionText}</span> 
                     </p>
                     <p className='date'>{time}</p>
                 </div>);
