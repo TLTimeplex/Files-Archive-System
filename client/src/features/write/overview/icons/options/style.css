@@ -1,0 +1,29 @@
+.OptionsIcon {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.OptionsIcon>* {
+  background: #000000;
+  padding: 0;
+  flex: 1;
+  position: absolute;
+}
+
+.OptionsIcon-Dots {
+  width: 20%;
+  height: 20%;
+  left: 10%;
+  border-radius: 50%;
+  top: 40%;
+} 
+
+.OptionsIcon-Dots:nth-child(2) {
+  left: 40%;
+}
+
+.OptionsIcon-Dots:nth-child(3) {
+  left: 70%;
+}

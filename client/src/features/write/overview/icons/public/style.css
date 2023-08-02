@@ -1,0 +1,85 @@
+.PublicIcon {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transition: transform 0.5s ease-in-out;
+  transform: translate(0%, -5%);
+}
+
+.PublicIcon.enabled {
+  transform: translate(0%, 0%);
+}
+
+.PublicIcon * {
+  background: #000;
+  padding: 0;
+  position: absolute;
+  flex: 1;
+}
+
+.PublicIcon-Body {
+  width: 80%;
+  height: 40%;
+  border-radius: 1.5px;
+  top: 55%;
+  left: 10%;
+}
+
+.PublicIcon-Head {
+  top: 15%;
+  left: 15%;
+  width: 70%;
+  height: 70%;
+  max-width: 70%;
+  max-height: 70%;
+  background: none;
+  position: relative;
+  transition: transform 0.5s ease-in-out;
+}
+
+.PublicIcon-Bow {
+  width: 100%;
+  height: 100%;
+  inset: 0px;
+  border-radius: 50%;
+}
+
+.PublicIcon-BowInner {
+  width: 60%;
+  height: 60%;
+  inset: 20%;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.PublicIcon-BowMask {
+  width: 100%;
+  height: 50%;
+  top: 50%;
+  background: #fff;
+}
+
+.PublicIcon-PinRight {
+  width: 20%;
+  height: 50%;
+  top: 50%;
+  right: 0%;
+}
+
+.PublicIcon-PinLeft {
+  width: 20%;
+  height: 20%;
+  top: 40%;
+  left: 0%;
+  border-bottom-left-radius: 50%;
+  border-bottom-right-radius: 50%;
+}
+
+.PublicIcon>.PublicIcon-Head>*{
+  position: absolute;
+}
+
+.PublicIcon.enabled>.PublicIcon-Head {
+  transform: translate(0%, -10%);
+}

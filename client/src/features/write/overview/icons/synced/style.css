@@ -1,0 +1,52 @@
+.SyncedIcon {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.SyncedIcon>* {
+  background: #ccc;
+  padding: 0;
+  flex: 1;
+  position: absolute;
+}
+
+.SyncedIcon.enabled>* {
+  background: #000;
+  padding: 0;
+  position: absolute;
+  flex: 1;
+}
+
+.SyncedIcon-LeftShaft,
+.SyncedIcon-RightShaft {
+  width: 15%;
+  height: 90%;
+  top: 5%;
+}
+
+.SyncedIcon-LeftShaft {
+  left: 30%;
+}
+
+.SyncedIcon-RightShaft {
+  right: 30%;
+}
+
+.SyncedIcon-LeftPoint,
+.SyncedIcon-RightPoint {
+  width: 15%;
+  height: 35%;
+  transform: rotate(-45deg);
+}
+
+.SyncedIcon-LeftPoint {
+  top: 60%;
+  left: 15%;
+}
+
+.SyncedIcon-RightPoint {
+  top: 7%;
+  right: 15%;
+}

@@ -11,6 +11,7 @@ import HorizontalDivider from "./horizontalDivider";
 import IDB_File from "../../../types/iDB_file";
 import { API_FileMeta } from "../../../types/API_File";
 import { AlertLoader3 } from "../../../scripts/AlertLoader3";
+import { ListItem } from "./ListItem";
 
 
 declare global {
@@ -21,15 +22,21 @@ declare global {
   }
 }
 
+interface OverviewReport {
+  Report: IDB_Report;
+  isLocal: boolean;
+  isRemote: boolean;
+  isLocallyChanged: boolean;
+  isSynced: boolean;
+  canSync: boolean;
+  canMerge: boolean;
+  isPublic: boolean;
+}
+
 // TODO: Add Search!
 // TODO: Add Synchronisation with server
 export const Overview = () => {
-  const [LocalReports, setLocalReports] = useState<IDB_Report[]>([]);
-  const [RemoteReports, setRemoteReports] = useState<IDB_Report[]>([]);
-  const [RemoteChangedReports, setRemoteChangedReports] = useState<IDB_Report[]>([]);
-
-  const [SyncReports, setSyncReports] = useState<IDB_Report[]>([]);
-  const [MergeReports, setMergeReports] = useState<IDB_Report[]>([]); //TODO:
+  const [Reports, setReports] = useState<OverviewReport[]>([]);
 
   const [isOnline, setIsOnline] = useState(navigator.onLine);
 
@@ -49,6 +56,7 @@ export const Overview = () => {
       id: true,
       title: true,
       date_modified: true,
+      access: true,
     }
 
     let _syncedReports: any[] = [];
@@ -67,82 +75,130 @@ export const Overview = () => {
     const _localReports = await ReportDB.getAllReports("local");
     const _remoteReports = await ReportDB.getAllReports("remote");
 
-    let localReports: IDB_Report[] = [];
-    let remoteReports: IDB_Report[] = [];
-    let remoteChangedReports: IDB_Report[] = [];
-    let syncReports: IDB_Report[] = [];
+    let _reports: OverviewReport[] = [];
 
-    let mergeReports: IDB_Report[] = [];
+    let knownReports: string[] = [];
 
-    //TODO: REDO! Reverse order
+    _localReports.forEach((report) => {
 
-    _localReports.forEach((localReport: IDB_Report) => {
-      const remoteReport = _remoteReports.find((remoteReport: IDB_Report) => remoteReport.id === localReport.id);
+      let _report: OverviewReport = {
+        Report: report,
+        isLocal: true,
+        isRemote: false,
+        isSynced: false,
+        isLocallyChanged: false,
+        canSync: false,
+        canMerge: false,
+        isPublic: false,
+      };
 
-      if (remoteReport !== undefined) {
-        if (new Date(localReport.updatedAt) < new Date(remoteReport.updatedAt)) {
-          ReportDB.deleteReport(localReport.id, "local");
-        } else {
-          remoteChangedReports.push(remoteReport);
+      knownReports.push(report.id);
+
+      let remote = _remoteReports.find((remoteReport: any) => remoteReport.id === report.id);
+      let synced = _syncedReports.find((syncedReport: any) => syncedReport.id === report.id);
+
+      if (remote) {
+        _report.isRemote = true;
+        if (remote.updatedAt < report.updatedAt) {
+          _report.isLocallyChanged = true;
         }
-        return;
-      }
-
-      const syncedReport = _syncedReports.find((syncedReport: any) => syncedReport.id === localReport.id);
-      if (syncedReport !== undefined) {
-        if (new Date(localReport.updatedAt) < new Date(syncedReport.date_modified)) {
-          ReportDB.deleteReport(localReport.id, "local");
-        } else {
-          mergeReports.push(localReport);
+        if (synced) {
+          _report.isSynced = true;
+          if (synced.date_modified > report.updatedAt && synced.date_modified > remote.updatedAt) {
+            _report.canSync = true;
+          }
         }
-        return;
-      }
-
-      localReports.push(localReport);
-    });
-
-    _remoteReports.forEach((remoteReport: IDB_Report) => {
-      const localReport = _localReports.find((localReport: IDB_Report) => remoteReport.id === localReport.id);
-
-      if (localReport !== undefined) {
-        return;
-      }
-
-      const syncedReport = _syncedReports.find((syncedReport: any) => syncedReport.id === remoteReport.id);
-      if (syncedReport !== undefined) {
-        if (new Date(remoteReport.updatedAt) < new Date(syncedReport.date_modified)) {
-          syncReports.push(remoteReport);
+      } else if (synced) {
+        _report.isSynced = true;
+        if (synced.date_modified > report.updatedAt) {
+          _report.canSync = true;
         }
       }
 
-      remoteReports.push(remoteReport);
+      if (synced) {
+        // TODO: Check if public available
+      }
+      _reports.push(_report);
     });
 
-    _syncedReports.forEach((syncedReport: any) => {
-      const localReport = _localReports.find((localReport: IDB_Report) => syncedReport.id === localReport.id);
-      const remoteReport = _remoteReports.find((remoteReport: IDB_Report) => syncedReport.id === remoteReport.id);
-
-      if (localReport !== undefined || remoteReport !== undefined) {
+    _remoteReports.forEach((report) => {
+      if (knownReports.includes(report.id))
         return;
+
+      knownReports.push(report.id);
+
+      let _report: OverviewReport = {
+        Report: report,
+        isLocal: false,
+        isRemote: true,
+        isSynced: false,
+        isLocallyChanged: false,
+        canSync: false,
+        canMerge: false,
+        isPublic: false,
+      };
+
+      let synced = _syncedReports.find((syncedReport: any) => syncedReport.id === report.id);
+
+      if (synced) {
+        _report.isSynced = true;
+        console.log(new Date(synced.date_modified) > new Date(report.updatedAt))
+        if (new Date(synced.date_modified) > new Date(report.updatedAt)) {
+          _report.canSync = true;
+        }
       }
 
-      syncReports.push({
-        id: syncedReport.id,
-        title: syncedReport.title,
-        updatedAt: syncedReport.date_modified
-      });
+      if (synced) {
+        // TODO: Check if public available
+      }
+
+      console.log(_report)
+
+      _reports.push(_report);
+
     });
 
-    setLocalReports(localReports);
-    setRemoteReports(remoteReports);
-    setRemoteChangedReports(remoteChangedReports);
-    setSyncReports(syncReports);
-    setMergeReports(mergeReports);
-  };
+    _syncedReports.forEach((report) => {
+      if (knownReports.includes(report.id))
+        return;
+
+      knownReports.push(report.id);
+
+      let _report: OverviewReport = {
+        Report: {
+          id: report.id,
+          title: report.title,
+          updatedAt: new Date(report.date_modified),
+        },
+        isLocal: false,
+        isRemote: false,
+        isSynced: true,
+        isLocallyChanged: false,
+        canSync: true,
+        canMerge: false,
+        isPublic: false,
+      };
+
+      // TODO: Check if public available
+
+      _reports.push(_report);
+    });
+
+    //sort after updatedAt date (newest first)
+    _reports.sort((a, b) => {
+      if (a.Report.updatedAt > b.Report.updatedAt)
+        return -1;
+      if (a.Report.updatedAt < b.Report.updatedAt)
+        return 1;
+      return 0;
+    });
+
+    setReports(_reports);
+  }
 
   const syncReport = async (reportID: string) => {
 
-    if(!isOnline){
+    if (!isOnline) {
       AddAlert("You are offline", "danger");
       return;
     }
@@ -357,6 +413,15 @@ export const Overview = () => {
     return;
   };
 
+  const deleteReport = async (reportID: string) => {
+    console.log("Deleting Report " + reportID);
+    //TODO:
+  };
+
+  const archiveReport = async (reportID: string) => {
+    console.log("Archiving Report " + reportID);
+    //TODO:
+  };
 
   if (!init) {
     sync();
@@ -368,42 +433,17 @@ export const Overview = () => {
   return (
     <>
       <h1>Select Report to edit</h1>
-      {LocalReports.length !== 0 ?
-        <>
-          <HorizontalDivider title="Local" />
-          <CardBox reports={LocalReports} type="local" />
-        </>
-        : null}
-
-      {RemoteReports.length !== 0 ?
-        <>
-          <HorizontalDivider title="Remote" />
-          <CardBox reports={RemoteReports} type="remote" />
-        </>
-        : null}
-      {RemoteChangedReports.length !== 0 ?
-        <>
-          <HorizontalDivider title="Remote (Changed)" />
-          <CardBox reports={RemoteChangedReports} type="remoteChanged" />
-        </>
-        : null}
-      {SyncReports.length !== 0 ?
-        <>
-          <HorizontalDivider title="Remote (Need Sync)" />
-          <CardBox reports={SyncReports} type="sync" sync={syncReport} />
-        </>
-        : null}
-      {MergeReports.length !== 0 ?
-        <>
-          <HorizontalDivider title="Remote (Need Merge)" />
-          <CardBox reports={MergeReports} type="merge" />
-        </>
-        : null}
-      <hr />
-      <div className="AddButtonBox">
-        <Button variant="secondary" href="/report/new" className="AddButton">New Report</Button>
-      </div>
-      <h1>{ }</h1>
+      <table className="Overview">
+        <tbody>
+          {
+            Reports.map((report, index) => {
+              return (
+                <ListItem key={index} Title={report.Report.title || ""} isArchived={false} statusSet={{ isLocallyAvailable: report.isLocal || report.isRemote, isSynced: report.isSynced, isPublic: false, hasConflicts: (!report.isSynced && report.isRemote) }} date={report.Report.updatedAt} content={report.Report.report?.slice(0, 50) + "..."} viewCallback={() => document.location.href = "/report/edit/" + report.Report.id} deleteCallback={/* TODO: Check if is own */ () => { deleteReport(report.Report.id) }} syncCallback={report.canSync ? () => syncReport(report.Report.id) : undefined} mergeCallback={report.canMerge ? () => {/*TODO:*/ } : undefined} archiveCallback={() => archiveReport(report.Report.id)} />
+              );
+            })
+          }
+        </tbody>
+      </table>
     </>
   );
 };
