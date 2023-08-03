@@ -1,115 +1,110 @@
 @media (max-width: 480px) {
-    .Feed {
-        width: 100vmin;
-        height: 100vmin;
-    }
+  .Feed {
+    width: 100vmin;
+    height: 100vmin;
+  }
 }
 
 @media (min-width: 481px) {
-    .Feed {
-        width: 320px;
-        height: 320px;
-    }
+  .Feed {
+    width: 320px;
+    height: 320px;
+  }
 }
 
 .Feed {
-    display: block;
-    float: left;
-    margin-top: 0%;
-    margin-left: 1px;
-    margin-right: 1px;
-    border-style: groove;
-    border-color: white;
-    border-radius: 5px;
-    
+  display: block;
+  float: left;
+  margin: 5px;
+  width: calc(100% - 10px);
+  height: calc(100% - 10px);
+  box-sizing: border-box;
 }
 
 .HeadLine {
-    width: 100%;
-    height: 6%;
-    margin:0%;
-    margin-bottom: 3%;
-    text-align: center;
-    font-weight: bold;
-    font-family: "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; /* font family from Bootstrap */
-}
-
-.lastReports {
-    margin: 0%;
-    display: block;
-    width: 100%;
-    height: 94%;
+  width: 100%;
+  height: 1.3rem;
+  margin: 0%;
+  margin-bottom: 3%;
+  text-align: center;
+  font-weight: bold;
+  font-family: "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  /* font family from Bootstrap */
 }
 
 .SingleReport {
-    width: 99%;
-    margin-left: 0.5%;
-    margin-bottom: 0%;
-    margin-bottom: 2%;
-    border-style: solid;
-    border-width: 1px;
-    border-radius: 5px;
-    display: block;
-    min-height: 20%;
+  width: 99%;
+  margin-left: 0.5%;
+  margin-bottom: 2%;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 5px;
+  display: block;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.SingleReport:last-child {
+  margin-bottom: 0%;
 }
 
 .SingleReport:hover {
-    background-color:lightskyblue;
+  background-color: lightskyblue;
+  box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.75);
 }
 
 .title {
-    width: 98%;
-    height: 40%;
-    margin: 0%;
-    margin-left: 1%;
-    display: inline-block;
-    font-weight: 500;
-    border-bottom-style: solid;
-    border-width: 1px;
+  width: 98%;
+  height: 40%;
+  margin: 0%;
+  margin-left: 1%;
+  display: inline-block;
+  font-weight: 500;
+  border-bottom-style: solid;
+  border-width: 1px;
 
-    overflow: hidden; 
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .title:empty::before {
-    content: "";
-    display: inline-block; 
+  content: "";
+  display: inline-block;
 }
 
 .discription {
-    display: inline-block;
-    width: 99%;
-    height: 40%;
-    margin: 0%;
-    margin-left: 1%;
-    margin-bottom: 3%;
-    font-size: 90%;
+  display: inline-block;
+  width: 99%;
+  height: 40%;
+  margin: 0%;
+  margin-left: 1%;
+  margin-bottom: 3%;
+  font-size: 90%;
 
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .discriptionBold {
-    font-weight: 500;
+  font-weight: 500;
 }
 
 .discriptionItalic {
-    font-style: italic;
+  font-style: italic;
 }
 
 .discription:empty::before {
-    content: "";
-    display: inline-block;
+  content: "";
+  display: inline-block;
 }
 
 .date {
-    float: right;
-    display: block;
-    margin: 0%;
-    margin-right: 1%;
-    margin-top: -5%;
-    font-size: 65%;
-    color: gray;
+  float: right;
+  display: block;
+  margin: 0%;
+  margin-right: 1%;
+  margin-top: -5%;
+  font-size: 65%;
+  color: gray;
 }
