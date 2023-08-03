@@ -243,22 +243,26 @@
         <section data-auto-animate>
           <h3>Client</h3>
           <img src="img/FAS - Pages-Seite-8.drawio.svg" style="width: 60%; height: auto;">
-          <div data-id="markerBox" style="width: 11.5rem; height: 6.5rem; position: fixed; border:red solid 1px; inset: 10rem 11rem;"></div>
+          <div data-id="markerBox"
+            style="width: 11.5rem; height: 6.5rem; position: fixed; border:red solid 1px; inset: 10rem 11rem;"></div>
         </section>
         <section data-auto-animate>
           <h3>Client</h3>
           <img src="img/FAS - Pages-Seite-8.drawio.svg" style="width: 60%; height: auto;">
-          <div data-id="markerBox" style="width: 11.5rem; height: 6.5rem; position: fixed; border:red solid 1px; inset: 20rem 16rem;"></div>
+          <div data-id="markerBox"
+            style="width: 11.5rem; height: 6.5rem; position: fixed; border:red solid 1px; inset: 20rem 16rem;"></div>
         </section>
         <section data-auto-animate>
           <h3>Client</h3>
           <img src="img/FAS - Pages-Seite-8.drawio.svg" style="width: 60%; height: auto;">
-          <div data-id="markerBox" style="width: 25rem; height: 13rem; position: fixed; border:red solid 1px; inset: 26.5rem 17.5rem;"></div>
+          <div data-id="markerBox"
+            style="width: 25rem; height: 13rem; position: fixed; border:red solid 1px; inset: 26.5rem 17.5rem;"></div>
         </section>
         <section data-auto-animate>
           <h3>Client</h3>
           <img src="img/FAS - Pages-Seite-8.drawio.svg" style="width: 60%; height: auto;">
-          <div data-id="markerBox" style="width: 16rem; height: 13rem; position: fixed; border:red solid 1px; inset: 20rem 32.5rem;"></div>
+          <div data-id="markerBox"
+            style="width: 16rem; height: 13rem; position: fixed; border:red solid 1px; inset: 20rem 32.5rem;"></div>
         </section>
         <section data-auto-animate>
           <h2>Aufbau</h2>
@@ -275,8 +279,193 @@
         </section>
       </section>
       <section>
-        <section>
+        <section data-auto-animate>
           <h2>Features</h2>
+        </section>
+        <section data-auto-animate>
+          <h2>Offline verfügbar</h2>
+        </section>
+        <section data-auto-animate>
+          <h2>Offline verfügbar</h2>
+          Mit eingeschränktem Funktionsumfang
+        </section>
+        <section data-auto-animate>
+          <h2 data-id="title">Online</h2>
+          <img src="img/does.drawio.svg" style="width: 50%; height: auto;" data-id="image">
+        </section>
+        <section data-auto-animate>
+          <h2 data-id="title">Offline</h2>
+          <img src="img/does.drawio (1).svg" style="width: 50%; height: auto;" data-id="image">
+        </section>
+        <section data-auto-animate>
+          <h2 data-id="title">Lokale Speicherung</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Variante</th>
+                <th>Größe</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="fragment" data-fragment-index="1">
+                <td><span class="fragment highlight-red" data-fragment-index="3">Local Storage</span></td>
+                <td><span class="fragment highlight-red" data-fragment-index="3">~5.24 MB</span></td>
+              </tr>
+              <tr class="fragment" data-fragment-index="2">
+                <td><span class="fragment highlight-green" data-fragment-index="3">IndexedDB</span></td>
+                <td><span class="fragment highlight-green" data-fragment-index="3">80% of Disk<br />(Chromium)</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+        <section data-auto-animate>
+          <h2>IndexedDB</h2>
+        </section>
+        <section data-auto-animate>
+          <div
+            style="flex-direction:row;justify-content:space-between;align-items:center;display:flex;width: 100%;height: 100%;">
+            <h2>IndexedDB</h2>
+            <img src="img/IndexedDBChart.svg" style="width: 40%; height: auto;">
+          </div>
+        </section>
+        <section data-auto-animate>
+          <div
+            style="flex-direction:row;justify-content:space-between;align-items:center;display:flex;width: 100%;height: 100%;">
+            <h2>IndexedDB</h2>
+            <img src="img/IndexDB.png" style="width: 40%; height: auto;">
+          </div>
+        </section>
+        <section data-auto-animate>
+          <h2>IndexedDB</h2>
+          <div
+            style="flex-direction:row;justify-content:center;align-items:center;display:flex;width: 100%;height: 100%;">
+            <img src="img/lslrb.png" style="width: 100%; height: auto;" data-id="image">
+          </div>
+        </section>
+        <section data-auto-animate>
+          <h2>IndexedDB</h2>
+          <div
+            style="flex-direction:row;justify-content:center;align-items:center;display:flex;width: 100%;height: 100%;">
+            <div id="zoomlslrb" data-id="image"></div>
+            <pre style="margin-left: 50px;"><code data-line-numbers  class="language-typescript">export interface IDB_Report {
+  id: string;
+  title?: string;
+  report?: string;
+  
+  createdAt?: Date;
+  updatedAt: Date;
+
+  authorID?: number;
+  description?: string;
+  fileIDs?: string[];
+}
+              </code></pre>
+          </div>
+        </section>
+        <section data-auto-animate>
+          <h3 data-id="title2">Get DB</h3>
+          <pre style="width: 110%;margin-left: -5%;height: 150%;max-height: 150%;"><code data-line-numbers="|2|4-7|9-21|10|12-15|23" class="language-typescript">export const GetIDB = (): IDBOpenDBRequest => {
+  const reportsDB = indexedDB.open('reports', 1);
+
+  reportsDB.onerror = (err) => {
+    console.log('Error while opening the database');
+    console.log(err);
+  };
+
+  reportsDB.onupgradeneeded = (e) => {
+    const db = reportsDB.result;
+
+    const localReportStore = db.createObjectStore("local", { keyPath: "id" });
+    localReportStore.createIndex("title", "title", { unique: false });
+    localReportStore.createIndex("createdAt", "createdAt", { unique: false });
+    localReportStore.createIndex("updatedAt", "updatedAt", { unique: false });
+
+    const remoteReportStore = db.createObjectStore("remote", { keyPath: "id" });
+    remoteReportStore.createIndex("title", "title", { unique: false });
+    remoteReportStore.createIndex("createdAt", "createdAt", { unique: false });
+    remoteReportStore.createIndex("updatedAt", "updatedAt", { unique: false });
+  };
+
+  return reportsDB;
+};
+              </code></pre>
+        </section>
+        <section data-auto-animate>
+          <h3 data-id="title2">Insert Report</h3>
+          <pre style="width: 110%;margin-left: -5%;height: 150%;max-height: 150%;"><code data-line-numbers="|1-2|3|4|6|13-14|16|18-32|68-70" class="language-typescript">export const InsertReport = async (report: IDB_Report, type: IDB_DB_Select): 
+  Promise<void> => {
+  return new Promise((resolve, reject) => {
+    const DB = GetIDB();
+
+    DB.onsuccess = (e) => {
+      const db = DB.result;
+
+      let promises: Promise<void>[] = [];
+
+      if (type === "local" || type === "all") {
+        promises.push(new Promise((resolve, reject) => {
+          const transaction = db.transaction("local", "readwrite");
+          const objectStore = transaction.objectStore("local");
+
+          const request = objectStore.add(report);
+
+          request.onsuccess = () => {
+            resolve();
+          }
+
+          request.onerror = (e) => {
+            reject(e);
+          }
+
+          transaction.oncomplete = () => {
+            db.close();
+          }
+
+          transaction.onerror = (e) => {
+            reject(e);
+          }
+        }));
+      }
+
+      if (type === "remote" || type === "all") {
+        promises.push(new Promise((resolve, reject) => {
+          const transaction = db.transaction("remote", "readwrite");
+          const objectStore = transaction.objectStore("remote");
+
+          const request = objectStore.add(report);
+
+          request.onsuccess = () => {
+            resolve();
+          }
+
+          request.onerror = (e) => {
+            reject(e);
+          }
+
+          transaction.oncomplete = () => {
+            db.close();
+          }
+
+          transaction.onerror = (e) => {
+            reject(e);
+          }
+        }));
+      }
+
+      Promise.all(promises).then(() => {
+        resolve();
+      }).catch((e) => {
+        reject(e);
+      });
+    };
+
+    DB.onerror = (e) => {
+      reject(e);
+    }
+
+  });
+};        </code></pre>
         </section>
       </section>
     </div>
@@ -296,6 +485,7 @@
       hash: true,
       slideNumber: 'h.v',
       controlsTutorial: false,
+      controls: false,
       // Learn about plugins: https://revealjs.com/plugins/
       plugins: [RevealMarkdown, RevealHighlight, RevealNotes]
     });
@@ -303,12 +493,3 @@
 </body>
 
 </html>
-
-
-
-<container>
-  <left>
-  </left>
-  <right>
-  </right>
-</container>

@@ -1,0 +1,30 @@
+# Diese Präsentation benötigt reveal.js um zu funkioniren.
+# Zur sicherheit ist dieses dokument das script.
+# Einfach '.sh' anhängen und ausführen
+# WINDOWS: GitBash ist vorausgesetzt: https://git-scm.com/downloads
+
+echo ''
+echo '######################'
+echo 'Cloning repo...'
+echo '######################'
+git clone https://github.com/hakimel/reveal.js.git
+
+echo ''
+echo '######################'
+echo 'Installing dependecys'
+echo '######################'
+cd reveal.js
+npm i
+
+echo ''
+echo '######################'
+echo 'Moving presentation files into folder'
+echo '######################'
+mkdir img
+cp ../insert/index.html .
+cp ../insert/style.css .
+cp ../insert/img/* ./img/
+read -s -n 1 -p  'Done. Press any key to exit'
+PAUSE
+
+# Anschlisend index.html öffnen
