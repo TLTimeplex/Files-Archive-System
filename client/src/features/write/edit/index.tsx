@@ -232,6 +232,8 @@ export const Editor = () => {
     }).finally(() => { });
   }
 
+var localIsUploaded = isUploaded;
+
   const syncReport = async () => {
     if (!navigator.onLine) {
       AddAlert("You need to be online to sync a report!", "danger");
@@ -241,20 +243,18 @@ export const Editor = () => {
     const shadowReport = createShadowReport();
 
     // If report is not uploaded, create a new one
-    if (!isUploaded) {
+    if (!localIsUploaded) {
       const result = await axios.put("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report", shadowReport);
       if (!result.data.success) {
         AddAlert(result.data.message, "danger");
         return;
       }
-    }
-    // If report is already uploaded, patch it    
-    else {
-      const result = await axios.patch("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report/" + Report.id, shadowReport);
-      if (!result.data.success) {
-        AddAlert(result.data.message, "danger");
-        return;
-      }
+      await ReportsDB.insertReport(shadowReport, "remote");
+      await ReportsDB.deleteReport(shadowReport.id, "local");
+      setIsUploaded(true);
+      localIsUploaded = true;
+      syncReport();
+      return;
     }
 
     if (!Report.fileIDs)
@@ -268,6 +268,12 @@ export const Editor = () => {
     }
     const uploadedFiles = uploadedFilesResult.data.fileIDs as string[];
 
+    const result = await axios.patch("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report/" + Report.id, shadowReport);
+    if (!result.data.success) {
+      AddAlert(result.data.message, "danger");
+      return;
+    }
+    
     let promises: Promise<void>[] = [];
 
     let needToUpload: string[] = [];
@@ -417,7 +423,7 @@ export const Editor = () => {
     const fileUpload = document.getElementById("fileUpload") as HTMLInputElement;
 
     const files = fileUpload.files;
-    let fileIDs: string[]= [];
+    let fileIDs: string[] = [];
     Report.fileIDs?.forEach(id => fileIDs.push(id));
     if (!files) return;
     for (let i = 0; i < files.length; i++) {
@@ -426,7 +432,7 @@ export const Editor = () => {
       if (fileIDs === undefined) fileIDs = [];
       fileIDs.push(result);
     }
-    saveReport({...Report, fileIDs: fileIDs});
+    saveReport({ ...Report, fileIDs: fileIDs });
   }
 
   const removeFile = async (fileID: string) => {

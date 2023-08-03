@@ -419,8 +419,15 @@ export const Overview = () => {
   };
 
   const archiveReport = async (reportID: string) => {
-    console.log("Archiving Report " + reportID);
-    //TODO:
+    const res = await axios.get("/api/1/" + (localStorage.getItem("token") || sessionStorage.getItem("token")) + "/report/" + reportID + "/archive");
+    if (!res.data.success) {
+      AddAlert(res.data.message, "danger");
+      return;
+    }
+    //TODO: Remove files from storage
+    await ReportDB.deleteReport(reportID, "all");
+    AddAlert("Report archived!", "success");
+    sync();
   };
 
   if (!init) {
@@ -438,12 +445,15 @@ export const Overview = () => {
           {
             Reports.map((report, index) => {
               return (
-                <ListItem key={index} Title={report.Report.title || ""} isArchived={false} statusSet={{ isLocallyAvailable: report.isLocal || report.isRemote, isSynced: report.isSynced, isPublic: false, hasConflicts: (!report.isSynced && report.isRemote) }} date={report.Report.updatedAt} content={report.Report.report?.slice(0, 50) + "..."} viewCallback={() => document.location.href = "/report/edit/" + report.Report.id} deleteCallback={/* TODO: Check if is own */ () => { deleteReport(report.Report.id) }} syncCallback={report.canSync ? () => syncReport(report.Report.id) : undefined} mergeCallback={report.canMerge ? () => {/*TODO:*/ } : undefined} archiveCallback={() => archiveReport(report.Report.id)} />
+                <ListItem key={index} Title={report.Report.title || ""} isArchived={false} statusSet={{ isLocallyAvailable: report.isLocal || report.isRemote, isSynced: report.isSynced, isPublic: false, hasConflicts: (!report.isSynced && report.isRemote) }} date={report.Report.updatedAt} content={report.Report.report?.slice(0, 50) + "..."} viewCallback={() => document.location.href = "/report/edit/" + report.Report.id} deleteCallback={/* TODO: Check if is own */ () => { deleteReport(report.Report.id) }} syncCallback={report.canSync && isOnline ? () => syncReport(report.Report.id) : undefined} mergeCallback={report.canMerge && isOnline ? () => {/*TODO:*/ } : undefined} archiveCallback={isOnline ? () => archiveReport(report.Report.id) : () => {}} />
               );
             })
           }
         </tbody>
       </table>
+      <div className="buttonContainer">
+        <Button variant="success" onClick={() => document.location.href = "/report/new"}>Create new Report</Button>
+      </div>
     </>
   );
 };
