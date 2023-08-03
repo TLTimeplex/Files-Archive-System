@@ -6,6 +6,7 @@ import Login from './features/login';
 import Write from './features/write';
 import { RouteCustoms } from './modules/RouteCustoms';
 import Archive from './features/archive';
+import Dashboard from './features/Dashboard';
 
 
 const App = () => {
@@ -13,7 +14,7 @@ const App = () => {
     <Router>
       <RouteCustoms element={<Main />} blocked={["/login"]} />
       <Routes>
-        <Route path='*' element={<></>} />
+        <Route path='*' element={<Dashboard />} />
         <Route path='/login' element={<Login />} />
         <Route path="/report/*" element={<Write />} />
         <Route path="/archive/*" element={<Archive />} />
