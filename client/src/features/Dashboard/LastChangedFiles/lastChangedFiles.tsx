@@ -28,7 +28,6 @@ async function getLastReportsSorted(): Promise<IDB_Archive[]> {
     AddAlert(res.data.message, "danger");
   } else {
     const reports = res.data.data.map((report: any) => {
-      console.log(report);
       return {
         id: report.id,
         data: {
@@ -43,6 +42,8 @@ async function getLastReportsSorted(): Promise<IDB_Archive[]> {
 
     allArchive.push(...reports);
   }
+
+
 
   return (allArchive.sort((a, b) => {
     const aDate = new Date(a.meta.date);
@@ -65,11 +66,13 @@ export const LastFileChanged = () => {
     });
   });
 
+  var skip = 0;
+
   return (<div className='Feed'>
     <p className='HeadLine'>Archive Feed</p>
     <div>
       {lastUpdatedReports.map((report, index) => {
-        if (index >= limit) return ("");
+        if (index >= limit + skip) return ("");
         return (
           <div className='SingleReport' onClick={() => document.location.href = "/archive/" + report.id} title={report.data.title} key={index}>
             <p className='title'>{report.data.title}</p>
